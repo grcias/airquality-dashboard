@@ -52,6 +52,32 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
+				'map-section': {
+					DEFAULT: 'hsl(var(--map-primary))',
+					secondary: 'hsl(var(--map-secondary))',
+					foreground: 'hsl(var(--map-foreground))'
+				},
+				'pollution-avg': {
+					DEFAULT: 'hsl(var(--pollution-avg-primary))',
+					secondary: 'hsl(var(--pollution-avg-secondary))',
+					foreground: 'hsl(var(--pollution-avg-foreground))'
+				},
+				'units-section': {
+					DEFAULT: 'hsl(var(--units-primary))',
+					secondary: 'hsl(var(--units-secondary))',
+					foreground: 'hsl(var(--units-foreground))'
+				},
+				'chart-section': {
+					DEFAULT: 'hsl(var(--chart-primary))',
+					secondary: 'hsl(var(--chart-secondary))',
+					foreground: 'hsl(var(--chart-foreground))'
+				},
+				status: {
+					good: 'hsl(var(--status-good))',
+					moderate: 'hsl(var(--status-moderate))',
+					unhealthy: 'hsl(var(--status-unhealthy))',
+					hazardous: 'hsl(var(--status-hazardous))'
+				},
 				sidebar: {
 					DEFAULT: 'hsl(var(--sidebar-background))',
 					foreground: 'hsl(var(--sidebar-foreground))',

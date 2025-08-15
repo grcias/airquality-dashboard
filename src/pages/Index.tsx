@@ -73,8 +73,12 @@ const Index = () => {
         <main className="container mx-auto px-6 py-8">
           {/* Top Section: Status + Map */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-            <StatusIndicator aqi={currentAQI} />
-            <AirQualityMap stations={stationsData} />
+            <div className="w-full">
+              <StatusIndicator aqi={currentAQI} />
+            </div>
+            <div className="w-full">
+              <AirQualityMap stations={stationsData} />
+            </div>
           </div>
 
           {/* Middle Section: Average Pollution */}

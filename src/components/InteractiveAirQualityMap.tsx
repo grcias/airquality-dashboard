@@ -71,32 +71,32 @@ const SimpleMapView = ({ stations, onStationClick }: {
         <div className="flex items-center gap-2">
           <div className="flex items-center gap-1">
             <div 
-              className="w-8 h-4 rounded text-xs font-medium flex items-center justify-center text-white"
-              style={{ backgroundColor: 'hsl(var(--status-good))' }}
+              className="w-16 h-6 rounded text-xs font-bold flex items-center justify-center text-white"
+              style={{ backgroundColor: '#22c55e' }}
             >
               Good
             </div>
             <div 
-              className="w-12 h-4 rounded text-xs font-medium flex items-center justify-center text-white"
-              style={{ backgroundColor: 'hsl(var(--status-moderate))' }}
+              className="w-18 h-6 rounded text-xs font-bold flex items-center justify-center text-black"
+              style={{ backgroundColor: '#eab308' }}
             >
               Moderate
             </div>
             <div 
-              className="w-16 h-4 rounded text-xs font-medium flex items-center justify-center text-white"
-              style={{ backgroundColor: 'hsl(var(--status-unhealthy))' }}
+              className="w-20 h-6 rounded text-xs font-bold flex items-center justify-center text-white"
+              style={{ backgroundColor: '#f97316' }}
             >
               Unhealthy
             </div>
             <div 
-              className="w-20 h-4 rounded text-xs font-medium flex items-center justify-center text-white"
-              style={{ backgroundColor: 'hsl(var(--status-unhealthy))' }}
+              className="w-24 h-6 rounded text-xs font-bold flex items-center justify-center text-white"
+              style={{ backgroundColor: '#ef4444' }}
             >
               Very Unhealthy
             </div>
             <div 
-              className="w-16 h-4 rounded text-xs font-medium flex items-center justify-center text-white"
-              style={{ backgroundColor: 'hsl(var(--status-hazardous))' }}
+              className="w-20 h-6 rounded text-xs font-bold flex items-center justify-center text-white"
+              style={{ backgroundColor: '#a855f7' }}
             >
               Hazardous
             </div>

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
-import StatusIndicator from "@/components/StatusIndicator";
-import AirQualityMap from "@/components/AirQualityMap";
+import InteractiveAirQualityMap from "@/components/InteractiveAirQualityMap";
 import AveragePollution from "@/components/AveragePollution";
 import PollutionUnits from "@/components/PollutionUnits";
 import ForecastWidget from "@/components/ForecastWidget";
@@ -14,6 +13,7 @@ const Index = () => {
   const [currentAQI, setCurrentAQI] = useState(0);
   const [stationsData, setStationsData] = useState([]);
   const [averageAQI, setAverageAQI] = useState(0);
+  const [selectedCity, setSelectedCity] = useState("Los Angeles");
   const [pollutionUnits, setPollutionUnits] = useState({
     pm25: 0,
     pm10: 0,
@@ -34,6 +34,7 @@ const Index = () => {
       const mainCityData = await airQualityAPI.getNearestCityData();
       const currentAqi = mainCityData.data.current.pollution.aqius;
       setCurrentAQI(currentAqi);
+      setSelectedCity(mainCityData.data.city);
 
       // Load multiple stations data
       const stations = await airQualityAPI.getMultipleCitiesData();
@@ -71,36 +72,47 @@ const Index = () => {
       
       {activeTab === "home" && (
         <main className="container mx-auto px-6 py-8">
-          {/* Top Section: Status + Map */}
-          <div className="space-y-6 mb-8">
-            <StatusIndicator aqi={currentAQI} />
-            <AirQualityMap stations={stationsData} />
+          {/* Header Section */}
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-foreground">
+              Air Quality Index (AQI⁺) and PM2.5 pollution in {selectedCity}
+            </h1>
+            <p className="text-muted-foreground mt-2">
+              Real-time air quality monitoring and pollution data
+            </p>
           </div>
 
-          {/* Middle Section: Average Pollution */}
+          {/* Interactive Map Section */}
           <div className="mb-8">
+            <InteractiveAirQualityMap 
+              stations={stationsData} 
+              selectedCity={selectedCity}
+            />
+          </div>
+
+          {/* Data Sections */}
+          <div className="space-y-8">
+            {/* Average Pollution */}
             <AveragePollution averageAQI={averageAQI} previousAQI={averageAQI - 5} />
-          </div>
 
-          {/* Lower Middle Section: Units + Forecasts */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-            <PollutionUnits data={pollutionUnits} />
-            <ForecastWidget 
-              title="Hourly Forecast" 
-              type="hourly" 
-              data={airQualityAPI.generateForecastData('hourly')}
-              icon={<Clock className="h-5 w-5" />}
-            />
-            <ForecastWidget 
-              title="Daily Forecast" 
-              type="daily" 
-              data={airQualityAPI.generateForecastData('daily')}
-              icon={<Calendar className="h-5 w-5" />}
-            />
-          </div>
+            {/* Units + Forecasts */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <PollutionUnits data={pollutionUnits} />
+              <ForecastWidget 
+                title="Hourly Forecast" 
+                type="hourly" 
+                data={airQualityAPI.generateForecastData('hourly')}
+                icon={<Clock className="h-5 w-5" />}
+              />
+              <ForecastWidget 
+                title="Daily Forecast" 
+                type="daily" 
+                data={airQualityAPI.generateForecastData('daily')}
+                icon={<Calendar className="h-5 w-5" />}
+              />
+            </div>
 
-          {/* Bottom Section: Historical Chart */}
-          <div className="mb-8">
+            {/* Historical Chart */}
             <HistoricalChart data={airQualityAPI.generateHistoricalData()} />
           </div>
         </main>
@@ -143,7 +155,10 @@ const Index = () => {
             <h2 className="text-3xl font-bold mb-4">Monitoring Stations</h2>
             <p className="text-muted-foreground">Real-time data from air quality monitoring networks</p>
           </div>
-          <AirQualityMap stations={stationsData} />
+          <InteractiveAirQualityMap 
+            stations={stationsData} 
+            selectedCity={selectedCity}
+          />
         </main>
       )}
     </div>

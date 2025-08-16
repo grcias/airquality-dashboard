@@ -74,11 +74,11 @@ const Index = () => {
         <main className="container mx-auto px-6 py-8">
           {/* Header Section */}
           <div className="mb-8">
-            <h1 className="text-3xl font-bold text-foreground">
-              Air Quality Index (AQI⁺) and PM2.5 pollution in {selectedCity}
+            <h1 className="text-3xl font-bold text-foreground mb-2">
+              Air Quality Status
             </h1>
-            <p className="text-muted-foreground mt-2">
-              Real-time air quality monitoring and pollution data
+            <p className="text-xl text-muted-foreground">
+              Air Quality Index (AQI⁺) and PM2.5 pollution in {selectedCity}
             </p>
           </div>
 

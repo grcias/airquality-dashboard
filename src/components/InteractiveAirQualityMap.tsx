@@ -1,12 +1,8 @@
+
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Thermometer, Droplets, Wind } from "lucide-react";
 import { getAQILevel } from "@/types/airQuality";
-
-// Simple map placeholder until Leaflet issues are resolved
-// import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-// import L from 'leaflet';
-// import 'leaflet/dist/leaflet.css';
 
 interface StationData {
   city: string;
@@ -69,40 +65,45 @@ const SimpleMapView = ({ stations, onStationClick }: {
         <div className="text-sm font-medium text-gray-900 dark:text-white">Air Quality Monitoring Stations</div>
         <div className="text-xs text-gray-600 dark:text-gray-300">Click stations to view details</div>
       </div>
-    </div>
-  );
-};
 
-const AQILegend = () => {
-  const aqiRanges = [
-    { range: '0-50', label: 'Good', color: 'hsl(var(--status-good))' },
-    { range: '51-100', label: 'Moderate', color: 'hsl(var(--status-moderate))' },
-    { range: '101-150', label: 'Unhealthy for Sensitive Groups', color: 'hsl(var(--status-unhealthy))' },
-    { range: '151-200', label: 'Unhealthy', color: 'hsl(var(--status-unhealthy))' },
-    { range: '201-300', label: 'Very Unhealthy', color: 'hsl(var(--status-hazardous))' },
-    { range: '301+', label: 'Hazardous', color: 'hsl(var(--status-hazardous))' }
-  ];
-
-  return (
-    <Card className="mt-4">
-      <CardHeader className="pb-3">
-        <CardTitle className="text-lg font-semibold">AQI Scale</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-2">
-          {aqiRanges.map((item, index) => (
-            <div key={index} className="flex flex-col items-center text-center">
-              <div 
-                className="w-full h-8 rounded mb-1"
-                style={{ backgroundColor: item.color }}
-              />
-              <div className="text-xs font-medium">{item.range}</div>
-              <div className="text-xs text-muted-foreground">{item.label}</div>
+      {/* Fixed AQI Legend at bottom - hidden on mobile */}
+      <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg px-4 py-3 shadow-lg hidden md:block">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
+            <div 
+              className="w-8 h-4 rounded text-xs font-medium flex items-center justify-center text-white"
+              style={{ backgroundColor: 'hsl(var(--status-good))' }}
+            >
+              Good
             </div>
-          ))}
+            <div 
+              className="w-12 h-4 rounded text-xs font-medium flex items-center justify-center text-white"
+              style={{ backgroundColor: 'hsl(var(--status-moderate))' }}
+            >
+              Moderate
+            </div>
+            <div 
+              className="w-16 h-4 rounded text-xs font-medium flex items-center justify-center text-white"
+              style={{ backgroundColor: 'hsl(var(--status-unhealthy))' }}
+            >
+              Unhealthy
+            </div>
+            <div 
+              className="w-20 h-4 rounded text-xs font-medium flex items-center justify-center text-white"
+              style={{ backgroundColor: 'hsl(var(--status-unhealthy))' }}
+            >
+              Very Unhealthy
+            </div>
+            <div 
+              className="w-16 h-4 rounded text-xs font-medium flex items-center justify-center text-white"
+              style={{ backgroundColor: 'hsl(var(--status-hazardous))' }}
+            >
+              Hazardous
+            </div>
+          </div>
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
@@ -204,8 +205,6 @@ const InteractiveAirQualityMap = ({ stations, selectedCity }: InteractiveAirQual
           )}
         </CardContent>
       </Card>
-      
-      <AQILegend />
     </div>
   );
 };

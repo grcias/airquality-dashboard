@@ -1,18 +1,12 @@
 import { useState, useEffect } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Thermometer, Droplets, Wind } from "lucide-react";
 import { getAQILevel } from "@/types/airQuality";
-import L from 'leaflet';
-import 'leaflet/dist/leaflet.css';
 
-// Fix for default markers in react-leaflet
-delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-});
+// Simple map placeholder until Leaflet issues are resolved
+// import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+// import L from 'leaflet';
+// import 'leaflet/dist/leaflet.css';
 
 interface StationData {
   city: string;
@@ -32,41 +26,51 @@ interface InteractiveAirQualityMapProps {
   selectedCity: string;
 }
 
-// Custom marker component
-const createCustomIcon = (aqi: number) => {
-  const aqiLevel = getAQILevel(aqi);
-  const color = aqiLevel.color.replace('hsl(var(--status-', '').replace('))', '');
-  
-  // Convert semantic color to actual hex
-  const colorMap: { [key: string]: string } = {
-    'good': '#10b981',
-    'moderate': '#f59e0b',
-    'unhealthy': '#ef4444',
-    'hazardous': '#7c2d12'
-  };
-  
-  const iconColor = colorMap[color] || '#ef4444';
-  
-  return L.divIcon({
-    className: 'custom-marker',
-    html: `<div style="
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background-color: ${iconColor};
-      border: 2px solid white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: bold;
-      color: white;
-    ">${aqi}</div>`,
-    iconSize: [20, 20],
-    iconAnchor: [10, 10],
-    popupAnchor: [0, -10]
-  });
+// Simple visual map representation for now
+const SimpleMapView = ({ stations, onStationClick }: { 
+  stations: StationData[], 
+  onStationClick: (station: StationData) => void 
+}) => {
+  return (
+    <div className="relative h-full bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 rounded-lg border-2 border-blue-200 dark:border-blue-700/50 overflow-hidden">
+      {/* Map background pattern */}
+      <div className="absolute inset-0 opacity-20">
+        <div className="w-full h-full" style={{
+          backgroundImage: `
+            radial-gradient(circle at 25% 25%, #3b82f6 1px, transparent 1px),
+            radial-gradient(circle at 75% 75%, #3b82f6 1px, transparent 1px)
+          `,
+          backgroundSize: '50px 50px'
+        }} />
+      </div>
+      
+      {/* Station markers */}
+      {stations.map((station, index) => {
+        const aqiLevel = getAQILevel(station.aqi);
+        return (
+          <button
+            key={index}
+            onClick={() => onStationClick(station)}
+            className="absolute w-6 h-6 rounded-full border-2 border-white shadow-lg transform -translate-x-1/2 -translate-y-1/2 hover:scale-125 transition-all duration-200 cursor-pointer flex items-center justify-center text-white text-xs font-bold"
+            style={{
+              backgroundColor: aqiLevel.color,
+              left: `${20 + (index * 12)}%`,
+              top: `${30 + (index % 4) * 15}%`,
+            }}
+            title={`${station.city}: AQI ${station.aqi}`}
+          >
+            {station.aqi}
+          </button>
+        );
+      })}
+      
+      {/* Map title overlay */}
+      <div className="absolute top-4 left-4 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg px-3 py-2 shadow-md">
+        <div className="text-sm font-medium text-gray-900 dark:text-white">Air Quality Monitoring Stations</div>
+        <div className="text-xs text-gray-600 dark:text-gray-300">Click stations to view details</div>
+      </div>
+    </div>
+  );
 };
 
 const AQILegend = () => {
@@ -183,47 +187,18 @@ const InteractiveAirQualityMap = ({ stations, selectedCity }: InteractiveAirQual
     }
   }, [selectedCity, stations]);
 
-  const defaultCenter: [number, number] = enhancedStations.length > 0 
-    ? [enhancedStations[0].lat, enhancedStations[0].lng] 
-    : [39.8283, -98.5795]; // Center of USA
-
   return (
     <div className="space-y-4">
       <Card className="h-[500px] relative overflow-hidden">
         <CardContent className="p-0 h-full">
-          <MapContainer
-            center={defaultCenter}
-            zoom={5}
-            style={{ height: '100%', width: '100%' }}
-            className="rounded-lg"
-          >
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            
-            {enhancedStations.map((station, index) => (
-              <Marker
-                key={index}
-                position={[station.lat, station.lng]}
-                icon={createCustomIcon(station.aqi)}
-                eventHandlers={{
-                  click: () => setSelectedStation(station),
-                }}
-              >
-                <Popup>
-                  <div className="text-center">
-                    <div className="font-semibold">{station.city}</div>
-                    <div className="text-lg font-bold">AQI: {station.aqi}</div>
-                  </div>
-                </Popup>
-              </Marker>
-            ))}
-          </MapContainer>
+          <SimpleMapView 
+            stations={enhancedStations} 
+            onStationClick={setSelectedStation}
+          />
           
           {/* Floating station card overlay */}
           {selectedStation && (
-            <div className="absolute top-4 right-4 z-[1000]">
+            <div className="absolute top-4 right-4 z-10">
               <StationCard station={selectedStation} />
             </div>
           )}

@@ -96,20 +96,22 @@ const Index = () => {
             <AveragePollution averageAQI={averageAQI} previousAQI={averageAQI - 5} />
 
             {/* Units + Forecasts */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <PollutionUnits data={pollutionUnits} />
-              <ForecastWidget 
-                title="Hourly Forecast" 
-                type="hourly" 
-                data={airQualityAPI.generateForecastData('hourly')}
-                icon={<Clock className="h-5 w-5" />}
-              />
-              <ForecastWidget 
-                title="Daily Forecast" 
-                type="daily" 
-                data={airQualityAPI.generateForecastData('daily')}
-                icon={<Calendar className="h-5 w-5" />}
-              />
+              <div className="space-y-4">
+                <ForecastWidget 
+                  title="Hourly Forecast" 
+                  type="hourly" 
+                  data={airQualityAPI.generateForecastData('hourly')}
+                  icon={<Clock className="h-5 w-5" />}
+                />
+                <ForecastWidget 
+                  title="Daily Forecast" 
+                  type="daily" 
+                  data={airQualityAPI.generateForecastData('daily')}
+                  icon={<Calendar className="h-5 w-5" />}
+                />
+              </div>
             </div>
 
             {/* Historical Chart */}

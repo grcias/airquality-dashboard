@@ -60,33 +60,21 @@ const SimpleMapView = ({
       {/* Fixed AQI Legend at bottom - hidden on mobile */}
       <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-lg px-4 py-3 shadow-lg hidden md:block">
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1">
-            <div className="w-16 h-6 rounded text-xs font-bold flex items-center justify-center text-white" style={{
-            backgroundColor: '#22c55e'
-          }}>
-              Good
+          {[
+            { label: 'Good', color: '#22c55e' },
+            { label: 'Moderate', color: '#facc15' },
+            { label: 'Unhealthy', color: '#f97316' },
+            { label: 'Very Unhealthy', color: '#ef4444' },
+            { label: 'Hazardous', color: '#a855f7' }
+          ].map((category) => (
+            <div 
+              key={category.label}
+              className="px-3 py-1 rounded text-xs font-bold flex items-center justify-center text-white"
+              style={{ backgroundColor: category.color }}
+            >
+              {category.label}
             </div>
-            <div style={{
-            backgroundColor: '#facc15'
-          }} className="w-18 h-6 rounded text-xs font-bold flex items-center justify-center text-white mx-2">
-              Moderate
-            </div>
-            <div className="w-20 h-6 rounded text-xs font-bold flex items-center justify-center text-white" style={{
-            backgroundColor: '#f97316'
-          }}>
-              Unhealthy
-            </div>
-            <div className="w-24 h-6 rounded text-xs font-bold flex items-center justify-center text-white" style={{
-            backgroundColor: '#ef4444'
-          }}>
-              Very Unhealthy
-            </div>
-            <div className="w-20 h-6 rounded text-xs font-bold flex items-center justify-center text-white" style={{
-            backgroundColor: '#a855f7'
-          }}>
-              Hazardous
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>;

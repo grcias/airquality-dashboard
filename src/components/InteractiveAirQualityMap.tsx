@@ -67,8 +67,8 @@ const SimpleMapView = ({
               Good
             </div>
             <div style={{
-            backgroundColor: '#eab308'
-          }} className="w-18 h-6 rounded text-xs font-bold flex items-center justify-center text-black mx-[2px]">
+            backgroundColor: '#facc15'
+          }} className="w-18 h-6 rounded text-xs font-bold flex items-center justify-center text-white mx-[2px]">
               Moderate
             </div>
             <div className="w-20 h-6 rounded text-xs font-bold flex items-center justify-center text-white" style={{

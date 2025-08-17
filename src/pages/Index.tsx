@@ -123,7 +123,7 @@ const Index = () => {
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-4">Extended Forecast</h2>
             <p className="text-muted-foreground mb-8">Detailed air quality predictions</p>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6">
               <ForecastWidget 
                 title="Next 24 Hours" 
                 type="hourly" 

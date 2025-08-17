@@ -41,7 +41,9 @@ const Index = () => {
       setStationsData(stations);
 
       // Calculate average AQI
-      const avgAqi = stations.reduce((sum: number, station: any) => sum + station.aqi, 0) / stations.length;
+      const avgAqi =
+        stations.reduce((sum: number, station: any) => sum + station.aqi, 0) /
+        stations.length;
       setAverageAQI(avgAqi);
 
       // Generate pollution units data
@@ -60,7 +62,9 @@ const Index = () => {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-          <p className="text-xl text-muted-foreground">Loading air quality data...</p>
+          <p className="text-xl text-muted-foreground">
+            Loading air quality data...
+          </p>
         </div>
       </div>
     );
@@ -95,22 +99,31 @@ const Index = () => {
             {/* Average Pollution */}
             <AveragePollution averageAQI={averageAQI} previousAQI={averageAQI - 5} />
 
-            {/* Units + Forecasts */}
+            {/* Units + Forecasts with equal height */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <PollutionUnits data={pollutionUnits} />
-              <div className="space-y-4">
-                <ForecastWidget 
-                  title="Hourly Forecast" 
-                  type="hourly" 
-                  data={airQualityAPI.generateForecastData('hourly')}
-                  icon={<Clock className="h-5 w-5" />}
-                />
-                <ForecastWidget 
-                  title="Daily Forecast" 
-                  type="daily" 
-                  data={airQualityAPI.generateForecastData('daily')}
-                  icon={<Calendar className="h-5 w-5" />}
-                />
+              {/* Pollution Units */}
+              <div className="h-full">
+                <PollutionUnits data={pollutionUnits} />
+              </div>
+
+              {/* Forecast stacked (Hourly + Daily) */}
+              <div className="flex flex-col gap-6 h-full">
+                <div className="flex-1">
+                  <ForecastWidget
+                    title="Hourly Forecast"
+                    type="hourly"
+                    data={airQualityAPI.generateForecastData("hourly")}
+                    icon={<Clock className="h-5 w-5" />}
+                  />
+                </div>
+                <div className="flex-1">
+                  <ForecastWidget
+                    title="Daily Forecast"
+                    type="daily"
+                    data={airQualityAPI.generateForecastData("daily")}
+                    icon={<Calendar className="h-5 w-5" />}
+                  />
+                </div>
               </div>
             </div>
 
@@ -124,17 +137,19 @@ const Index = () => {
         <main className="container mx-auto px-6 py-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-4">Extended Forecast</h2>
-            <p className="text-muted-foreground mb-8">Detailed air quality predictions</p>
+            <p className="text-muted-foreground mb-8">
+              Detailed air quality predictions
+            </p>
             <div className="grid grid-cols-1 gap-6">
-              <ForecastWidget 
-                title="Next 24 Hours" 
-                type="hourly" 
-                data={airQualityAPI.generateForecastData('hourly')}
+              <ForecastWidget
+                title="Next 24 Hours"
+                type="hourly"
+                data={airQualityAPI.generateForecastData("hourly")}
               />
-              <ForecastWidget 
-                title="Next 7 Days" 
-                type="daily" 
-                data={airQualityAPI.generateForecastData('daily')}
+              <ForecastWidget
+                title="Next 7 Days"
+                type="daily"
+                data={airQualityAPI.generateForecastData("daily")}
               />
             </div>
           </div>
@@ -145,7 +160,9 @@ const Index = () => {
         <main className="container mx-auto px-6 py-8">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-4">Historical Data</h2>
-            <p className="text-muted-foreground">Air quality trends and analysis</p>
+            <p className="text-muted-foreground">
+              Air quality trends and analysis
+            </p>
           </div>
           <HistoricalChart data={airQualityAPI.generateHistoricalData()} />
         </main>
@@ -155,7 +172,9 @@ const Index = () => {
         <main className="container mx-auto px-6 py-8">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-4">Monitoring Stations</h2>
-            <p className="text-muted-foreground">Real-time data from air quality monitoring networks</p>
+            <p className="text-muted-foreground">
+              Real-time data from air quality monitoring networks
+            </p>
           </div>
           <InteractiveAirQualityMap 
             stations={stationsData} 

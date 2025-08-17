@@ -85,7 +85,7 @@ const StationCard = ({
   station: StationData;
 }) => {
   const aqiLevel = getAQILevel(station.aqi);
-  return <Card className="w-80 border-2 shadow-lg" style={{
+  return <Card className="w-full max-w-sm sm:max-w-md lg:max-w-lg border-2 shadow-lg" style={{
     borderColor: aqiLevel.color
   }}>
       <CardHeader className="pb-3">
@@ -166,7 +166,7 @@ const InteractiveAirQualityMap = ({
           <SimpleMapView stations={enhancedStations} onStationClick={setSelectedStation} />
           
           {/* Floating station card overlay */}
-          {selectedStation && <div className="absolute top-4 right-4 z-10">
+          {selectedStation && <div className="absolute top-4 right-4 left-4 sm:left-auto z-10">
               <StationCard station={selectedStation} />
             </div>}
         </CardContent>

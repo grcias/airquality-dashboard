@@ -68,7 +68,7 @@ const ForecastWidget = ({ title, type, data, icon }: ForecastWidgetProps) => {
 
   return (
     <Card className="h-full bg-gradient-to-br from-card to-card/80 backdrop-blur-sm border-2 hover:shadow-[var(--shadow-elegant)] transition-all duration-300">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-4">
         <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
           {icon || defaultIcon}
           {title}
@@ -79,51 +79,78 @@ const ForecastWidget = ({ title, type, data, icon }: ForecastWidgetProps) => {
           </p>
         )}
       </CardHeader>
-      <CardContent className="p-4">
-        <div className="space-y-2">
-          {mockData.map((item, index) => (
-            <div 
-              key={index}
-              className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors"
-            >
-              <div className="flex items-center space-x-3 min-w-0 flex-1">
-                <span className="text-sm font-medium text-foreground min-w-[60px]">
-                  {item.time}
-                </span>
-                <div className={`px-2 py-1 rounded text-white text-sm font-bold min-w-[50px] text-center ${getAQIColor(item.aqi)}`}>
-                  {item.aqi}
+      <CardContent className="p-4 pt-0">
+        {type === "hourly" ? (
+          <div className="max-h-80 overflow-y-auto space-y-2 pr-2">
+            {mockData.map((item, index) => (
+              <div 
+                key={index}
+                className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors min-h-[60px]"
+              >
+                <div className="flex items-center space-x-3">
+                  <span className="text-sm font-medium text-foreground min-w-[50px]">
+                    {item.time}
+                  </span>
+                  <div className={`px-2 py-1 rounded text-white text-sm font-bold ${getAQIColor(item.aqi)}`}>
+                    {item.aqi}
+                  </div>
+                  {item.weather && (
+                    <div className="flex items-center">
+                      {getWeatherIcon(item.weather)}
+                    </div>
+                  )}
                 </div>
-                {type === "daily" && item.weather && (
-                  <div className="flex items-center space-x-1">
-                    {getWeatherIcon(item.weather)}
-                    <span className="text-xs text-muted-foreground opacity-75">100%</span>
+                
+                {item.temperature && (
+                  <div className="text-sm font-medium text-foreground">
+                    {item.temperature.high}°C
                   </div>
                 )}
               </div>
-              
-              {type === "daily" && item.temperature && (
-                <div className="flex items-center space-x-4 text-sm">
-                  <div className="flex items-center space-x-1">
-                    <span className="font-medium">{item.temperature.high}°</span>
-                    <span className="text-muted-foreground">{item.temperature.low}°</span>
+            ))}
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {mockData.map((item, index) => (
+              <div 
+                key={index}
+                className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors min-h-[70px]"
+              >
+                <div className="flex items-center space-x-3 min-w-0 flex-1">
+                  <span className="text-sm font-medium text-foreground min-w-[60px]">
+                    {item.time}
+                  </span>
+                  <div className={`px-2 py-1 rounded text-white text-sm font-bold ${getAQIColor(item.aqi)}`}>
+                    {item.aqi}
                   </div>
-                  {item.wind && (
-                    <div className="flex items-center space-x-1 text-muted-foreground">
-                      <Wind className="h-3 w-3" />
-                      <span className="text-xs">{item.wind} km/h</span>
-                    </div>
-                  )}
-                  {item.humidity && (
-                    <div className="flex items-center space-x-1 text-muted-foreground">
-                      <Droplets className="h-3 w-3" />
-                      <span className="text-xs">{item.humidity}%</span>
+                  {item.weather && (
+                    <div className="flex items-center space-x-1">
+                      {getWeatherIcon(item.weather)}
+                      <span className="text-xs text-muted-foreground">100%</span>
                     </div>
                   )}
                 </div>
-              )}
-            </div>
-          ))}
-        </div>
+                
+                {item.temperature && (
+                  <div className="text-right">
+                    <div className="flex items-center space-x-2 text-sm">
+                      <span className="font-medium">{item.temperature.high}°</span>
+                      <span className="text-muted-foreground">{item.temperature.low}°</span>
+                    </div>
+                    <div className="flex items-center space-x-2 text-xs text-muted-foreground mt-1">
+                      {item.wind && (
+                        <div className="flex items-center space-x-1">
+                          <Wind className="h-3 w-3" />
+                          <span>{item.wind} km/h</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </CardContent>
     </Card>
   );

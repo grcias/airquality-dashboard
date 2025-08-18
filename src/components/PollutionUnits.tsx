@@ -60,7 +60,7 @@ const PollutionUnits = ({ data }: PollutionUnitsProps) => {
 
   return (
     <Card className="h-full bg-gradient-to-br from-card to-card/80 backdrop-blur-sm border-2 hover:shadow-[var(--shadow-elegant)] transition-all duration-300">
-      <CardHeader className="pb-3">
+      <CardHeader className="pb-4">
         <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
           <Gauge className="h-5 w-5" />
           Air pollutants
@@ -69,35 +69,42 @@ const PollutionUnits = ({ data }: PollutionUnitsProps) => {
           What is the current air quality in Jakarta?
         </p>
       </CardHeader>
-      <CardContent className="p-4">
-        <div className="grid grid-cols-2 gap-4">
-          {pollutants.map((pollutant, index) => (
-            <div 
-              key={index}
-              className="bg-muted/30 rounded-lg p-4 hover:bg-muted/50 transition-colors"
-            >
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <div className="font-bold text-foreground">
+      <CardContent className="p-4 pt-0">
+        <div className="grid grid-cols-2 gap-3">
+          {pollutants.map((pollutant, index) => {
+            const getStatusColor = (name: string, value: number) => {
+              if (name === "PM2.5" && value > 35) return "bg-orange-500";
+              if (name === "PM10" && value > 50) return "bg-orange-500";
+              if (value > 100) return "bg-red-500";
+              if (value > 50) return "bg-yellow-500";
+              return "bg-green-500";
+            };
+            
+            return (
+              <div 
+                key={index}
+                className="bg-muted/30 rounded-lg p-3 hover:bg-muted/50 transition-colors relative h-20 flex flex-col justify-between"
+              >
+                <div className={`absolute top-2 right-2 w-2 h-2 rounded-full ${getStatusColor(pollutant.name, pollutant.value)}`} />
+                <div>
+                  <div className="font-bold text-foreground text-sm">
                     {pollutant.name}
                   </div>
-                  <div className={`w-3 h-3 rounded-full ${pollutant.color.replace('text-', 'bg-')}`} />
-                </div>
-                <div className="text-xs text-muted-foreground">
-                  {pollutant.description}
+                  <div className="text-xs text-muted-foreground">
+                    {pollutant.description}
+                  </div>
                 </div>
                 <div className="flex items-baseline space-x-1">
-                  <span className={`text-2xl font-bold ${pollutant.color}`}>
+                  <span className="text-lg font-bold text-foreground">
                     {pollutant.value.toFixed(1)}
                   </span>
                   <span className="text-xs text-muted-foreground">
                     {pollutant.unit}
                   </span>
-                  <sup className="text-xs text-muted-foreground">3</sup>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </CardContent>
     </Card>

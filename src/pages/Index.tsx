@@ -95,35 +95,31 @@ const Index = () => {
           </div>
 
           {/* Data Sections */}
-          <div className="space-y-8">
+          <div className="space-y-6">
             {/* Average Pollution */}
             <AveragePollution averageAQI={averageAQI} previousAQI={averageAQI - 5} />
 
-            {/* Units + Forecasts with equal height */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Pollution Units */}
-              <div className="h-full">
+            {/* Main content grid - responsive layout */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              {/* Pollution Units - takes 1 column */}
+              <div className="lg:col-span-1">
                 <PollutionUnits data={pollutionUnits} />
               </div>
 
-              {/* Forecast stacked (Hourly + Daily) */}
-              <div className="flex flex-col gap-6 h-full">
-                <div className="flex-1">
-                  <ForecastWidget
-                    title="Hourly Forecast"
-                    type="hourly"
-                    data={airQualityAPI.generateForecastData("hourly")}
-                    icon={<Clock className="h-5 w-5" />}
-                  />
-                </div>
-                <div className="flex-1">
-                  <ForecastWidget
-                    title="Daily Forecast"
-                    type="daily"
-                    data={airQualityAPI.generateForecastData("daily")}
-                    icon={<Calendar className="h-5 w-5" />}
-                  />
-                </div>
+              {/* Forecasts - takes 2 columns, stacked vertically */}
+              <div className="lg:col-span-2 space-y-6">
+                <ForecastWidget
+                  title="Hourly Forecast"
+                  type="hourly"
+                  data={airQualityAPI.generateForecastData("hourly")}
+                  icon={<Clock className="h-5 w-5" />}
+                />
+                <ForecastWidget
+                  title="Daily Forecast"
+                  type="daily"
+                  data={airQualityAPI.generateForecastData("daily")}
+                  icon={<Calendar className="h-5 w-5" />}
+                />
               </div>
             </div>
 

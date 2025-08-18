@@ -12,95 +12,92 @@ const PollutionUnits = ({ data }: PollutionUnitsProps) => {
       name: "PM2.5",
       value: data.pm25,
       unit: "μg/m³",
-      icon: Droplets,
-      description: "Fine particulate matter",
-      safe: 12,
+      description: "Fine particles (≤ 2.5 μm)",
+      color: "text-orange-500",
+      bgColor: "bg-orange-500/10",
     },
     {
       name: "PM10",
       value: data.pm10,
       unit: "μg/m³", 
-      icon: Wind,
-      description: "Coarse particulate matter",
-      safe: 50,
+      description: "Coarse particles (≤ 10 μm)",
+      color: "text-green-500",
+      bgColor: "bg-green-500/10",
     },
     {
       name: "O₃",
       value: data.o3,
-      unit: "ppb",
-      icon: Zap,
-      description: "Ground-level ozone",
-      safe: 70,
+      unit: "μg/m³",
+      description: "Ozone",
+      color: "text-green-500",
+      bgColor: "bg-green-500/10",
     },
     {
       name: "NO₂",
       value: data.no2,
-      unit: "ppb",
-      icon: Gauge,
-      description: "Nitrogen dioxide",
-      safe: 53,
+      unit: "μg/m³",
+      description: "Nitrogen Dioxide",
+      color: "text-green-500",
+      bgColor: "bg-green-500/10",
+    },
+    {
+      name: "SO₂",
+      value: 19.3,
+      unit: "μg/m³",
+      description: "Sulphur Dioxide",
+      color: "text-green-500",
+      bgColor: "bg-green-500/10",
+    },
+    {
+      name: "CO",
+      value: 985.7,
+      unit: "μg/m³",
+      description: "Carbon Monoxide",
+      color: "text-green-500",
+      bgColor: "bg-green-500/10",
     },
   ];
 
   return (
-    <Card className="h-full bg-gradient-to-br from-units-section to-units-section/80 border-2 border-units-section/30 shadow-xl">
+    <Card className="h-full bg-gradient-to-br from-card to-card/80 backdrop-blur-sm border-2 hover:shadow-[var(--shadow-elegant)] transition-all duration-300">
       <CardHeader className="pb-3">
-        <CardTitle className="text-2xl font-bold text-units-foreground flex items-center gap-3">
-          <Gauge className="h-6 w-6" />
-          Pollution Levels
+        <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
+          <Gauge className="h-5 w-5" />
+          Air pollutants
         </CardTitle>
+        <p className="text-sm text-muted-foreground">
+          What is the current air quality in Jakarta?
+        </p>
       </CardHeader>
-      <CardContent className="p-6">
-        <div className="grid grid-cols-1 gap-4">
-          {pollutants.map((pollutant, index) => {
-            const Icon = pollutant.icon;
-            const isElevated = pollutant.value > pollutant.safe;
-            
-            return (
-              <div 
-                key={index}
-                className="bg-units-foreground/10 rounded-lg p-4 hover:bg-units-foreground/15 transition-colors"
-              >
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center space-x-3">
-                    <Icon className="h-5 w-5 text-units-foreground" />
-                    <div>
-                      <div className="font-bold text-units-foreground">
-                        {pollutant.name}
-                      </div>
-                      <div className="text-xs text-units-foreground/70">
-                        {pollutant.description}
-                      </div>
-                    </div>
+      <CardContent className="p-4">
+        <div className="grid grid-cols-2 gap-4">
+          {pollutants.map((pollutant, index) => (
+            <div 
+              key={index}
+              className="bg-muted/30 rounded-lg p-4 hover:bg-muted/50 transition-colors"
+            >
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <div className="font-bold text-foreground">
+                    {pollutant.name}
                   </div>
-                  <div className="text-right">
-                    <div className="text-2xl font-bold text-units-foreground">
-                      {pollutant.value.toFixed(1)}
-                    </div>
-                    <div className="text-xs text-units-foreground/70">
-                      {pollutant.unit}
-                    </div>
-                  </div>
+                  <div className={`w-3 h-3 rounded-full ${pollutant.color.replace('text-', 'bg-')}`} />
                 </div>
-                
-                <div className="w-full bg-units-foreground/20 rounded-full h-2 mt-3">
-                  <div 
-                    className={`h-2 rounded-full transition-all duration-500 ${
-                      isElevated ? 'bg-red-400' : 'bg-green-400'
-                    }`}
-                    style={{ 
-                      width: `${Math.min((pollutant.value / (pollutant.safe * 2)) * 100, 100)}%` 
-                    }}
-                  />
+                <div className="text-xs text-muted-foreground">
+                  {pollutant.description}
                 </div>
-                <div className="flex justify-between text-xs text-units-foreground/60 mt-1">
-                  <span>0</span>
-                  <span className="text-green-300">Safe: {pollutant.safe}</span>
-                  <span>{(pollutant.safe * 2).toFixed(0)}+</span>
+                <div className="flex items-baseline space-x-1">
+                  <span className={`text-2xl font-bold ${pollutant.color}`}>
+                    {pollutant.value.toFixed(1)}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {pollutant.unit}
+                  </span>
+                  <sup className="text-xs text-muted-foreground">3</sup>
                 </div>
               </div>
-            );
-          })}
+            </div>
+          ))}
         </div>
       </CardContent>
     </Card>

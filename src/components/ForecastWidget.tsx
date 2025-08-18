@@ -81,33 +81,37 @@ const ForecastWidget = ({ title, type, data, icon }: ForecastWidgetProps) => {
       </CardHeader>
       <CardContent className="p-4 pt-0">
         {type === "hourly" ? (
-          <div className="max-h-80 overflow-y-auto space-y-2 pr-2">
-            {mockData.map((item, index) => (
-              <div 
-                key={index}
-                className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors min-h-[60px]"
-              >
-                <div className="flex items-center space-x-3">
-                  <span className="text-sm font-medium text-foreground min-w-[50px]">
-                    {item.time}
-                  </span>
-                  <div className={`px-2 py-1 rounded text-white text-sm font-bold ${getAQIColor(item.aqi)}`}>
-                    {item.aqi}
+          <div className="max-w-[280px]">
+            <div className="max-h-80 overflow-y-auto space-y-1 pr-2">
+              {mockData.map((item, index) => (
+                <div 
+                  key={index}
+                  className="flex items-center justify-between p-2 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors h-[50px]"
+                >
+                  <div className="flex items-center space-x-2 flex-1">
+                    <span className="text-sm font-medium text-foreground min-w-[45px]">
+                      {item.time}
+                    </span>
+                    <div className="flex items-center space-x-1">
+                      <div className={`px-2 py-0.5 rounded text-white text-xs font-bold ${getAQIColor(item.aqi)}`}>
+                        {item.aqi}
+                      </div>
+                      {item.weather && (
+                        <div className="flex items-center">
+                          {getWeatherIcon(item.weather)}
+                        </div>
+                      )}
+                    </div>
                   </div>
-                  {item.weather && (
-                    <div className="flex items-center">
-                      {getWeatherIcon(item.weather)}
+                  
+                  {item.temperature && (
+                    <div className="text-sm text-foreground font-medium">
+                      {item.temperature.high}°
                     </div>
                   )}
                 </div>
-                
-                {item.temperature && (
-                  <div className="text-sm font-medium text-foreground">
-                    {item.temperature.high}°C
-                  </div>
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         ) : (
           <div className="space-y-2">

@@ -1,10 +1,11 @@
 import { useState, useEffect } from "react";
 import Header from "@/components/Header";
-import InteractiveAirQualityMap from "@/components/InteractiveAirQualityMap";
+import InteractiveMap from "@/components/InteractiveMap";
 import AveragePollution from "@/components/AveragePollution";
 import PollutionUnits from "@/components/PollutionUnits";
 import ForecastWidget from "@/components/ForecastWidget";
 import HistoricalChart from "@/components/HistoricalChart";
+import AirQualityDashboard from "@/components/AirQualityDashboard";
 import { airQualityAPI } from "@/services/airQualityAPI";
 import { Clock, Calendar } from "lucide-react";
 
@@ -88,10 +89,7 @@ const Index = () => {
 
           {/* Interactive Map Section */}
           <div className="mb-8">
-            <InteractiveAirQualityMap 
-              stations={stationsData} 
-              selectedCity={selectedCity}
-            />
+            <InteractiveMap />
           </div>
 
           {/* Data Sections */}
@@ -99,27 +97,31 @@ const Index = () => {
             {/* Average Pollution */}
             <AveragePollution averageAQI={averageAQI} previousAQI={averageAQI - 5} />
 
-            {/* Main content grid - responsive layout */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-              {/* Pollution Units - takes 1 column */}
-              <div className="lg:col-span-1">
+            {/* Main content grid - layout with vertical pollutants and horizontal forecasts */}
+            <div className="flex flex-col lg:flex-row gap-6">
+              {/* Pollution Units - tall vertical column on the left */}
+              <div className="lg:w-1/3 flex-shrink-0">
                 <PollutionUnits data={pollutionUnits} />
               </div>
 
-              {/* Forecasts - takes 2 columns, stacked vertically */}
-              <div className="lg:col-span-2 space-y-6">
-                <ForecastWidget
-                  title="Hourly Forecast"
-                  type="hourly"
-                  data={airQualityAPI.generateForecastData("hourly")}
-                  icon={<Clock className="h-5 w-5" />}
-                />
-                <ForecastWidget
-                  title="Daily Forecast"
-                  type="daily"
-                  data={airQualityAPI.generateForecastData("daily")}
-                  icon={<Calendar className="h-5 w-5" />}
-                />
+              {/* Forecasts - stacked vertically on the right with horizontal scrolling */}
+              <div className="lg:w-2/3 flex-grow space-y-6 flex flex-col">
+                <div className="flex-1">
+                  <ForecastWidget
+                    title="Hourly Forecast"
+                    type="hourly"
+                    data={airQualityAPI.generateForecastData("hourly")}
+                    icon={<Clock className="h-5 w-5" />}
+                  />
+                </div>
+                <div className="flex-1">
+                  <ForecastWidget
+                    title="Daily Forecast"
+                    type="daily"
+                    data={airQualityAPI.generateForecastData("daily")}
+                    icon={<Calendar className="h-5 w-5" />}
+                  />
+                </div>
               </div>
             </div>
 
@@ -172,10 +174,13 @@ const Index = () => {
               Real-time data from air quality monitoring networks
             </p>
           </div>
-          <InteractiveAirQualityMap 
-            stations={stationsData} 
-            selectedCity={selectedCity}
-          />
+          <InteractiveMap />
+        </main>
+      )}
+
+      {activeTab === "dashboard" && (
+        <main className="container mx-auto px-6 py-8">
+          <AirQualityDashboard />
         </main>
       )}
     </div>

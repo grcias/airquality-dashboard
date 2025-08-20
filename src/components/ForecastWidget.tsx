@@ -25,21 +25,26 @@ const ForecastWidget = ({ title, type, data, icon }: ForecastWidgetProps) => {
   const mockData = data.length > 0 ? data : (
     type === "hourly" 
       ? [
+          { time: "10 AM", aqi: 55, temperature: { high: 26, low: 21 }, humidity: 70, wind: 10.5, weather: "sunny" },
+          { time: "11 AM", aqi: 60, temperature: { high: 27, low: 22 }, humidity: 69, wind: 11.2, weather: "sunny" },
           { time: "12 PM", aqi: 65, temperature: { high: 28, low: 22 }, humidity: 68, wind: 12.5, weather: "cloudy" },
           { time: "1 PM", aqi: 72, temperature: { high: 29, low: 23 }, humidity: 65, wind: 14.2, weather: "sunny" },
           { time: "2 PM", aqi: 78, temperature: { high: 30, low: 24 }, humidity: 62, wind: 15.8, weather: "cloudy" },
           { time: "3 PM", aqi: 85, temperature: { high: 31, low: 25 }, humidity: 58, wind: 16.3, weather: "rainy" },
           { time: "4 PM", aqi: 82, temperature: { high: 30, low: 24 }, humidity: 61, wind: 14.7, weather: "cloudy" },
           { time: "5 PM", aqi: 75, temperature: { high: 29, low: 23 }, humidity: 64, wind: 13.2, weather: "sunny" },
+          { time: "6 PM", aqi: 70, temperature: { high: 28, low: 22 }, humidity: 66, wind: 12.0, weather: "sunny" },
+          { time: "7 PM", aqi: 65, temperature: { high: 27, low: 21 }, humidity: 68, wind: 10.8, weather: "cloudy" },
+          { time: "8 PM", aqi: 60, temperature: { high: 26, low: 20 }, humidity: 70, wind: 9.5, weather: "cloudy" },
         ]
       : [
-          { time: "Today", aqi: 118, temperature: { high: 33, low: 27 }, humidity: 53, wind: 21.6, weather: "rainy" },
-          { time: "Tue", aqi: 131, temperature: { high: 28, low: 22 }, humidity: 97, wind: 14.4, weather: "cloudy" },
-          { time: "Wed", aqi: 136, temperature: { high: 30, low: 23 }, humidity: 59, wind: 10.8, weather: "rainy" },
-          { time: "Thu", aqi: 103, temperature: { high: 29, low: 24 }, humidity: 63, wind: 10.8, weather: "rainy" },
-          { time: "Fri", aqi: 79, temperature: { high: 30, low: 24 }, humidity: 67, wind: 10.8, weather: "rainy" },
-          { time: "Sat", aqi: 67, temperature: { high: 32, low: 24 }, humidity: 63, wind: 18.0, weather: "cloudy" },
-          { time: "Sun", aqi: 71, temperature: { high: 32, low: 25 }, humidity: 63, wind: 14.4, weather: "cloudy" },
+          { time: "Mon", aqi: 157, temperature: { high: 28, low: 26 }, humidity: 78, wind: 10.8, weather: "cloudy" },
+          { time: "Tue", aqi: 124, temperature: { high: 35, low: 25 }, humidity: 58, wind: 14.4, weather: "sunny" },
+          { time: "Wed", aqi: 127, temperature: { high: 29, low: 25 }, humidity: 65, wind: 10.8, weather: "cloudy" },
+          { time: "Thu", aqi: 134, temperature: { high: 31, low: 24 }, humidity: 57, wind: 14.4, weather: "rainy" },
+          { time: "Fri", aqi: 104, temperature: { high: 31, low: 25 }, humidity: 61, wind: 10.8, weather: "cloudy" },
+          { time: "Sat", aqi: 80, temperature: { high: 32, low: 25 }, humidity: 61, wind: 14.4, weather: "sunny" },
+          { time: "Sun", aqi: 73, temperature: { high: 31, low: 25 }, humidity: 62, wind: 10.8, weather: "cloudy" },
         ]
   );
 
@@ -67,7 +72,7 @@ const ForecastWidget = ({ title, type, data, icon }: ForecastWidgetProps) => {
   };
 
   return (
-    <Card className="h-full bg-gradient-to-br from-card to-card/80 backdrop-blur-sm border-2 hover:shadow-[var(--shadow-elegant)] transition-all duration-300">
+    <Card className="h-full bg-gradient-to-br from-card to-card/80 backdrop-blur-sm border-2 hover:shadow-[var(--shadow-elegant)] transition-all duration-300 flex flex-col">
       <CardHeader className="pb-4">
         <CardTitle className="text-lg font-bold text-foreground flex items-center gap-2">
           {icon || defaultIcon}
@@ -79,29 +84,25 @@ const ForecastWidget = ({ title, type, data, icon }: ForecastWidgetProps) => {
           </p>
         )}
       </CardHeader>
-      <CardContent className="p-4 pt-0">
+      <CardContent className="p-4 pt-0 flex-grow">
         {type === "hourly" ? (
-          <div className="max-w-[280px]">
-            <div className="max-h-80 overflow-y-auto space-y-1 pr-2">
+          <div className="w-full overflow-x-auto">
+            <div className="flex space-x-4 pb-2 min-w-max">
               {mockData.map((item, index) => (
                 <div 
                   key={index}
-                  className="flex items-center justify-between p-2 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors h-[50px]"
+                  className="flex flex-col items-center p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors h-[90px] w-[100px] shrink-0"
                 >
-                  <div className="flex items-center space-x-2 flex-1">
-                    <span className="text-sm font-medium text-foreground min-w-[45px]">
-                      {item.time}
-                    </span>
-                    <div className="flex items-center space-x-1">
-                      <div className={`px-2 py-0.5 rounded text-white text-xs font-bold ${getAQIColor(item.aqi)}`}>
-                        {item.aqi}
-                      </div>
-                      {item.weather && (
-                        <div className="flex items-center">
-                          {getWeatherIcon(item.weather)}
-                        </div>
-                      )}
-                    </div>
+                  <span className="text-sm font-medium text-foreground mb-1">
+                    {item.time}
+                  </span>
+                  
+                  <div className="flex items-center justify-center mb-1">
+                    {item.weather && getWeatherIcon(item.weather)}
+                  </div>
+                  
+                  <div className={`px-2 py-0.5 rounded text-white text-xs font-bold mb-1 ${getAQIColor(item.aqi)}`}>
+                    {item.aqi}
                   </div>
                   
                   {item.temperature && (
@@ -114,45 +115,52 @@ const ForecastWidget = ({ title, type, data, icon }: ForecastWidgetProps) => {
             </div>
           </div>
         ) : (
-          <div className="space-y-2">
-            {mockData.map((item, index) => (
-              <div 
-                key={index}
-                className="flex items-center justify-between p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors min-h-[70px]"
-              >
-                <div className="flex items-center space-x-3 min-w-0 flex-1">
-                  <span className="text-sm font-medium text-foreground min-w-[60px]">
+          <div className="w-full overflow-x-auto">
+            <div className="flex space-x-4 pb-2 min-w-max">
+              {mockData.map((item, index) => (
+                <div 
+                  key={index}
+                  className="flex flex-col p-3 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors min-h-[120px] w-[130px] shrink-0"
+                >
+                  <span className="text-sm font-medium text-foreground mb-2">
                     {item.time}
                   </span>
-                  <div className={`px-2 py-1 rounded text-white text-sm font-bold ${getAQIColor(item.aqi)}`}>
+                  
+                  <div className="flex justify-center mb-2">
+                    {item.weather && getWeatherIcon(item.weather)}
+                  </div>
+                  
+                  <div className={`px-2 py-1 rounded text-white text-sm font-bold mb-2 self-center ${getAQIColor(item.aqi)}`}>
                     {item.aqi}
                   </div>
-                  {item.weather && (
-                    <div className="flex items-center space-x-1">
-                      {getWeatherIcon(item.weather)}
-                      <span className="text-xs text-muted-foreground">100%</span>
+                
+                  {item.temperature && (
+                    <div className="text-center mb-1">
+                      <div className="flex items-center justify-center space-x-2 text-sm">
+                        <span className="font-medium">{item.temperature.high}°</span>
+                        <span className="text-muted-foreground">{item.temperature.low}°</span>
+                      </div>
                     </div>
                   )}
-                </div>
-                
-                {item.temperature && (
-                  <div className="text-right">
-                    <div className="flex items-center space-x-2 text-sm">
-                      <span className="font-medium">{item.temperature.high}°</span>
-                      <span className="text-muted-foreground">{item.temperature.low}°</span>
-                    </div>
-                    <div className="flex items-center space-x-2 text-xs text-muted-foreground mt-1">
-                      {item.wind && (
-                        <div className="flex items-center space-x-1">
-                          <Wind className="h-3 w-3" />
-                          <span>{item.wind} km/h</span>
-                        </div>
-                      )}
-                    </div>
+                  
+                  <div className="flex justify-between w-full mt-1">
+                    {item.humidity && (
+                      <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                        <Droplets className="h-3 w-3 text-blue-500" />
+                        <span>{item.humidity}%</span>
+                      </div>
+                    )}
+                    
+                    {item.wind && (
+                      <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+                        <Wind className="h-3 w-3" />
+                        <span>{item.wind}</span>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </CardContent>

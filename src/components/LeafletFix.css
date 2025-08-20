@@ -1,0 +1,8 @@
+/* Fix for Leaflet marker icons */
+.leaflet-default-icon-path {
+  background-image: url(https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png) !important;
+}
+
+.leaflet-default-shadow-path {
+  background-image: url(https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png) !important;
+}

@@ -214,6 +214,14 @@ const Index = () => {
             
           </div>
 
+          {/* Header Section */}
+          <div className="mb-6 text-center">
+            <h1 className="text-3xl font-bold text-foreground mb-2">Air Quality Status</h1>
+            <p className="text-lg text-muted-foreground">
+              Air Quality Index (AQI) and PM2.5 pollution in {currentCityData.name}
+            </p>
+          </div>
+
           {/* Main Dashboard Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Map Section - 2 columns */}

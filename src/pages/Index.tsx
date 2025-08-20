@@ -215,7 +215,7 @@ const Index = () => {
           </div>
 
           {/* Header Section */}
-          <div className="mb-6 text-center">
+          <div className="mb-6 text-left">
             <h1 className="text-3xl font-bold text-foreground mb-2">Air Quality Status</h1>
             <p className="text-lg text-muted-foreground">
               Air Quality Index (AQI) and PM2.5 pollution in {currentCityData.name}

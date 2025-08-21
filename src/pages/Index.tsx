@@ -50,6 +50,7 @@ const aqiCategories = [{
   color: "#7e22ce",
   range: "301+"
 }];
+
 interface CityData {
   name: string;
   country: string;
@@ -63,6 +64,7 @@ interface CityData {
   humidity: number;
   windSpeed: number;
 }
+
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
   const [searchQuery, setSearchQuery] = useState("");
@@ -102,6 +104,7 @@ const Index = () => {
     }
     loadAirQualityData();
   }, []);
+
   const loadAirQualityData = async () => {
     try {
       setIsLoading(true);
@@ -159,9 +162,16 @@ const Index = () => {
     };
 
     // Determine category based on AQI
-    if (mockData.aqi <= 50) mockData.category = "Good";else if (mockData.aqi <= 100) mockData.category = "Moderate";else if (mockData.aqi <= 150) mockData.category = "Unhealthy for Sensitive Groups";else if (mockData.aqi <= 200) mockData.category = "Unhealthy";else if (mockData.aqi <= 300) mockData.category = "Very Unhealthy";else mockData.category = "Hazardous";
+    if (mockData.aqi <= 50) mockData.category = "Good";
+    else if (mockData.aqi <= 100) mockData.category = "Moderate";
+    else if (mockData.aqi <= 150) mockData.category = "Unhealthy for Sensitive Groups";
+    else if (mockData.aqi <= 200) mockData.category = "Unhealthy";
+    else if (mockData.aqi <= 300) mockData.category = "Very Unhealthy";
+    else mockData.category = "Hazardous";
+    
     return mockData;
   };
+
   const handleSearch = async () => {
     if (!searchQuery.trim()) return;
     try {
@@ -186,6 +196,7 @@ const Index = () => {
       setIsSearching(false);
     }
   };
+
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter') {
       handleSearch();
@@ -197,23 +208,46 @@ const Index = () => {
     const found = aqiCategories.find(c => c.name === category);
     return found ? found.color : "#4ade80";
   };
+
   if (isLoading) {
-    return <div className="min-h-screen bg-background flex items-center justify-center">
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
           <p className="text-xl text-muted-foreground">
             Loading air quality data...
           </p>
         </div>
-      </div>;
+      </div>
+    );
   }
-  return <div className="min-h-screen bg-background">
+
+  return (
+    <div className="min-h-screen bg-background">
       <Header activeTab={activeTab} onTabChange={setActiveTab} />
       
-      {activeTab === "home" && <main className="container mx-auto px-6 py-8">
+      {activeTab === "home" && (
+        <main className="container mx-auto px-6 py-8">
           {/* Search Section */}
           <div className="mb-6">
-            
+            <div className="flex gap-2 max-w-md">
+              <Input
+                type="text"
+                placeholder="Search for a city..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                onKeyPress={handleKeyPress}
+                className="flex-1"
+              />
+              <Button 
+                onClick={handleSearch} 
+                disabled={isSearching}
+                className="flex items-center gap-2"
+              >
+                <Search className="h-4 w-4" />
+                {isSearching ? "Searching..." : "Search"}
+              </Button>
+            </div>
           </div>
 
           {/* Header Section */}
@@ -227,12 +261,17 @@ const Index = () => {
           {/* Main Dashboard Layout */}
           <div className="relative">
             {/* Full-width Map Container */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden" style={{ height: '500px' }}>
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden relative" style={{ height: '500px' }}>
               <MapContainer 
                 key={`${currentCityData.lat}-${currentCityData.lng}`}
                 center={[currentCityData.lat, currentCityData.lng]} 
                 zoom={12} 
-                style={{ height: '100%', width: '100%' }}
+                style={{ 
+                  height: '100%', 
+                  width: '100%',
+                  position: 'relative',
+                  zIndex: 1
+                }}
               >
                 <TileLayer 
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
@@ -249,55 +288,72 @@ const Index = () => {
                   </Popup>
                 </Marker>
               </MapContainer>
-              
-              {/* Floating AQI Card - Top Right */}
-              <div className="absolute top-4 right-4 z-10 w-80">
-                <div className="bg-white rounded-xl shadow-lg p-6">
-                  {/* Location */}
-                  <div className="flex items-center gap-2 mb-4">
-                    <div className="w-6 h-6 bg-red-500 rounded flex items-center justify-center">
-                      <span className="text-white text-xs">📍</span>
-                    </div>
-                    <span className="text-sm font-medium text-gray-700">{currentCityData.name}, {currentCityData.country}</span>
+            </div>
+
+            {/* Overlay Elements - Outside of MapContainer */}
+            {/* Floating AQI Card - Top Right */}
+            <div className="absolute top-4 right-4 w-80" style={{ zIndex: 1000 }}>
+              <div className="bg-white rounded-xl shadow-lg p-6 backdrop-blur-sm bg-white/95">
+                {/* Location */}
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-6 h-6 bg-red-500 rounded flex items-center justify-center">
+                    <span className="text-white text-xs">📍</span>
                   </div>
-                  
-                  {/* AQI Number */}
-                  <div className="mb-2">
-                    <div className="text-5xl font-bold text-yellow-500 mb-1">{currentCityData.aqi}</div>
-                    <div className="text-lg font-semibold text-yellow-600">{currentCityData.category}</div>
+                  <span className="text-sm font-medium text-gray-700">{currentCityData.name}, {currentCityData.country}</span>
+                </div>
+                
+                {/* AQI Number */}
+                <div className="mb-2">
+                  <div className="text-5xl font-bold text-yellow-500 mb-1">{currentCityData.aqi}</div>
+                  <div className="text-lg font-semibold text-yellow-600">{currentCityData.category}</div>
+                </div>
+                
+                {/* Description */}
+                <div className="text-sm text-gray-600 mb-4">
+                  {currentCityData.aqi <= 50 ? "Air quality is satisfactory" : 
+                   currentCityData.aqi <= 100 ? "Air quality is acceptable for most people" :
+                   currentCityData.aqi <= 150 ? "Sensitive groups may experience symptoms" :
+                   "Air quality is unhealthy for everyone"}
+                </div>
+                
+                {/* Main Pollutant */}
+                <div className="bg-gray-100 rounded-lg p-3 mb-4">
+                  <div className="text-xs text-gray-500 mb-1">Main Pollutant</div>
+                  <div className="text-sm font-semibold text-gray-700">{currentCityData.mainPollutant}</div>
+                </div>
+                
+                {/* Weather Details */}
+                <div className="flex items-center justify-between bg-yellow-50 rounded-lg px-3 py-2">
+                  <div className="flex items-center gap-1">
+                    <Thermometer className="h-4 w-4 text-red-500" />
+                    <span className="text-sm font-medium text-gray-700">{currentCityData.temperature}°C</span>
                   </div>
-                  
-                  {/* Description */}
-                  <div className="text-sm text-gray-600 mb-4">
-                    Air quality is acceptable for most people
+                  <div className="flex items-center gap-1">
+                    <Droplets className="h-4 w-4 text-blue-500" />
+                    <span className="text-sm font-medium text-gray-700">{currentCityData.humidity}%</span>
                   </div>
-                  
-                  {/* Main Pollutant */}
-                  <div className="bg-gray-100 rounded-lg p-3 mb-4">
-                    <div className="text-xs text-gray-500 mb-1">Main Pollutant</div>
-                    <div className="text-sm font-semibold text-gray-700">{currentCityData.mainPollutant}</div>
-                  </div>
-                  
-                  {/* Weather Details */}
-                  <div className="flex items-center justify-between bg-yellow-200 rounded-lg px-3 py-2">
-                    <div className="flex items-center gap-1">
-                      <span className="text-lg">🌡</span>
-                      <span className="text-sm font-medium text-gray-700">{currentCityData.temperature}°C</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-lg">💧</span>
-                      <span className="text-sm font-medium text-gray-700">{currentCityData.humidity}%</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span className="text-lg">🌬</span>
-                      <span className="text-sm font-medium text-gray-700">{currentCityData.windSpeed} m/s</span>
-                    </div>
+                  <div className="flex items-center gap-1">
+                    <Wind className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm font-medium text-gray-700">{currentCityData.windSpeed} m/s</span>
                   </div>
                 </div>
               </div>
-              
-              {/* AQI Legend - Bottom Left */}
-              <AQILegend />
+            </div>
+            
+            {/* AQI Legend - Bottom Left */}
+            <div className="absolute bottom-4 left-4 flex flex-wrap gap-2" style={{ zIndex: 1000 }}>
+              {aqiCategories.map((category, index) => (
+                <div 
+                  key={index} 
+                  className="flex items-center gap-2 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md border border-white/20"
+                >
+                  <div 
+                    className="w-3 h-3 rounded-full border border-gray-200" 
+                    style={{ backgroundColor: category.color }}
+                  />
+                  <span className="text-xs font-medium text-gray-700">{category.name}</span>
+                </div>
+              ))}
             </div>
           </div>
 
@@ -331,9 +387,11 @@ const Index = () => {
               <HistoricalChart data={airQualityAPI.generateHistoricalData()} />
             </div>
           </div>
-        </main>}
+        </main>
+      )}
 
-      {activeTab === "cast" && <main className="container mx-auto px-6 py-8">
+      {activeTab === "cast" && (
+        <main className="container mx-auto px-6 py-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-4">Air Quality Cast</h2>
             <p className="text-muted-foreground mb-8">
@@ -344,9 +402,11 @@ const Index = () => {
               <HistoricalChart data={airQualityAPI.generateHistoricalData()} />
             </div>
           </div>
-        </main>}
+        </main>
+      )}
 
-      {activeTab === "forecast" && <main className="container mx-auto px-6 py-8">
+      {activeTab === "forecast" && (
+        <main className="container mx-auto px-6 py-8">
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-4">Extended Forecast</h2>
             <p className="text-muted-foreground mb-8">
@@ -357,9 +417,11 @@ const Index = () => {
               <ForecastWidget title="Next 7 Days" type="daily" data={airQualityAPI.generateForecastData("daily")} />
             </div>
           </div>
-        </main>}
+        </main>
+      )}
 
-      {activeTab === "graph" && <main className="container mx-auto px-6 py-8">
+      {activeTab === "graph" && (
+        <main className="container mx-auto px-6 py-8">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-4">Historical Data</h2>
             <p className="text-muted-foreground">
@@ -367,9 +429,11 @@ const Index = () => {
             </p>
           </div>
           <HistoricalChart data={airQualityAPI.generateHistoricalData()} />
-        </main>}
+        </main>
+      )}
 
-      {activeTab === "stations" && <main className="container mx-auto px-6 py-8">
+      {activeTab === "stations" && (
+        <main className="container mx-auto px-6 py-8">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-4">Monitoring Stations</h2>
             <p className="text-muted-foreground">
@@ -379,11 +443,18 @@ const Index = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 bg-card rounded-xl shadow-lg overflow-hidden">
               <div className="h-[450px] relative">
-                <MapContainer center={[currentCityData.lat, currentCityData.lng]} zoom={10} style={{
-              height: '100%',
-              width: '100%'
-            }}>
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
+                <MapContainer 
+                  center={[currentCityData.lat, currentCityData.lng]} 
+                  zoom={10} 
+                  style={{
+                    height: '100%',
+                    width: '100%'
+                  }}
+                >
+                  <TileLayer 
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' 
+                  />
                   <Marker position={[currentCityData.lat, currentCityData.lng]}>
                     <Popup>
                       <div className="text-sm">
@@ -397,7 +468,10 @@ const Index = () => {
               </div>
             </div>
           </div>
-        </main>}
-    </div>;
+        </main>
+      )}
+    </div>
+  );
 };
+
 export default Index;

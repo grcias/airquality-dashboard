@@ -225,48 +225,79 @@ const Index = () => {
           </div>
 
           {/* Main Dashboard Layout */}
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            {/* Map Section - 2 columns */}
-            <div className="xl:col-span-2">
-              <div className="bg-map-area rounded-2xl shadow-sm p-6 h-[450px] relative">
-                <MapContainer 
-                  key={`${currentCityData.lat}-${currentCityData.lng}`}
-                  center={[currentCityData.lat, currentCityData.lng]} 
-                  zoom={12} 
-                  style={{ height: '100%', width: '100%', borderRadius: '1rem' }}
-                >
-                  <TileLayer 
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' 
-                  />
-                  <Marker position={[currentCityData.lat, currentCityData.lng]}>
-                    <Popup>
-                      <div className="text-sm">
-                        <h3 className="font-bold mb-1">{currentCityData.name}</h3>
-                        <p>AQI: {currentCityData.aqi}</p>
-                        <p>Category: {currentCityData.category}</p>
-                        <p>Main Pollutant: {currentCityData.mainPollutant}</p>
-                      </div>
-                    </Popup>
-                  </Marker>
-                </MapContainer>
-                
-                {/* AQI Legend */}
-                <AQILegend />
+          <div className="relative">
+            {/* Full-width Map Container */}
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden" style={{ height: '500px' }}>
+              <MapContainer 
+                key={`${currentCityData.lat}-${currentCityData.lng}`}
+                center={[currentCityData.lat, currentCityData.lng]} 
+                zoom={12} 
+                style={{ height: '100%', width: '100%' }}
+              >
+                <TileLayer 
+                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' 
+                />
+                <Marker position={[currentCityData.lat, currentCityData.lng]}>
+                  <Popup>
+                    <div className="text-sm">
+                      <h3 className="font-bold mb-1">{currentCityData.name}</h3>
+                      <p>AQI: {currentCityData.aqi}</p>
+                      <p>Category: {currentCityData.category}</p>
+                      <p>Main Pollutant: {currentCityData.mainPollutant}</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              </MapContainer>
+              
+              {/* Floating AQI Card - Top Right */}
+              <div className="absolute top-4 right-4 z-10 w-80">
+                <div className="bg-white rounded-xl shadow-lg p-6">
+                  {/* Location */}
+                  <div className="flex items-center gap-2 mb-4">
+                    <div className="w-6 h-6 bg-red-500 rounded flex items-center justify-center">
+                      <span className="text-white text-xs">📍</span>
+                    </div>
+                    <span className="text-sm font-medium text-gray-700">{currentCityData.name}, {currentCityData.country}</span>
+                  </div>
+                  
+                  {/* AQI Number */}
+                  <div className="mb-2">
+                    <div className="text-5xl font-bold text-yellow-500 mb-1">{currentCityData.aqi}</div>
+                    <div className="text-lg font-semibold text-yellow-600">{currentCityData.category}</div>
+                  </div>
+                  
+                  {/* Description */}
+                  <div className="text-sm text-gray-600 mb-4">
+                    Air quality is acceptable for most people
+                  </div>
+                  
+                  {/* Main Pollutant */}
+                  <div className="bg-gray-100 rounded-lg p-3 mb-4">
+                    <div className="text-xs text-gray-500 mb-1">Main Pollutant</div>
+                    <div className="text-sm font-semibold text-gray-700">{currentCityData.mainPollutant}</div>
+                  </div>
+                  
+                  {/* Weather Details */}
+                  <div className="flex items-center justify-between bg-yellow-200 rounded-lg px-3 py-2">
+                    <div className="flex items-center gap-1">
+                      <span className="text-lg">🌡</span>
+                      <span className="text-sm font-medium text-gray-700">{currentCityData.temperature}°C</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-lg">💧</span>
+                      <span className="text-sm font-medium text-gray-700">{currentCityData.humidity}%</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span className="text-lg">🌬</span>
+                      <span className="text-sm font-medium text-gray-700">{currentCityData.windSpeed} m/s</span>
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-            
-            {/* AQI Info Card - 1 column */}
-            <div className="xl:col-span-1">
-              <AQICard
-                location={`${currentCityData.name}, ${currentCityData.country}`}
-                aqi={currentCityData.aqi}
-                status={currentCityData.category}
-                pollutant={currentCityData.mainPollutant}
-                temperature={currentCityData.temperature}
-                humidity={currentCityData.humidity}
-                windSpeed={currentCityData.windSpeed}
-              />
+              
+              {/* AQI Legend - Bottom Left */}
+              <AQILegend />
             </div>
           </div>
 

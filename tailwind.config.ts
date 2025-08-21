@@ -52,30 +52,35 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				'map-section': {
-					DEFAULT: 'hsl(var(--map-primary))',
-					secondary: 'hsl(var(--map-secondary))',
-					foreground: 'hsl(var(--map-foreground))'
+				'nav-active': {
+					DEFAULT: 'hsl(var(--nav-active))',
+					foreground: 'hsl(var(--nav-active-foreground))'
 				},
-				'pollution-avg': {
-					DEFAULT: 'hsl(var(--pollution-avg-primary))',
-					secondary: 'hsl(var(--pollution-avg-secondary))',
-					foreground: 'hsl(var(--pollution-avg-foreground))'
+				'pollutants': {
+					DEFAULT: 'hsl(var(--pollutants-bg))',
+					foreground: 'hsl(var(--pollutants-foreground))'
 				},
-				'units-section': {
-					DEFAULT: 'hsl(var(--units-primary))',
-					secondary: 'hsl(var(--units-secondary))',
-					foreground: 'hsl(var(--units-foreground))'
+				'hourly-forecast': {
+					DEFAULT: 'hsl(var(--hourly-forecast-bg))',
+					foreground: 'hsl(var(--hourly-forecast-foreground))'
 				},
-				'chart-section': {
-					DEFAULT: 'hsl(var(--chart-primary))',
-					secondary: 'hsl(var(--chart-secondary))',
-					foreground: 'hsl(var(--chart-foreground))'
+				'daily-forecast': {
+					DEFAULT: 'hsl(var(--daily-forecast-bg))',
+					foreground: 'hsl(var(--daily-forecast-foreground))'
+				},
+				'aqi-card': {
+					DEFAULT: 'hsl(var(--aqi-card-bg))',
+					foreground: 'hsl(var(--aqi-card-foreground))'
+				},
+				'map-area': {
+					DEFAULT: 'hsl(var(--map-area-bg))',
+					foreground: 'hsl(var(--map-area-foreground))'
 				},
 				status: {
 					good: 'hsl(var(--status-good))',
 					moderate: 'hsl(var(--status-moderate))',
 					unhealthy: 'hsl(var(--status-unhealthy))',
+					'very-unhealthy': 'hsl(var(--status-very-unhealthy))',
 					hazardous: 'hsl(var(--status-hazardous))'
 				},
 				sidebar: {

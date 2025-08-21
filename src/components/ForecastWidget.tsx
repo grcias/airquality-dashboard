@@ -48,29 +48,30 @@ const ForecastWidget = ({ title, type, data, icon }: ForecastWidgetProps) => {
     return "bg-red-800";
   };
 
+  const bgColor = type === "hourly" ? "bg-hourly-forecast" : "bg-daily-forecast";
+  const textColor = type === "hourly" ? "text-hourly-forecast-foreground" : "text-daily-forecast-foreground";
+
   return (
-    <Card className="h-full">
+    <Card className={`h-full ${bgColor} rounded-2xl shadow-sm`}>
       <CardHeader className="pb-4">
-        <CardTitle className="text-lg font-semibold text-foreground flex items-center gap-2">
+        <CardTitle className={`text-lg font-semibold ${textColor} flex items-center gap-2`}>
           {icon}
           {title}
         </CardTitle>
-        {type === "daily" && (
-          <p className="text-sm text-muted-foreground">
-            Jakarta air quality index (AQI⁺) forecast
-          </p>
-        )}
+        <p className={`text-sm ${textColor}/80`}>
+          Air quality index (AQI⁺) forecast
+        </p>
       </CardHeader>
       <CardContent className="p-4 pt-0">
         <div className="flex flex-wrap gap-3">
           {mockData.map((item, index) => (
             <div 
               key={index}
-              className="flex flex-col items-center gap-2"
+              className="bg-white/80 rounded-xl p-3 min-w-[80px] text-center"
             >
-              <span className="text-sm font-medium text-foreground">
+              <div className="text-sm font-medium text-foreground mb-2">
                 {item.time}
-              </span>
+              </div>
               <div className={`px-3 py-1 rounded-full text-white text-sm font-bold ${getAQIColor(item.aqi)}`}>
                 {item.aqi}
               </div>

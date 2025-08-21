@@ -15,17 +15,17 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
   const tabs = [
     { id: 'home', label: 'Home' },
     { id: 'forecast', label: 'Forecast' },
-    { id: 'graph', label: 'Graph' },
-    { id: 'stations', label: 'Stations' }
+    { id: 'cast', label: 'Cast' },
+    { id: 'graph', label: 'Graph' }
   ];
 
   return (
-    <header className="bg-card border-b border-border shadow-lg">
+    <header className="bg-card border-b border-border shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo Section */}
           <div className="flex items-center space-x-2 sm:space-x-3">
-            <div className="p-1.5 sm:p-2 bg-primary rounded-xl">
+            <div className="p-1.5 sm:p-2 bg-primary rounded-lg">
               <Cloud className="h-6 w-6 sm:h-8 sm:w-8 text-primary-foreground" />
             </div>
             <h1 className="text-lg sm:text-2xl lg:text-3xl font-bold text-foreground tracking-tight">
@@ -34,13 +34,17 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
           </div>
           
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex space-x-2">
+          <nav className="hidden lg:flex space-x-1">
             {tabs.map((tab) => (
               <Button
                 key={tab.id}
-                variant={activeTab === tab.id ? "default" : "ghost"}
+                variant="ghost"
                 onClick={() => onTabChange(tab.id)}
-                className="px-4 xl:px-6 py-2 font-medium transition-all duration-200"
+                className={`px-4 xl:px-6 py-2 font-medium transition-all duration-200 rounded-lg ${
+                  activeTab === tab.id 
+                    ? 'bg-nav-active text-nav-active-foreground hover:bg-nav-active/90' 
+                    : 'hover:bg-secondary'
+                }`}
               >
                 {tab.label}
               </Button>

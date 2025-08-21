@@ -64,37 +64,37 @@ const PollutionUnits = ({ data }: PollutionUnitsProps) => {
   };
 
   return (
-    <Card className="h-full">
+    <Card className="h-full bg-pollutants rounded-2xl shadow-sm">
       <CardHeader className="pb-4">
-        <CardTitle className="text-lg font-semibold text-foreground">
-          Air pollutants
+        <CardTitle className="text-lg font-semibold text-pollutants-foreground">
+          Air Pollutants
         </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          What is the current air quality in Jakarta?
+        <p className="text-sm text-pollutants-foreground/80">
+          Current pollutant levels in your area
         </p>
       </CardHeader>
-      <CardContent className="p-4 pt-0 space-y-4">
+      <CardContent className="p-4 pt-0 space-y-3">
         {pollutants.map((pollutant, index) => (
-          <div key={index} className="flex items-center justify-between py-2">
-            <div className="flex-1">
+          <div key={index} className="bg-white/20 rounded-lg p-3">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className={`w-2 h-2 rounded-full ${getStatusDot(pollutant.status)}`} />
+                <div className={`w-3 h-3 rounded-full ${getStatusDot(pollutant.status)}`} />
                 <div>
-                  <div className="font-medium text-foreground text-sm">
+                  <div className="font-medium text-pollutants-foreground text-sm">
                     {pollutant.name}
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-pollutants-foreground/70">
                     {pollutant.description}
                   </div>
                 </div>
               </div>
-            </div>
-            <div className="text-right">
-              <div className={`font-bold text-lg ${getValueColor(pollutant.status)}`}>
-                {pollutant.value}
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {pollutant.unit}
+              <div className="text-right">
+                <div className="font-bold text-lg text-pollutants-foreground">
+                  {pollutant.value}
+                </div>
+                <div className="text-xs text-pollutants-foreground/70">
+                  {pollutant.unit}
+                </div>
               </div>
             </div>
           </div>

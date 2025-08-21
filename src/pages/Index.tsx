@@ -8,6 +8,8 @@ import AveragePollution from "@/components/AveragePollution";
 import PollutionUnits from "@/components/PollutionUnits";
 import ForecastWidget from "@/components/ForecastWidget";
 import HistoricalChart from "@/components/HistoricalChart";
+import AQICard from "@/components/AQICard";
+import AQILegend from "@/components/AQILegend";
 import { airQualityAPI } from "@/services/airQualityAPI";
 import { Clock, Calendar, Search, Thermometer, Droplets, Wind } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -223,16 +225,20 @@ const Index = () => {
           </div>
 
           {/* Main Dashboard Layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
             {/* Map Section - 2 columns */}
-            <div className="lg:col-span-2 bg-card rounded-xl shadow-lg overflow-hidden">
-              <div className="h-[450px] relative">
-                <MapContainer key={`${currentCityData.lat}-${currentCityData.lng}`} // Force re-render on city change
-            center={[currentCityData.lat, currentCityData.lng]} zoom={12} style={{
-              height: '100%',
-              width: '100%'
-            }}>
-                  <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' />
+            <div className="xl:col-span-2">
+              <div className="bg-map-area rounded-2xl shadow-sm p-6 h-[450px] relative">
+                <MapContainer 
+                  key={`${currentCityData.lat}-${currentCityData.lng}`}
+                  center={[currentCityData.lat, currentCityData.lng]} 
+                  zoom={12} 
+                  style={{ height: '100%', width: '100%', borderRadius: '1rem' }}
+                >
+                  <TileLayer 
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' 
+                  />
                   <Marker position={[currentCityData.lat, currentCityData.lng]}>
                     <Popup>
                       <div className="text-sm">
@@ -246,97 +252,66 @@ const Index = () => {
                 </MapContainer>
                 
                 {/* AQI Legend */}
-                <div className="absolute bottom-4 left-4 bg-card p-3 rounded-lg shadow-md z-[1000] pointer-events-auto">
-                  <h3 className="font-semibold text-sm mb-2">AQI Legend</h3>
-                  <div className="space-y-1">
-                    {aqiCategories.map((category, index) => <div key={index} className="flex items-center text-xs">
-                        <div className="w-4 h-4 mr-2 rounded-sm" style={{
-                    backgroundColor: category.color
-                  }} />
-                        <span>{category.name} ({category.range})</span>
-                      </div>)}
-                  </div>
-                </div>
+                <AQILegend />
               </div>
             </div>
             
-            {/* Info Card - 1 column */}
-            <div className="lg:col-span-1">
-              <Card className="h-full">
-                <CardContent className="p-6">
-                  <div className="flex flex-col h-full">
-                    <div className="mb-4">
-                      <h2 className="text-2xl font-bold">{currentCityData.name}</h2>
-                      <p className="text-muted-foreground">{currentCityData.country}</p>
-                    </div>
-                    
-                    <div className="flex-grow">
-                      <div className="flex flex-col items-center mb-6">
-                        <div className="text-6xl font-bold mb-2" style={{
-                      color: getAqiColor(currentCityData.category)
-                    }}>
-                          {currentCityData.aqi}
-                        </div>
-                        <div className="text-lg font-medium px-4 py-1 rounded-full" style={{
-                      backgroundColor: getAqiColor(currentCityData.category),
-                      color: currentCityData.category === "Good" ? "#1f2937" : "white"
-                    }}>
-                          {currentCityData.category}
-                        </div>
-                      </div>
-                      
-                      <div className="bg-muted rounded-lg p-4 mb-6">
-                        <h3 className="font-semibold mb-2">Main Pollutant</h3>
-                        <div className="text-xl font-medium">
-                          {currentCityData.mainPollutant}: {currentCityData.mainPollutantValue} µg/m³
-                        </div>
-                      </div>
-                      
-                      <div className="grid grid-cols-3 gap-4">
-                        <div className="bg-blue-50 rounded-lg p-3 flex flex-col items-center">
-                          <Thermometer className="h-6 w-6 text-blue-500 mb-1" />
-                          <span className="text-sm text-muted-foreground">Temperature</span>
-                          <span className="font-medium">{currentCityData.temperature}°C</span>
-                        </div>
-                        <div className="bg-blue-50 rounded-lg p-3 flex flex-col items-center">
-                          <Droplets className="h-6 w-6 text-blue-500 mb-1" />
-                          <span className="text-sm text-muted-foreground">Humidity</span>
-                          <span className="font-medium">{currentCityData.humidity}%</span>
-                        </div>
-                        <div className="bg-blue-50 rounded-lg p-3 flex flex-col items-center">
-                          <Wind className="h-6 w-6 text-blue-500 mb-1" />
-                          <span className="text-sm text-muted-foreground">Wind</span>
-                          <span className="font-medium">{currentCityData.windSpeed.toFixed(1)} m/s</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+            {/* AQI Info Card - 1 column */}
+            <div className="xl:col-span-1">
+              <AQICard
+                location={`${currentCityData.name}, ${currentCityData.country}`}
+                aqi={currentCityData.aqi}
+                status={currentCityData.category}
+                pollutant={currentCityData.mainPollutant}
+                temperature={currentCityData.temperature}
+                humidity={currentCityData.humidity}
+                windSpeed={currentCityData.windSpeed}
+              />
             </div>
           </div>
 
-          {/* Data Sections */}
-          <div className="mt-8 space-y-6">
-            {/* Average Pollution */}
-            <AveragePollution averageAQI={averageAQI} previousAQI={averageAQI - 5} />
-
-            {/* Main content grid */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-              {/* Pollution Units - 1 column */}
-              <div className="lg:col-span-1">
+          {/* Bottom Grid - Air Pollutants and Forecasts */}
+          <div className="mt-8">
+            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+              {/* Left - Air Pollutants */}
+              <div className="xl:col-span-1">
                 <PollutionUnits data={pollutionUnits} />
               </div>
-
-              {/* Forecasts - 2 columns stacked */}
-              <div className="lg:col-span-2 space-y-4">
-                <ForecastWidget title="Hourly Forecast" type="hourly" data={airQualityAPI.generateForecastData("hourly")} icon={<Clock className="h-5 w-5" />} />
-                <ForecastWidget title="Daily Forecast" type="daily" data={airQualityAPI.generateForecastData("daily")} icon={<Calendar className="h-5 w-5" />} />
+              
+              {/* Right - Forecasts */}
+              <div className="xl:col-span-2 space-y-6">
+                <ForecastWidget 
+                  title="Hourly Forecast" 
+                  type="hourly" 
+                  data={airQualityAPI.generateForecastData("hourly")} 
+                  icon={<Clock className="h-5 w-5" />} 
+                />
+                <ForecastWidget 
+                  title="Daily Forecast" 
+                  type="daily" 
+                  data={airQualityAPI.generateForecastData("daily")} 
+                  icon={<Calendar className="h-5 w-5" />} 
+                />
               </div>
             </div>
-
+            
             {/* Historical Chart */}
-            <HistoricalChart data={airQualityAPI.generateHistoricalData()} />
+            <div className="mt-8">
+              <HistoricalChart data={airQualityAPI.generateHistoricalData()} />
+            </div>
+          </div>
+        </main>}
+
+      {activeTab === "cast" && <main className="container mx-auto px-6 py-8">
+          <div className="text-center">
+            <h2 className="text-3xl font-bold mb-4">Air Quality Cast</h2>
+            <p className="text-muted-foreground mb-8">
+              Advanced air quality predictions and modeling
+            </p>
+            <div className="grid grid-cols-1 gap-6">
+              <ForecastWidget title="Extended Forecast" type="hourly" data={airQualityAPI.generateForecastData("hourly")} />
+              <HistoricalChart data={airQualityAPI.generateHistoricalData()} />
+            </div>
           </div>
         </main>}
 

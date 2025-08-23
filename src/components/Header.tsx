@@ -7,9 +7,13 @@ import { useState } from "react";
 interface HeaderProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+  onSearch: () => void;
+  isSearching: boolean;
 }
 
-const Header = ({ activeTab, onTabChange }: HeaderProps) => {
+const Header = ({ activeTab, onTabChange, searchQuery, onSearchChange, onSearch, isSearching }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const tabs = [
@@ -59,6 +63,9 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
               <Input
                 type="text"
                 placeholder="Search locations..."
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && onSearch()}
                 className="pl-10 w-48 lg:w-64 xl:w-80"
               />
             </div>
@@ -116,6 +123,9 @@ const Header = ({ activeTab, onTabChange }: HeaderProps) => {
               <Input
                 type="text"
                 placeholder="Search locations..."
+                value={searchQuery}
+                onChange={(e) => onSearchChange(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && onSearch()}
                 className="pl-10 w-full"
               />
             </div>

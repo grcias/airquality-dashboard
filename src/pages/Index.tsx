@@ -9,7 +9,7 @@ import PollutionUnits from "@/components/PollutionUnits";
 import ForecastWidget from "@/components/ForecastWidget";
 import HistoricalChart from "@/components/HistoricalChart";
 import AQICard from "@/components/AQICard";
-import AQILegend from "@/components/AQILegend";
+
 import { airQualityAPI } from "@/services/airQualityAPI";
 import { Clock, Calendar, Search, Thermometer, Droplets, Wind } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -224,31 +224,17 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header activeTab={activeTab} onTabChange={setActiveTab} />
+      <Header 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onSearch={handleSearch}
+        isSearching={isSearching}
+      />
       
       {activeTab === "home" && (
         <main className="container mx-auto px-6 py-8">
-          {/* Search Section */}
-          <div className="mb-6">
-            <div className="flex gap-2 max-w-md">
-              <Input
-                type="text"
-                placeholder="Search for a city..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                onKeyPress={handleKeyPress}
-                className="flex-1"
-              />
-              <Button 
-                onClick={handleSearch} 
-                disabled={isSearching}
-                className="flex items-center gap-2"
-              >
-                <Search className="h-4 w-4" />
-                {isSearching ? "Searching..." : "Search"}
-              </Button>
-            </div>
-          </div>
 
           {/* Header Section */}
           <div className="mb-6 text-left">

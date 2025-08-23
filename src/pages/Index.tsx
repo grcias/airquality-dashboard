@@ -34,13 +34,9 @@ const aqiCategories = [{
   color: "#facc15",
   range: "51-100"
 }, {
-  name: "Unhealthy for Sensitive Groups",
-  color: "#fb923c",
-  range: "101-150"
-}, {
   name: "Unhealthy",
   color: "#ef4444",
-  range: "151-200"
+  range: "101-200"
 }, {
   name: "Very Unhealthy",
   color: "#ec4899",
@@ -98,6 +94,7 @@ const Index = () => {
       try {
         const cityData = JSON.parse(lastCity);
         setCurrentCityData(cityData);
+        setAverageAQI(cityData.aqi);
       } catch (error) {
         console.error('Error parsing last city data:', error);
       }
@@ -109,10 +106,10 @@ const Index = () => {
     try {
       setIsLoading(true);
 
-      // Generate mock data for now
+      // Generate mock data for now (this can be updated when webhook provides pollutant data)
       const unitsData = airQualityAPI.generatePollutionUnitsData();
       setPollutionUnits(unitsData);
-      setAverageAQI(85);
+      // Average AQI is now set when city data is loaded
     } catch (error) {
       console.error("Error loading air quality data:", error);
     } finally {
@@ -120,56 +117,84 @@ const Index = () => {
     }
   };
 
-  // Geocoding function using Nominatim
-  const geocodeCity = async (cityName: string) => {
+  // Geocoding function using Nominatim (kept for reference, not currently used)
+  // const geocodeCity = async (cityName: string) => {
+  //   try {
+  //     const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityName)}&format=json&limit=1`);
+  //     const data = await response.json();
+  //     if (data.length > 0) {
+  //       const result = data[0];
+  //       return {
+  //         lat: parseFloat(result.lat),
+  //         lng: parseFloat(result.lon),
+  //         displayName: result.display_name
+  //       };
+  //     }
+  //     throw new Error('City not found');
+  //     } catch (error) {
+  //       console.error('Geocoding error:', error);
+  //       throw error;
+  //     }
+  // };
+
+  // Function to fetch air quality and weather data from Make webhook
+  const fetchCityDataFromWebhook = async (cityName: string): Promise<CityData> => {
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cityName)}&format=json&limit=1`);
-      const data = await response.json();
-      if (data.length > 0) {
-        const result = data[0];
-        return {
-          lat: parseFloat(result.lat),
-          lng: parseFloat(result.lon),
-          displayName: result.display_name
-        };
+      console.log(`Fetching data for city: ${cityName}`);
+      
+      const response = await fetch('https://hook.eu2.make.com/lc1hratujpvj68rm1by4179k4osec9vc', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ city: cityName })
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      throw new Error('City not found');
+
+      const data = await response.json();
+      console.log('Webhook response:', data);
+      
+      if (!data.success) {
+        throw new Error('Failed to fetch city data from webhook');
+      }
+
+      // Validate required fields
+      if (!data.city || !data.country || !data.coords || !data.aqi || !data.weather) {
+        throw new Error('Invalid data structure received from webhook');
+      }
+
+      // Determine category based on AQI
+      let category = "Good";
+      if (data.aqi <= 50) category = "Good";
+      else if (data.aqi <= 100) category = "Moderate";
+      else if (data.aqi <= 200) category = "Unhealthy";
+      else if (data.aqi <= 300) category = "Very Unhealthy";
+      else category = "Hazardous";
+
+      // Convert the webhook response to our CityData format
+      const cityData: CityData = {
+        name: data.city,
+        country: data.country,
+        lat: parseFloat(data.coords.lat),
+        lng: parseFloat(data.coords.lon),
+        aqi: data.aqi,
+        category: category,
+        mainPollutant: "PM2.5", // Default value, can be updated if webhook provides this
+        mainPollutantValue: data.aqi, // Using AQI as default, can be updated if webhook provides specific pollutant data
+        temperature: data.weather.temp,
+        humidity: data.weather.humidity,
+        windSpeed: data.weather.wind
+      };
+
+      console.log('Processed city data:', cityData);
+      return cityData;
     } catch (error) {
-      console.error('Geocoding error:', error);
+      console.error('Error fetching data from webhook:', error);
       throw error;
     }
-  };
-
-  // Mock function to simulate API calls for air quality and weather
-  const fetchCityData = async (cityName: string, lat: number, lng: number): Promise<CityData> => {
-    // Mock data - in real implementation, call actual APIs here
-    const mockData: CityData = {
-      name: cityName,
-      country: "Indonesia",
-      // This would come from geocoding API
-      lat,
-      lng,
-      aqi: Math.floor(Math.random() * 150) + 50,
-      // Random AQI between 50-200
-      category: "Moderate",
-      mainPollutant: "PM2.5",
-      mainPollutantValue: Math.floor(Math.random() * 50) + 30,
-      temperature: Math.floor(Math.random() * 15) + 20,
-      // 20-35°C
-      humidity: Math.floor(Math.random() * 40) + 40,
-      // 40-80%
-      windSpeed: Math.random() * 5 + 1 // 1-6 m/s
-    };
-
-    // Determine category based on AQI
-    if (mockData.aqi <= 50) mockData.category = "Good";
-    else if (mockData.aqi <= 100) mockData.category = "Moderate";
-    else if (mockData.aqi <= 150) mockData.category = "Unhealthy for Sensitive Groups";
-    else if (mockData.aqi <= 200) mockData.category = "Unhealthy";
-    else if (mockData.aqi <= 300) mockData.category = "Very Unhealthy";
-    else mockData.category = "Hazardous";
-    
-    return mockData;
   };
 
   const handleSearch = async () => {
@@ -177,21 +202,19 @@ const Index = () => {
     try {
       setIsSearching(true);
 
-      // Get coordinates from city name
-      const geocodeResult = await geocodeCity(searchQuery);
-
-      // Fetch air quality and weather data
-      const cityData = await fetchCityData(searchQuery, geocodeResult.lat, geocodeResult.lng);
+      // Fetch air quality and weather data directly from webhook
+      const cityData = await fetchCityDataFromWebhook(searchQuery);
 
       // Update state
       setCurrentCityData(cityData);
+      setAverageAQI(cityData.aqi);
 
       // Save to localStorage
       localStorage.setItem('lastSearchedCity', JSON.stringify(cityData));
       setSearchQuery("");
     } catch (error) {
       console.error('Search failed:', error);
-      alert('City not found. Please try another city name.');
+      alert('Failed to fetch city data. Please try another city name.');
     } finally {
       setIsSearching(false);
     }
@@ -290,16 +313,27 @@ const Index = () => {
                 
                 {/* AQI Number */}
                 <div className="mb-2">
-                  <div className="text-5xl font-bold text-yellow-500 mb-1">{currentCityData.aqi}</div>
-                  <div className="text-lg font-semibold text-yellow-600">{currentCityData.category}</div>
+                  <div 
+                    className="text-5xl font-bold mb-1" 
+                    style={{ color: getAqiColor(currentCityData.category) }}
+                  >
+                    {currentCityData.aqi}
+                  </div>
+                  <div 
+                    className="text-lg font-semibold" 
+                    style={{ color: getAqiColor(currentCityData.category) }}
+                  >
+                    {currentCityData.category}
+                  </div>
                 </div>
                 
                 {/* Description */}
                 <div className="text-sm text-gray-600 mb-4">
                   {currentCityData.aqi <= 50 ? "Air quality is satisfactory" : 
                    currentCityData.aqi <= 100 ? "Air quality is acceptable for most people" :
-                   currentCityData.aqi <= 150 ? "Sensitive groups may experience symptoms" :
-                   "Air quality is unhealthy for everyone"}
+                   currentCityData.aqi <= 200 ? "Air quality is unhealthy for everyone" :
+                   currentCityData.aqi <= 300 ? "Air quality is very unhealthy for everyone" :
+                   "Air quality is hazardous for everyone"}
                 </div>
                 
                 {/* Main Pollutant */}
@@ -351,20 +385,24 @@ const Index = () => {
                 <PollutionUnits data={pollutionUnits} />
               </div>
               
-              {/* Right - Forecasts */}
-              <div className="xl:col-span-2 space-y-6">
-                <ForecastWidget 
-                  title="Hourly Forecast" 
-                  type="hourly" 
-                  data={airQualityAPI.generateForecastData("hourly")} 
-                  icon={<Clock className="h-5 w-5" />} 
-                />
-                <ForecastWidget 
-                  title="Daily Forecast" 
-                  type="daily" 
-                  data={airQualityAPI.generateForecastData("daily")} 
-                  icon={<Calendar className="h-5 w-5" />} 
-                />
+              {/* Right - Forecasts - Stacked vertically with equal heights */}
+              <div className="xl:col-span-2 flex flex-col h-full">
+                <div className="flex-1 mb-3">
+                  <ForecastWidget 
+                    title="Hourly Forecast" 
+                    type="hourly" 
+                    data={airQualityAPI.generateForecastData("hourly")} 
+                    icon={<Clock className="h-5 w-5" />} 
+                  />
+                </div>
+                <div className="flex-1">
+                  <ForecastWidget 
+                    title="Daily Forecast" 
+                    type="daily" 
+                    data={airQualityAPI.generateForecastData("daily")} 
+                    icon={<Calendar className="h-5 w-5" />} 
+                  />
+                </div>
               </div>
             </div>
             

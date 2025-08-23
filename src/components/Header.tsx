@@ -62,12 +62,18 @@ const Header = ({ activeTab, onTabChange, searchQuery, onSearchChange, onSearch,
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
                 type="text"
-                placeholder="Search locations..."
+                placeholder={isSearching ? "Searching..." : "Search locations..."}
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && onSearch()}
                 className="pl-10 w-48 lg:w-64 xl:w-80"
+                disabled={isSearching}
               />
+              {isSearching && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                </div>
+              )}
             </div>
             
             {/* Mobile Search Button */}
@@ -122,12 +128,18 @@ const Header = ({ activeTab, onTabChange, searchQuery, onSearchChange, onSearch,
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
               <Input
                 type="text"
-                placeholder="Search locations..."
+                placeholder={isSearching ? "Searching..." : "Search locations..."}
                 value={searchQuery}
                 onChange={(e) => onSearchChange(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && onSearch()}
                 className="pl-10 w-full"
+                disabled={isSearching}
               />
+              {isSearching && (
+                <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
+                </div>
+              )}
             </div>
           </div>
         )}

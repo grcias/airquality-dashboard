@@ -1,0 +1,35 @@
+* {
+  box-sizing: border-box;
+}
+
+.frame6 {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 124px;
+  height: 107px;
+
+  .a85 {
+    flex-shrink: 0;
+    align-self: stretch;
+    text-align: center;
+    letter-spacing: 0;
+    color: #fef979;
+    font-family: Poppins, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 64px;
+    font-weight: 600;
+  }
+
+  .moderate {
+    flex-shrink: 0;
+    align-self: stretch;
+    margin: -19px 0px 0px;
+    text-align: center;
+    letter-spacing: 0;
+    color: #fef979;
+    font-family: Poppins, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+  }
+}

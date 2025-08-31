@@ -21,43 +21,49 @@ const AQICard = ({
   windSpeed 
 }: AQICardProps) => {
   return (
-    <Card className="bg-aqi-card p-6 rounded-2xl shadow-sm">
-      {/* Location */}
-      <div className="flex items-center gap-2 mb-4">
-        <MapPin className="h-4 w-4 text-nav-active" />
-        <span className="text-sm font-medium text-aqi-card-foreground">{location}</span>
+    <Card className="bg-white p-6 rounded-2xl shadow-sm overflow-hidden border border-yellow-100">
+      {/* Location pill */}
+      <div className="flex items-center mb-5">
+        <div className="inline-flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1 whitespace-nowrap max-w-full">
+          <span className="inline-flex items-center justify-center rounded-full bg-red-500/10 text-red-500 w-5 h-5">
+            <MapPin className="h-3.5 w-3.5" />
+          </span>
+          <span className="text-sm font-medium text-gray-700 truncate max-w-[220px]">{location}</span>
+        </div>
       </div>
-      
-      {/* AQI Number */}
+
+      {/* AQI value and status */}
       <div className="mb-2">
-        <div className="text-6xl font-bold text-aqi-card-foreground">{aqi}</div>
-        <div className="text-lg font-semibold text-status-moderate mt-1">{status}</div>
+        <div className="text-6xl font-bold text-yellow-400 leading-none">{aqi}</div>
+        <div className="text-lg font-semibold text-yellow-400 mt-1">{status}</div>
       </div>
-      
+
       {/* Description */}
-      <div className="text-sm text-muted-foreground mb-4">
+      <div className="text-sm text-gray-500 mb-5">
         Air quality is acceptable for most people
       </div>
-      
-      {/* Main Pollutant */}
+
+      {/* Main Pollutant box */}
       <div className="mb-6">
-        <div className="text-xs text-muted-foreground">Main Pollutant</div>
-        <div className="text-sm font-semibold text-aqi-card-foreground">{pollutant}</div>
+        <div className="rounded-xl bg-gray-100 px-3 py-3">
+          <div className="text-xs text-gray-500">Main Pollutant</div>
+          <div className="text-sm font-semibold text-gray-800">{pollutant}</div>
+        </div>
       </div>
-      
-      {/* Weather Details */}
-      <div className="flex items-center justify-between bg-status-moderate/20 rounded-lg px-3 py-2">
-        <div className="flex items-center gap-1">
-          <Thermometer className="h-4 w-4 text-aqi-card-foreground" />
-          <span className="text-sm font-medium text-aqi-card-foreground">{temperature}°C</span>
+
+      {/* Footer: weather details on yellow gradient */}
+      <div className="mt-6 -mx-6 -mb-6 px-5 py-3 bg-gradient-to-b from-yellow-300 to-yellow-400 flex items-center justify-between">
+        <div className="flex items-center gap-1 text-gray-800">
+          <Thermometer className="h-4 w-4" />
+          <span className="text-sm font-medium">{temperature}°C</span>
         </div>
-        <div className="flex items-center gap-1">
-          <Droplets className="h-4 w-4 text-aqi-card-foreground" />
-          <span className="text-sm font-medium text-aqi-card-foreground">{humidity}%</span>
+        <div className="flex items-center gap-1 text-gray-800">
+          <Droplets className="h-4 w-4" />
+          <span className="text-sm font-medium">{humidity}%</span>
         </div>
-        <div className="flex items-center gap-1">
-          <Wind className="h-4 w-4 text-aqi-card-foreground" />
-          <span className="text-sm font-medium text-aqi-card-foreground">{windSpeed} m/s</span>
+        <div className="flex items-center gap-1 text-gray-800">
+          <Wind className="h-4 w-4" />
+          <span className="text-sm font-medium">{windSpeed} m/s</span>
         </div>
       </div>
     </Card>

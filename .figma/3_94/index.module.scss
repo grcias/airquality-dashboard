@@ -1,0 +1,63 @@
+* {
+  box-sizing: border-box;
+}
+
+.frame10 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  column-gap: 45px;
+  width: 316px;
+  height: 20px;
+
+  .a29C {
+    flex-shrink: 0;
+    line-height: 18px;
+    letter-spacing: 0;
+    color: #3d3d3d;
+    font-family: Inter, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 15px;
+  }
+
+  .frame7 {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    column-gap: 1px;
+
+    .fluentTemperature32R {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      overflow: hidden;
+    }
+  }
+
+  .frame8 {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: flex-end;
+    column-gap: 6px;
+
+    .entypoWater {
+      flex-shrink: 0;
+      width: 18px;
+      height: 18px;
+      overflow: hidden;
+    }
+  }
+
+  .frame9 {
+    display: inline-flex;
+    flex-shrink: 0;
+    align-items: center;
+    column-gap: 6px;
+
+    .solarWindBold {
+      flex-shrink: 0;
+      width: 20px;
+      height: 19px;
+      overflow: hidden;
+    }
+  }
+}

@@ -1,0 +1,63 @@
+* {
+  box-sizing: border-box;
+}
+
+.group5 {
+  position: relative;
+  width: 777px;
+  height: 777px;
+
+  .ellipse9 {
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-radius: 50%;
+    background: #8db2ff;
+    width: 777px;
+    height: 777px;
+  }
+
+  .ellipse10 {
+    position: absolute;
+    top: 65px;
+    left: 65px;
+    border-radius: 50%;
+    background: #9ebdff;
+    width: 645px;
+    height: 645px;
+    rotate: -2deg;
+  }
+
+  .ellipse11 {
+    position: absolute;
+    top: 136px;
+    left: 136px;
+    border-radius: 50%;
+    background: #b2cbff;
+    width: 503px;
+    height: 503px;
+    rotate: -2deg;
+  }
+
+  .ellipse12 {
+    position: absolute;
+    top: 202px;
+    left: 202px;
+    border-radius: 50%;
+    background: #c6d8ff;
+    width: 371px;
+    height: 371px;
+    rotate: -2deg;
+  }
+
+  .ellipse13 {
+    position: absolute;
+    top: 255px;
+    left: 255px;
+    border-radius: 50%;
+    background: #dae6ff;
+    width: 266px;
+    height: 266px;
+    rotate: -2deg;
+  }
+}

@@ -6,3 +6,13 @@
 .leaflet-default-shadow-path {
   background-image: url(https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png) !important;
 }
+
+/* Make map tiles slightly transparent to show background color */
+.leaflet-tile {
+  opacity: 0.8 !important;
+}
+
+/* Ensure map container background is transparent */
+.leaflet-container {
+  background: transparent !important;
+}

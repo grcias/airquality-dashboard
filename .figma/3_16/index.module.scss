@@ -1,0 +1,38 @@
+* {
+  box-sizing: border-box;
+}
+
+.rectangle6 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  background: #f1f2f4;
+  padding-right: 77px;
+  width: 293px;
+  height: 40px;
+
+  .rectangle7 {
+    display: flex;
+    align-items: center;
+    border-radius: 10px 0px 0px 10px;
+    background: #fd6e6e;
+    padding: 8px 12px 8px 13px;
+
+    .tdesignLocationFille {
+      width: 24px;
+      height: 24px;
+      overflow: hidden;
+    }
+  }
+
+  .jakartaIndonesia {
+    width: 154px;
+    height: 21px;
+    letter-spacing: 0;
+    color: #000000;
+    font-family: Poppins, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+  }
+}

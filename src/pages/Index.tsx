@@ -10,8 +10,10 @@ import ForecastWidget from "@/components/ForecastWidget";
 import HistoricalChart from "@/components/HistoricalChart";
 import AQICard from "@/components/AQICard";
 
+
+
 import { airQualityAPI } from "@/services/airQualityAPI";
-import { Clock, Calendar, Search, Thermometer, Droplets, Wind } from "lucide-react";
+import { Clock, Calendar, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -232,6 +234,26 @@ const Index = () => {
     return found ? found.color : "#4ade80";
   };
 
+  // Get color based on AQI value
+  const getAQIColor = (aqi: number): string => {
+    if (aqi <= 50) return '#c3f1cb';  // Good - Green
+    if (aqi <= 100) return '#fef979'; // Moderate - Yellow
+    if (aqi <= 150) return '#ffca59'; // Unhealthy for Sensitive Groups - Orange
+    if (aqi <= 200) return '#ffca59'; // Unhealthy - Orange
+    if (aqi <= 300) return '#fd6e6e'; // Very Unhealthy - Red
+    return '#d597ff'; // Hazardous - Purple
+  };
+
+  // Get gradient background based on AQI value
+  const getAQIGradient = (aqi: number): string => {
+    if (aqi <= 50) return 'linear-gradient(180deg, #c3f1cb 0%, #a8e6b3 100%)';  // Good - Green gradient
+    if (aqi <= 100) return 'linear-gradient(180deg, #fef979 0%, #f4ea00 100%)'; // Moderate - Yellow gradient
+    if (aqi <= 150) return 'linear-gradient(180deg, #ffca59 0%, #ff9f1c 100%)'; // Unhealthy for Sensitive Groups - Orange gradient
+    if (aqi <= 200) return 'linear-gradient(180deg, #ffca59 0%, #ff9f1c 100%)'; // Unhealthy - Orange gradient
+    if (aqi <= 300) return 'linear-gradient(180deg, #fd6e6e 0%, #e63946 100%)'; // Very Unhealthy - Red gradient
+    return 'linear-gradient(180deg, #d597ff 0%, #b565d8 100%)'; // Hazardous - Purple gradient
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -256,21 +278,131 @@ const Index = () => {
         isSearching={isSearching}
       />
       
-      {activeTab === "home" && (
-        <main className="container mx-auto px-6 py-8">
+      {/* Soft drop shadow below navbar */}
+      <div 
+  className="absolute w-full pointer-events-none" 
+  style={{ 
+    height: '24px',
+    background: 'linear-gradient(to bottom, rgba(0, 0, 0, 0.04) 0%, rgba(0, 0, 0, 0.02) 60%, transparent 100%)',
+    zIndex: 50
+  }}
+/>
 
-          {/* Header Section */}
-          <div className="mb-6 text-left">
-            <h1 className="text-3xl font-bold text-foreground mb-2">Air Quality Status</h1>
-            <p className="text-lg text-muted-foreground">
-              Air Quality Index (AQI) and PM2.5 pollution in {currentCityData.name}
-            </p>
-          </div>
+      
+      {activeTab === "home" && (
+        <>
+          {/* Blue Background Section - Header + Map with extending ellipse */}
+          <div style={{ backgroundColor: '#8DB2FF', position: 'relative', overflow: 'visible' }}>
+            {/* Group 5 - Background Ellipses */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              {/* Ellipse 9 - Largest */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  width: '776.92px',
+                  height: '776.92px',
+                  right: '-225px',
+                  top: '-418px',
+                  background: '#8DB2FF',
+                  borderRadius: '50%',
+                  zIndex: 0
+                }}
+              />
+              
+              {/* Ellipse 10 */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  width: '645.33px',
+                  height: '645.33px',
+                  right: '-159px',
+                  top: '-353px',
+                  background: '#9EBDFF',
+                  borderRadius: '50%',
+                  zIndex: 0
+                }}
+              />
+              
+              {/* Ellipse 11 */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  width: '502.87px',
+                  height: '502.87px',
+                  right: '-88px',
+                  top: '-281px',
+                  background: '#B2CBFF',
+                  borderRadius: '50%',
+                  zIndex: 0
+                }}
+              />
+              
+              {/* Ellipse 12 */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  width: '371.38px',
+                  height: '371.38px',
+                  right: '-23px',
+                  top: '-216px',
+                  background: '#C6D8FF',
+                  borderRadius: '50%',
+                  zIndex: 0
+                }}
+              />
+              
+              {/* Ellipse 13 - Smallest */}
+              <div 
+                style={{
+                  position: 'absolute',
+                  width: '266.29px',
+                  height: '266.29px',
+                  right: '29px',
+                  top: '-163px',
+                  background: '#DAE6FF',
+                  borderRadius: '50%',
+                  zIndex: 0
+                }}
+              />
+            </div>
+
+            {/* Large ellipse extending into section 2 */}
+            <div
+              className="pointer-events-none"
+              style={{
+                position: 'absolute',
+                left: '50%',
+                transform: 'translateX(-50%)',
+                bottom: '-50%',
+                width: 'clamp(800px, 120vw, 1662px)',
+                aspectRatio: '1662 / 659',
+                background: '#8DB2FF',
+                borderRadius: '50%',
+                zIndex: 1
+              }}
+            />
+
+            <main className="container mx-auto px-6 py-8 relative" style={{ zIndex: 10 }}>
+              {/* Header Section */}
+              <div className="mb-6 text-left">
+                <h1 className="text-3xl font-bold text-white mb-2">Air Quality Status</h1>
+                <p className="text-lg text-white/90">
+                  Air Quality Index (AQI) and PM2.5 pollution in {currentCityData.name}
+                </p>
+              </div>
 
           {/* Main Dashboard Layout */}
-          <div className="relative">
-            {/* Full-width Map Container */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden relative" style={{ height: '500px' }}>
+          <div className="relative overflow-hidden" style={{ marginTop: '45px' }}>
+
+            
+            {/* Full-width Map Container - Rectangle 58 from Figma */}
+            <div className="rounded-2xl shadow-lg overflow-hidden relative" style={{ 
+              backgroundColor: 'white',
+              height: '480px',
+              maxWidth: '1440px',
+              margin: '0 auto',
+              zIndex: 10
+            }}>
               <MapContainer 
                 key={`${currentCityData.lat}-${currentCityData.lng}`}
                 center={[currentCityData.lat, currentCityData.lng]} 
@@ -279,7 +411,8 @@ const Index = () => {
                   height: '100%', 
                   width: '100%',
                   position: 'relative',
-                  zIndex: 1
+                  zIndex: 10,
+                  backgroundColor: 'transparent'
                 }}
               >
                 <TileLayer 
@@ -297,121 +430,465 @@ const Index = () => {
                   </Popup>
                 </Marker>
               </MapContainer>
+              
+
             </div>
 
             {/* Overlay Elements - Outside of MapContainer */}
             {/* Floating AQI Card - Top Right */}
-            <div className="absolute top-4 right-4 w-80" style={{ zIndex: 1000 }}>
-              <div className="bg-white rounded-xl shadow-lg p-6 backdrop-blur-sm bg-white/95">
-                {/* Location */}
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-6 h-6 bg-red-500 rounded flex items-center justify-center">
-                    <span className="text-white text-xs">📍</span>
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">{currentCityData.name}, {currentCityData.country}</span>
-                </div>
-                
-                {/* AQI Number */}
-                <div className="mb-2">
+            {/* Rectangle 9 - Yellow Gradient Background with Shadow */}
+            <div className="absolute top-4 right-4" style={{ zIndex: 100, width: '341px', height: '370px' }}>
+              <div 
+                className="rounded-xl shadow-lg" 
+                style={{
+                  background: 'white',
+                  border: `1px solid ${getAQIColor(currentCityData.aqi)}`,
+                  borderRadius: '10px',
+                  boxShadow: '4px 8px 10px rgba(0, 0, 0, 0.1019607843)',
+                  width: '341px',
+                  height: '370px',
+                  padding: '0',
+                  display: 'flex',
+                  flexDirection: 'column'
+                }}
+              >
+                {/* Rectangle 5 - White Card Content */}
+                <div 
+                  style={{
+                    background: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    width: '335px',
+                    height: '311px',
+                    padding: '16px',
+                    position: 'relative',
+                    flex: '0 0 311px',
+                    overflow: 'hidden'
+                  }}
+                >
+                  {/* Group 3 - Location Header with Red Background */}
                   <div 
-                    className="text-5xl font-bold mb-1" 
-                    style={{ color: getAqiColor(currentCityData.category) }}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '12px',
+                      borderRadius: '10px',
+                      background: '#f1f2f4',
+                      paddingRight: '12px',
+                      paddingLeft: '0',
+                      width: '293px',
+                      height: '40px',
+                      margin: '0 auto 16px auto',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap'
+                    }}
                   >
-                    {currentCityData.aqi}
+                    <div 
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      borderRadius: '10px 0px 0px 10px',
+                      background: '#fd6e6e',
+                      padding: '8px 12px 8px 13px'
+                    }}
+                  >
+                    <svg width="25" height="25" viewBox="0 0 25 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M10.8888 22.2862C11.4954 22.7867 12.128 23.2442 12.7757 23.6906C13.4248 23.2501 14.0543 22.7815 14.6626 22.2862C15.6767 21.4536 16.631 20.5508 17.5186 19.5844C19.5647 17.3471 21.7849 14.1038 21.7849 10.4631C21.7849 9.27998 21.5519 8.10845 21.0992 7.0154C20.6464 5.92235 19.9828 4.92918 19.1462 4.0926C18.3096 3.25602 17.3164 2.5924 16.2234 2.13964C15.1303 1.68689 13.9588 1.45386 12.7757 1.45386C11.5926 1.45386 10.4211 1.68689 9.32803 2.13964C8.23498 2.5924 7.24181 3.25602 6.40522 4.0926C5.56864 4.92918 4.90502 5.92235 4.45227 7.0154C3.99951 8.10845 3.76648 9.27998 3.76648 10.4631C3.76648 14.1038 5.98675 17.3461 8.03285 19.5844C8.92038 20.5511 9.8747 21.4532 10.8888 22.2862ZM12.7757 13.7164C11.9129 13.7164 11.0854 13.3737 10.4753 12.7635C9.86514 12.1534 9.52238 11.3259 9.52238 10.4631C9.52238 9.60025 9.86514 8.77275 10.4753 8.16263C11.0854 7.55251 11.9129 7.20975 12.7757 7.20975C13.6385 7.20975 14.466 7.55251 15.0762 8.16263C15.6863 8.77275 16.029 9.60025 16.029 10.4631C16.029 11.3259 15.6863 12.1534 15.0762 12.7635C14.466 13.3737 13.6385 13.7164 12.7757 13.7164Z" fill="white"/>
+                    </svg>
                   </div>
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        color: '#000',
+                        fontFamily: 'Poppins, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif',
+                        fontSize: '15px',
+                        fontWeight: 600,
+                        letterSpacing: '0px',
+                        overflow: 'hidden',
+                        textOverflow: 'ellipsis',
+                        whiteSpace: 'nowrap',
+                        maxWidth: '230px'
+                      }}
+                    >
+                      {currentCityData.name}, {currentCityData.country}
+                    </span>
+                  </div>
+                  
+                  {/* Frame 6 - AQI Display */}
                   <div 
-                    className="text-lg font-semibold" 
-                    style={{ color: getAqiColor(currentCityData.category) }}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      width: '124px',
+                      height: '107px',
+                      margin: '0 auto 16px auto'
+                    }}
                   >
-                    {currentCityData.category}
+                    <div 
+                      style={{
+                        flexShrink: 0,
+                        alignSelf: 'stretch',
+                        textAlign: 'center',
+                        letterSpacing: '0',
+                        color: getAQIColor(currentCityData.aqi),
+                        fontFamily: 'Poppins, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif',
+                        fontSize: '64px',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {currentCityData.aqi}
+                    </div>
+                    <div 
+                      style={{
+                        flexShrink: 0,
+                        alignSelf: 'stretch',
+                        margin: '-19px 0px 0px',
+                        textAlign: 'center',
+                        letterSpacing: '0',
+                        color: getAQIColor(currentCityData.aqi),
+                        fontFamily: 'Poppins, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif',
+                        fontSize: '20px',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {currentCityData.category}
+                    </div>
+                  </div>
+                  
+                  {/* Description */}
+                  <div className="text-sm text-gray-600 text-center mb-6">
+                    {currentCityData.aqi <= 50 ? "Air quality is satisfactory" : 
+                     currentCityData.aqi <= 100 ? "Air quality is acceptable for most people" :
+                     currentCityData.aqi <= 200 ? "Air quality is unhealthy for everyone" :
+                     currentCityData.aqi <= 300 ? "Air quality is very unhealthy for everyone" :
+                     "Air quality is hazardous for everyone"}
+                  </div>
+                  
+                  {/* Rectangle 8 - Gray Background Section */}
+                  <div 
+                    style={{
+                      borderRadius: '10px',
+                      background: '#f1f2f4',
+                      width: '293px',
+                      height: '58px',
+                      padding: '12px',
+                      margin: '0 auto',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      justifyContent: 'center'
+                    }}
+                  >
+                    <div 
+                      style={{
+                        textAlign: 'left',
+                        letterSpacing: '0',
+                        color: '#3d3d3d',
+                        fontFamily: 'Poppins, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif',
+                        fontSize: '13px',
+                        fontWeight: '600',
+                        marginBottom: '4px'
+                      }}
+                    >
+                      Main Pollutant
+                    </div>
+                    <div 
+                      style={{
+                        lineHeight: '20px',
+                        textAlign: 'left',
+                        letterSpacing: '0',
+                        color: '#3d3d3d',
+                        fontFamily: 'Poppins, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif',
+                        fontSize: '13px',
+                        fontWeight: '600'
+                      }}
+                    >
+                      {currentCityData.mainPollutant}
+                    </div>
                   </div>
                 </div>
                 
-                {/* Description */}
-                <div className="text-sm text-gray-600 mb-4">
-                  {currentCityData.aqi <= 50 ? "Air quality is satisfactory" : 
-                   currentCityData.aqi <= 100 ? "Air quality is acceptable for most people" :
-                   currentCityData.aqi <= 200 ? "Air quality is unhealthy for everyone" :
-                   currentCityData.aqi <= 300 ? "Air quality is very unhealthy for everyone" :
-                   "Air quality is hazardous for everyone"}
-                </div>
-                
-                {/* Main Pollutant */}
-                <div className="bg-gray-100 rounded-lg p-3 mb-4">
-                  <div className="text-xs text-gray-500 mb-1">Main Pollutant</div>
-                  <div className="text-sm font-semibold text-gray-700">{currentCityData.mainPollutant}</div>
-                </div>
-                
-                {/* Weather Details */}
-                <div className="flex items-center justify-between bg-yellow-50 rounded-lg px-3 py-2">
-                  <div className="flex items-center gap-1">
-                    <Thermometer className="h-4 w-4 text-red-500" />
-                    <span className="text-sm font-medium text-gray-700">{currentCityData.temperature}°C</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Droplets className="h-4 w-4 text-blue-500" />
-                    <span className="text-sm font-medium text-gray-700">{currentCityData.humidity}%</span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Wind className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-medium text-gray-700">{currentCityData.windSpeed} m/s</span>
+                {/* Weather Details - Footer with Gradient */}
+                <div 
+                  style={{
+                    background: getAQIGradient(currentCityData.aqi),
+                    borderRadius: '0 0 10px 10px',
+                    padding: '12px 16px',
+                    height: '59px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    flex: '1'
+                  }}
+                >
+                  <div className="flex items-center justify-center w-full px-4" style={{ color: '#3D3D3D', fontFamily: 'Inter, sans-serif' }}>
+                    <div className="flex items-center justify-between w-full max-w-xs">
+                      <div className="flex items-center gap-2">
+                        <img src="/.figma/image/meths6m4-osomnqk.svg" className="h-4 w-4" />
+                        <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>{currentCityData.temperature}°C</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <img src="/.figma/image/meths6m4-ygz2nyn.svg" className="h-4 w-4" />
+                        <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>{currentCityData.humidity}%</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <img src="/.figma/image/meths6m4-dte37nt.svg" className="h-4 w-4" />
+                        <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>{currentCityData.windSpeed} m/s</span>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
             
-            {/* AQI Legend - Bottom Left */}
-            <div className="absolute bottom-4 left-4 flex flex-wrap gap-2" style={{ zIndex: 1000 }}>
-              {aqiCategories.map((category, index) => (
+
+            
+            {/* AQI Legend - Bottom Center - Rectangle 11 & Frame 18 */}
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2" style={{ zIndex: 100 }}>
+              {/* Rectangle 11 - White container with yellow border */}
+              <div 
+                style={{
+                  border: '1px solid #fef979',
+                  borderRadius: '7px',
+                  background: '#ffffff',
+                  width: '413px',
+                  height: '40px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  padding: '8px 12px'
+                }}
+              >
+                {/* Frame 18 - Category badges container */}
                 <div 
-                  key={index} 
-                  className="flex items-center gap-2 bg-white/95 backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md border border-white/20"
+                  style={{
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    columnGap: '10px',
+                    width: '382px',
+                    height: '22px'
+                  }}
                 >
+                  {/* Good */}
                   <div 
-                    className="w-3 h-3 rounded-full border border-gray-200" 
-                    style={{ backgroundColor: category.color }}
-                  />
-                  <span className="text-xs font-medium text-gray-700">{category.name}</span>
+                    style={{
+                      display: 'inline-flex',
+                      flexShrink: 0,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      columnGap: '8px',
+                      borderRadius: '3px',
+                      background: '#c3f1cb',
+                      padding: '3px 7px'
+                    }}
+                  >
+                    <span 
+                      style={{
+                        lineHeight: '15px',
+                        letterSpacing: '0',
+                        color: '#ffffff',
+                        fontFamily: 'Poppins, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif',
+                        fontSize: '10px',
+                        fontWeight: '700'
+                      }}
+                    >
+                      Good
+                    </span>
+                  </div>
+                  
+                  {/* Moderate */}
+                  <div 
+                    style={{
+                      display: 'inline-flex',
+                      flexShrink: 0,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      columnGap: '8px',
+                      borderRadius: '3px',
+                      background: '#fef979',
+                      padding: '3px 7px'
+                    }}
+                  >
+                    <span 
+                      style={{
+                        lineHeight: '15px',
+                        letterSpacing: '0',
+                        color: '#ffffff',
+                        fontFamily: 'Poppins, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif',
+                        fontSize: '10px',
+                        fontWeight: '700'
+                      }}
+                    >
+                      Moderate
+                    </span>
+                  </div>
+                  
+                  {/* Unhealthy */}
+                  <div 
+                    style={{
+                      display: 'inline-flex',
+                      flexShrink: 0,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      columnGap: '8px',
+                      borderRadius: '3px',
+                      background: '#ffca59',
+                      padding: '3px 7px'
+                    }}
+                  >
+                    <span 
+                      style={{
+                        lineHeight: '15px',
+                        letterSpacing: '0',
+                        color: '#ffffff',
+                        fontFamily: 'Poppins, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif',
+                        fontSize: '10px',
+                        fontWeight: '700'
+                      }}
+                    >
+                      Unhealthy
+                    </span>
+                  </div>
+                  
+                  {/* Very Unhealthy */}
+                  <div 
+                    style={{
+                      display: 'inline-flex',
+                      flexShrink: 0,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      columnGap: '8px',
+                      borderRadius: '3px',
+                      background: '#fd6e6e',
+                      padding: '3px 7px'
+                    }}
+                  >
+                    <span 
+                      style={{
+                        lineHeight: '15px',
+                        letterSpacing: '0',
+                        color: '#ffffff',
+                        fontFamily: 'Poppins, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif',
+                        fontSize: '10px',
+                        fontWeight: '700'
+                      }}
+                    >
+                      Very Unhealthy
+                    </span>
+                  </div>
+                  
+                  {/* Hazardous */}
+                  <div 
+                    style={{
+                      display: 'inline-flex',
+                      flexShrink: 0,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      columnGap: '8px',
+                      borderRadius: '3px',
+                      background: '#d597ff',
+                      padding: '3px 7px'
+                    }}
+                  >
+                    <span 
+                      style={{
+                        lineHeight: '15px',
+                        letterSpacing: '0',
+                        color: '#ffffff',
+                        fontFamily: 'Poppins, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", SimHei, Arial, Helvetica, sans-serif',
+                        fontSize: '10px',
+                        fontWeight: '700'
+                      }}
+                    >
+                      Hazardous
+                    </span>
+                  </div>
                 </div>
-              ))}
+              </div>
             </div>
           </div>
 
-          {/* Bottom Grid - Air Pollutants and Forecasts */}
-          <div className="mt-8">
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-              {/* Left - Air Pollutants */}
-              <div className="xl:col-span-1">
-                <PollutionUnits data={pollutionUnits} />
+            </main>
+          </div>
+
+          {/* Average Air Quality Section - transparent background, content above ellipse */}
+          <section className="mt-6 py-12 relative">
+            <div className="text-center text-white relative" style={{ zIndex: 10 }}>
+              <h2 className="text-3xl font-bold mb-8">Average Air Quality</h2>
+              {/* Horizontal Layout: PM2.5 Circle, AQI Text, Progress Bar */}
+              <div className="flex items-center justify-between max-w-6xl mx-auto px-8">
+                {/* Left - PM2.5 Circle */}
+                <div className="flex-shrink-0">
+                  <div className="w-24 h-24 rounded-full bg-yellow-400 flex items-center justify-center shadow-lg">
+                    <div className="text-center">
+                      <div className="text-xs font-medium text-gray-800 mb-1">PM2.5</div>
+                      <div className="text-lg font-bold text-gray-800">{currentCityData.mainPollutantValue}</div>
+                      <div className="text-xs text-gray-600">μg/m³</div>
+                    </div>
+                  </div>
+                </div>
+                {/* Center - AQI Text */}
+                <div className="flex-1 mx-8">
+                  <div className="text-8xl font-bold mb-4">{averageAQI}</div>
+                  <div className="text-2xl font-semibold mb-2">AQI Indeks</div>
+                  <div className="text-lg opacity-90">Stable from Yesterday</div>
+                </div>
+                {/* Right - Progress Bar */}
+                <div className="flex-shrink-0">
+                  <div className="flex flex-col items-center">
+                    <div className="text-sm opacity-90 mb-3">Based on All Monitoring Stations</div>
+                    <div className="w-80 h-3 bg-white/30 rounded-full overflow-hidden">
+                      <div className="h-full bg-white rounded-full transition-all duration-500" style={{ width: `${Math.min((averageAQI / 200) * 100, 100)}%` }} />
+                    </div>
+                    <div className="flex justify-between w-80 text-sm mt-2 opacity-75">
+                      <span>0</span>
+                      <span>200+</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* White Background Section - Bottom Grid */}
+          <main className="container mx-auto px-6 py-8" style={{ backgroundColor: 'white' }}>
+            {/* Bottom Grid - Air Pollutants and Forecasts */}
+            <div className="mt-8">
+              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                {/* Left - Air Pollutants */}
+                <div className="xl:col-span-1">
+                  <PollutionUnits data={pollutionUnits} />
+                </div>
+                
+                {/* Right - Forecasts - Stacked vertically with equal heights */}
+                <div className="xl:col-span-2 flex flex-col h-full">
+                  <div className="flex-1 mb-3">
+                    <ForecastWidget 
+                      title="Hourly Forecast" 
+                      type="hourly" 
+                      data={airQualityAPI.generateForecastData("hourly")} 
+                      icon={<Clock className="h-5 w-5" />} 
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <ForecastWidget 
+                      title="Daily Forecast" 
+                      type="daily" 
+                      data={airQualityAPI.generateForecastData("daily")} 
+                      icon={<Calendar className="h-5 w-5" />} 
+                    />
+                  </div>
+                </div>
               </div>
               
-              {/* Right - Forecasts - Stacked vertically with equal heights */}
-              <div className="xl:col-span-2 flex flex-col h-full">
-                <div className="flex-1 mb-3">
-                  <ForecastWidget 
-                    title="Hourly Forecast" 
-                    type="hourly" 
-                    data={airQualityAPI.generateForecastData("hourly")} 
-                    icon={<Clock className="h-5 w-5" />} 
-                  />
-                </div>
-                <div className="flex-1">
-                  <ForecastWidget 
-                    title="Daily Forecast" 
-                    type="daily" 
-                    data={airQualityAPI.generateForecastData("daily")} 
-                    icon={<Calendar className="h-5 w-5" />} 
-                  />
-                </div>
+              {/* Historical Chart */}
+              <div className="mt-8">
+                <HistoricalChart data={airQualityAPI.generateHistoricalData()} />
               </div>
             </div>
-            
-            {/* Historical Chart */}
-            <div className="mt-8">
-              <HistoricalChart data={airQualityAPI.generateHistoricalData()} />
-            </div>
-          </div>
-        </main>
+          </main>
+        </>
       )}
 
       {activeTab === "cast" && (

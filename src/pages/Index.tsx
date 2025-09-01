@@ -78,7 +78,7 @@ const Index = () => {
     mainPollutantValue: 53,
     temperature: 29,
     humidity: 56,
-    windSpeed: 3.5
+    windSpeed: 1.1
   });
   const [averageAQI, setAverageAQI] = useState(0);
   const [pollutionUnits, setPollutionUnits] = useState({
@@ -268,7 +268,7 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen" style={{ backgroundColor: '#FAFDFF' }}>
       <Header 
         activeTab={activeTab} 
         onTabChange={setActiveTab}
@@ -366,18 +366,17 @@ const Index = () => {
               />
             </div>
 
-            {/* Large ellipse extending into section 2 */}
+            {/* Large ellipse extending into section 2 - dengan clip-path untuk avoid scrollbar */}
             <div
               className="pointer-events-none"
               style={{
                 position: 'absolute',
-                left: '50%',
-                transform: 'translateX(-50%)',
+                left: '0',
                 bottom: '-50%',
-                width: 'clamp(800px, 120vw, 1662px)',
-                aspectRatio: '1662 / 659',
+                width: '100%',
+                height: '659px',
                 background: '#8DB2FF',
-                borderRadius: '50%',
+                clipPath: 'ellipse(75% 100% at 50% 0%)',
                 zIndex: 1
               }}
             />
@@ -395,43 +394,41 @@ const Index = () => {
           <div className="relative overflow-hidden" style={{ marginTop: '45px' }}>
 
             
-            {/* Full-width Map Container - Rectangle 58 from Figma */}
-            <div className="rounded-2xl shadow-lg overflow-hidden relative" style={{ 
-              backgroundColor: 'white',
-              height: '480px',
-              maxWidth: '1440px',
-              margin: '0 auto',
-              zIndex: 10
-            }}>
-              <MapContainer 
-                key={`${currentCityData.lat}-${currentCityData.lng}`}
-                center={[currentCityData.lat, currentCityData.lng]} 
-                zoom={12} 
-                style={{ 
-                  height: '100%', 
-                  width: '100%',
-                  position: 'relative',
-                  zIndex: 10,
-                  backgroundColor: 'transparent'
-                }}
-              >
-                <TileLayer 
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' 
-                />
-                <Marker position={[currentCityData.lat, currentCityData.lng]}>
-                  <Popup>
-                    <div className="text-sm">
-                      <h3 className="font-bold mb-1">{currentCityData.name}</h3>
-                      <p>AQI: {currentCityData.aqi}</p>
-                      <p>Category: {currentCityData.category}</p>
-                      <p>Main Pollutant: {currentCityData.mainPollutant}</p>
-                    </div>
-                  </Popup>
-                </Marker>
-              </MapContainer>
-              
-
+                        {/* Full-width Map Container - Rectangle 58 from Figma */}
+                         {/* Outer wrapper: rounded + bg-white */}
+             <div className="relative rounded-2xl bg-white max-w-[1440px] mx-auto" style={{
+               zIndex: 10
+             }}>
+              {/* Inner wrapper: rounded + overflow-hidden untuk clip map */}
+              <div className="rounded-2xl overflow-hidden h-[480px]">
+                <MapContainer 
+                  key={`${currentCityData.lat}-${currentCityData.lng}`}
+                  center={[currentCityData.lat, currentCityData.lng]} 
+                  zoom={12} 
+                  style={{ 
+                    height: '100%', 
+                    width: '100%',
+                    position: 'relative',
+                    zIndex: 10,
+                    backgroundColor: 'transparent'
+                  }}
+                >
+                  <TileLayer 
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
+                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' 
+                  />
+                  <Marker position={[currentCityData.lat, currentCityData.lng]}>
+                    <Popup>
+                      <div className="text-sm">
+                        <h3 className="font-bold mb-1">{currentCityData.name}</h3>
+                        <p>AQI: {currentCityData.aqi}</p>
+                        <p>Category: {currentCityData.category}</p>
+                        <p>Main Pollutant: {currentCityData.mainPollutant}</p>
+                      </div>
+                    </Popup>
+                  </Marker>
+                </MapContainer>
+              </div>
             </div>
 
             {/* Overlay Elements - Outside of MapContainer */}
@@ -634,7 +631,7 @@ const Index = () => {
                       </div>
                       <div className="flex items-center gap-2">
                         <img src="/.figma/image/meths6m4-dte37nt.svg" className="h-4 w-4" />
-                        <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>{currentCityData.windSpeed} m/s</span>
+                        <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', letterSpacing: '0', wordSpacing: 'normal', fontFeatureSettings: 'normal' }}>{currentCityData.windSpeed} m/s</span>
                       </div>
                     </div>
                   </div>
@@ -813,35 +810,149 @@ const Index = () => {
           </div>
 
           {/* Average Air Quality Section - transparent background, content above ellipse */}
-          <section className="mt-6 py-12 relative">
-            <div className="text-center text-white relative" style={{ zIndex: 10 }}>
-              <h2 className="text-3xl font-bold mb-8">Average Air Quality</h2>
-              {/* Horizontal Layout: PM2.5 Circle, AQI Text, Progress Bar */}
-              <div className="flex items-center justify-between max-w-6xl mx-auto px-8">
-                {/* Left - PM2.5 Circle */}
-                <div className="flex-shrink-0">
-                  <div className="w-24 h-24 rounded-full bg-yellow-400 flex items-center justify-center shadow-lg">
-                    <div className="text-center">
-                      <div className="text-xs font-medium text-gray-800 mb-1">PM2.5</div>
-                      <div className="text-lg font-bold text-gray-800">{currentCityData.mainPollutantValue}</div>
-                      <div className="text-xs text-gray-600">μg/m³</div>
+          <section className="-mt-8 py-8 relative" style={{ backgroundColor: 'transparent' }}>
+            <div className="text-center text-white relative flex flex-col items-center" style={{ zIndex: 10 }}>
+                <h2 className="text-3xl font-bold mb-8">Average Air Quality in Indonesia</h2>
+                {/* Horizontal Layout: PM2.5 Circle, AQI Text, Progress Bar */}
+                <div className="flex items-center justify-center max-w-7xl mx-auto px-12 w-full gap-12 ml-24">
+                 {/* PM2.5 Circle */}
+                  <div className="flex-shrink-0">
+                    <div className="relative" style={{ width: '192px', height: '192px' }}>
+                    {/* Rectangle 63 - Outermost circle */}
+                    <div 
+                      className="absolute rounded-full"
+                      style={{
+                        width: '192px',
+                        height: '192px',
+                        left: '0px',
+                        top: '0px',
+                        background: 'linear-gradient(180deg, #FEF979 0%, #F4EC22 100%)',
+                        opacity: 0.19,
+                        borderRadius: '100px'
+                      }}
+                    ></div>
+                    {/* Rectangle 65 - Middle circle */}
+                    <div 
+                      className="absolute rounded-full"
+                      style={{
+                        width: '166px',
+                        height: '166px',
+                        left: '13px',
+                        top: '13px',
+                        background: 'linear-gradient(180deg, #FEF979 0%, #F4EC22 100%)',
+                        opacity: 0.36,
+                        borderRadius: '100px'
+                      }}
+                    ></div>
+                    {/* Rectangle 64 - Inner circle */}
+                    <div 
+                      className="absolute rounded-full"
+                      style={{
+                        width: '144px',
+                        height: '144px',
+                        left: '24px',
+                        top: '24px',
+                        background: 'linear-gradient(180deg, #FEF979 0%, #F4EC22 100%)',
+                        borderRadius: '100px'
+                      }}
+                    ></div>
+                    {/* PM 2.5 Text */}
+                    <div 
+                      className="absolute"
+                      style={{
+                        width: '46px',
+                        height: '21px',
+                        left: '72px',
+                        top: '45px',
+                        fontFamily: 'Poppins',
+                        fontWeight: 700,
+                        fontSize: '14px',
+                        lineHeight: '21px',
+                        color: '#3D3D3D'
+                      }}
+                    >
+                      PM 2.5
+                    </div>
+                    {/* 35,54 Value */}
+                    <div 
+                      className="absolute"
+                      style={{
+                        width: '90px',
+                        height: '48px',
+                        left: '51px',
+                        top: '77px',
+                        fontFamily: 'Poppins',
+                        fontWeight: 700,
+                        fontSize: '32px',
+                        lineHeight: '48px',
+                        color: '#3D3D3D'
+                      }}
+                    >
+                      35,54
+                    </div>
+                    {/* µm/ m³ Unit */}
+                    <div 
+                      className="absolute"
+                      style={{
+                        width: '53px',
+                        height: '21px',
+                        left: '69px',
+                        top: '117px',
+                        fontFamily: 'Poppins',
+                        fontWeight: 400,
+                        fontSize: '14px',
+                        lineHeight: '21px',
+                        color: '#3D3D3D'
+                      }}
+                    >
+                      µm/ m³
                     </div>
                   </div>
                 </div>
                 {/* Center - AQI Text */}
-                <div className="flex-1 mx-8">
-                  <div className="text-8xl font-bold mb-4">{averageAQI}</div>
-                  <div className="text-2xl font-semibold mb-2">AQI Indeks</div>
+                  <div className="flex-shrink-0 flex flex-col items-center justify-center text-center">
+                  <div className="text-8xl font-bold mb-4">101</div>
+                  <div className="text-2xl font-semibold mb-2">AQI⁺ Index</div>
                   <div className="text-lg opacity-90">Stable from Yesterday</div>
                 </div>
                 {/* Right - Progress Bar */}
-                <div className="flex-shrink-0">
+                  <div className="flex-shrink-0">
                   <div className="flex flex-col items-center">
                     <div className="text-sm opacity-90 mb-3">Based on All Monitoring Stations</div>
-                    <div className="w-80 h-3 bg-white/30 rounded-full overflow-hidden">
-                      <div className="h-full bg-white rounded-full transition-all duration-500" style={{ width: `${Math.min((averageAQI / 200) * 100, 100)}%` }} />
+                    <div 
+                      className="relative transition-all duration-500"
+                      style={{
+                        width: '352.45px',
+                        height: '43px',
+                        background: 'rgba(0, 0, 0, 0.1)',
+                        borderRadius: '7.67857px'
+                      }}
+                    >
+                      {/* Rectangle 60 - Background Track */}
+                      <div 
+                        className="absolute"
+                        style={{
+                          width: '323.27px',
+                          height: '9.98px',
+                          left: '14.59px',
+                          top: '16.89px',
+                          background: '#F1F1F1',
+                          borderRadius: '76.7857px'
+                        }}
+                      >
+                        {/* Rectangle 61 - Progress Fill */}
+                        <div 
+                          className="transition-all duration-500" 
+                          style={{ 
+                            width: `${Math.min((averageAQI / 200) * 323.27, 323.27)}px`,
+                            height: '9.98px',
+                            background: '#3D3D3D',
+                            borderRadius: '76.7857px'
+                          }} 
+                        />
+                      </div>
                     </div>
-                    <div className="flex justify-between w-80 text-sm mt-2 opacity-75">
+                    <div className="flex justify-between text-sm mt-2 opacity-75" style={{ width: '352.45px' }}>
                       <span>0</span>
                       <span>200+</span>
                     </div>
@@ -851,48 +962,366 @@ const Index = () => {
             </div>
           </section>
 
-          {/* White Background Section - Bottom Grid */}
-          <main className="container mx-auto px-6 py-8" style={{ backgroundColor: 'white' }}>
-            {/* Bottom Grid - Air Pollutants and Forecasts */}
-            <div className="mt-8">
-              <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-                {/* Left - Air Pollutants */}
-                <div className="xl:col-span-1">
-                  <PollutionUnits data={pollutionUnits} />
-                </div>
+          {/* Air Pollutants Section - sesuai referensi Figma */}
+          <section className="relative pt-36 pb-16" style={{ backgroundColor: '#FAFDFF' }}>
+            <div className="container mx-auto px-6">
+              {/* Frame 26 - Air Pollutants Container */}
+              <div className="relative mx-auto flex items-center justify-center" style={{ maxWidth: '1280px', minHeight: '382px' }}>
+                {/* Rectangle 12 - Background hijau */}
+                <div 
+                  className="absolute inset-0 rounded-[50px]"
+                  style={{
+                    background: '#ECFFBD',
+                    width: '100%',
+                    height: '382px'
+                  }}
+                />
                 
-                {/* Right - Forecasts - Stacked vertically with equal heights */}
-                <div className="xl:col-span-2 flex flex-col h-full">
-                  <div className="flex-1 mb-3">
-                    <ForecastWidget 
-                      title="Hourly Forecast" 
-                      type="hourly" 
-                      data={airQualityAPI.generateForecastData("hourly")} 
-                      icon={<Clock className="h-5 w-5" />} 
-                    />
+                {/* Content */}
+                <div className="relative px-12 py-4 w-full flex flex-col justify-center">
+                  {/* Header */}
+                  <div className="mb-6 text-left">
+                    <h2 
+                      className="mb-0"
+                      style={{
+                        fontFamily: 'Poppins',
+                        fontWeight: 700,
+                        fontSize: '32px',
+                        lineHeight: '48px',
+                        color: '#3D3D3D'
+                      }}
+                    >
+                      Air Pollutants
+                    </h2>
+                    <p 
+                      style={{
+                        fontFamily: 'Poppins',
+                        fontWeight: 400,
+                        fontSize: '20px',
+                        lineHeight: '30px',
+                        color: '#3D3D3D'
+                      }}
+                    >
+                      Current pollutant levels in your area
+                    </p>
                   </div>
-                  <div className="flex-1">
-                    <ForecastWidget 
-                      title="Daily Forecast" 
-                      type="daily" 
-                      data={airQualityAPI.generateForecastData("daily")} 
-                      icon={<Calendar className="h-5 w-5" />} 
-                    />
+                  
+                  {/* Grid 6 kolom pollutants - centered */}
+                  <div className="grid grid-cols-6 gap-8 justify-items-center max-w-6xl mx-auto">
+                    {/* PM 2.5 */}
+                    <div className="bg-white rounded-[10px] p-4 relative flex flex-col items-center justify-center w-full" style={{ height: '180px', maxWidth: '170px' }}>
+                      <div className="absolute w-[15px] h-[15px] rounded-full" style={{ background: '#FD6E6E', left: '14px', top: '13px' }} />
+                      <div 
+                        className="text-center mb-3"
+                        style={{
+                          fontFamily: 'Poppins',
+                          fontStyle: 'normal',
+                          fontWeight: 600,
+                          fontSize: '20px',
+                          lineHeight: '30px',
+                          color: '#3D3D3D'
+                        }}
+                      >
+                        PM 2.5
+                      </div>
+                      <div className="flex flex-col items-center justify-center flex-1">
+                        <div 
+                          className="text-center"
+                          style={{
+                            fontFamily: 'Poppins',
+                            fontStyle: 'normal',
+                            fontWeight: 600,
+                            fontSize: '64px',
+                            lineHeight: '96px',
+                            color: '#3D3D3D'
+                          }}
+                        >
+                          80
+                        </div>
+                        <div 
+                          className="text-center mt-1"
+                          style={{
+                            fontFamily: 'Poppins',
+                            fontStyle: 'normal',
+                            fontWeight: 500,
+                            fontSize: '15px',
+                            lineHeight: '22px',
+                            color: '#3D3D3D'
+                          }}
+                        >
+                          μm/ m<sup style={{ fontFamily: 'Poppins, sans-serif', fontSize: '10px', fontWeight: 500, color: '#3D3D3D' }}>3</sup>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* PM10 */}
+                    <div className="bg-white rounded-[10px] p-4 relative flex flex-col items-center justify-center w-full" style={{ height: '180px', maxWidth: '170px' }}>
+                      <div className="absolute w-[15px] h-[15px] rounded-full" style={{ background: '#C3F1CB', left: '14px', top: '13px' }} />
+                      <div 
+                        className="text-center mb-3"
+                        style={{
+                          fontFamily: 'Poppins',
+                          fontStyle: 'normal',
+                          fontWeight: 600,
+                          fontSize: '20px',
+                          lineHeight: '30px',
+                          color: '#3D3D3D'
+                        }}
+                      >
+                        PM10
+                      </div>
+                      <div className="flex flex-col items-center justify-center flex-1">
+                        <div 
+                          className="text-center"
+                          style={{
+                            fontFamily: 'Poppins',
+                            fontStyle: 'normal',
+                            fontWeight: 600,
+                            fontSize: '64px',
+                            lineHeight: '96px',
+                            color: '#3D3D3D'
+                          }}
+                        >
+                          52
+                        </div>
+                        <div 
+                          className="text-center mt-1"
+                          style={{
+                            fontFamily: 'Poppins',
+                            fontStyle: 'normal',
+                            fontWeight: 500,
+                            fontSize: '15px',
+                            lineHeight: '22px',
+                            color: '#3D3D3D'
+                          }}
+                        >
+                          μm/ m<sup style={{ fontFamily: 'Poppins, sans-serif', fontSize: '10px', fontWeight: 500, color: '#3D3D3D' }}>3</sup>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* O₃ */}
+                    <div className="bg-white rounded-[10px] p-4 relative flex flex-col items-center justify-center w-full" style={{ height: '180px', maxWidth: '170px' }}>
+                      <div className="absolute w-[15px] h-[15px] rounded-full" style={{ background: '#C3F1CB', left: '14px', top: '13px' }} />
+                      <div 
+                        className="text-center mb-3"
+                        style={{
+                          fontFamily: 'Poppins',
+                          fontStyle: 'normal',
+                          fontWeight: 600,
+                          fontSize: '20px',
+                          lineHeight: '30px',
+                          color: '#3D3D3D'
+                        }}
+                      >
+                        O<sub style={{ fontFamily: 'Poppins, sans-serif', fontSize: '14px', fontWeight: 600, color: '#3D3D3D' }}>3</sub>
+                      </div>
+                      <div className="flex flex-col items-center justify-center flex-1">
+                        <div 
+                          className="text-center"
+                          style={{
+                            fontFamily: 'Poppins',
+                            fontStyle: 'normal',
+                            fontWeight: 600,
+                            fontSize: '64px',
+                            lineHeight: '96px',
+                            color: '#3D3D3D'
+                          }}
+                        >
+                          37.2
+                        </div>
+                        <div 
+                          className="text-center mt-1"
+                          style={{
+                            fontFamily: 'Poppins',
+                            fontStyle: 'normal',
+                            fontWeight: 500,
+                            fontSize: '15px',
+                            lineHeight: '22px',
+                            color: '#3D3D3D'
+                          }}
+                        >
+                          μm/ m<sup style={{ fontFamily: 'Poppins, sans-serif', fontSize: '10px', fontWeight: 500, color: '#3D3D3D' }}>3</sup>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* NO₂ */}
+                    <div className="bg-white rounded-[10px] p-4 relative flex flex-col items-center justify-center w-full" style={{ height: '180px', maxWidth: '170px' }}>
+                      <div className="absolute w-[15px] h-[15px] rounded-full" style={{ background: '#C3F1CB', left: '14px', top: '13px' }} />
+                      <div 
+                        className="text-center mb-3"
+                        style={{
+                          fontFamily: 'Poppins',
+                          fontStyle: 'normal',
+                          fontWeight: 600,
+                          fontSize: '20px',
+                          lineHeight: '30px',
+                          color: '#3D3D3D'
+                        }}
+                      >
+                        NO<sub style={{ fontFamily: 'Poppins, sans-serif', fontSize: '14px', fontWeight: 600, color: '#3D3D3D' }}>2</sub>
+                      </div>
+                      <div className="flex flex-col items-center justify-center flex-1">
+                        <div 
+                          className="text-center"
+                          style={{
+                            fontFamily: 'Poppins',
+                            fontStyle: 'normal',
+                            fontWeight: 600,
+                            fontSize: '64px',
+                            lineHeight: '96px',
+                            color: '#3D3D3D'
+                          }}
+                        >
+                          7.6
+                        </div>
+                        <div 
+                          className="text-center mt-1"
+                          style={{
+                            fontFamily: 'Poppins',
+                            fontStyle: 'normal',
+                            fontWeight: 500,
+                            fontSize: '15px',
+                            lineHeight: '22px',
+                            color: '#3D3D3D'
+                          }}
+                        >
+                          μm/ m<sup style={{ fontFamily: 'Poppins, sans-serif', fontSize: '10px', fontWeight: 500, color: '#3D3D3D' }}>3</sup>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* SO₂ */}
+                    <div className="bg-white rounded-[10px] p-4 relative flex flex-col items-center justify-center w-full" style={{ height: '180px', maxWidth: '170px' }}>
+                      <div className="absolute w-[15px] h-[15px] rounded-full" style={{ background: '#C3F1CB', left: '14px', top: '13px' }} />
+                      <div 
+                        className="text-center mb-3"
+                        style={{
+                          fontFamily: 'Poppins',
+                          fontStyle: 'normal',
+                          fontWeight: 600,
+                          fontSize: '20px',
+                          lineHeight: '30px',
+                          color: '#3D3D3D'
+                        }}
+                      >
+                        SO<sub style={{ fontFamily: 'Poppins, sans-serif', fontSize: '14px', fontWeight: 600, color: '#3D3D3D' }}>2</sub>
+                      </div>
+                      <div className="flex flex-col items-center justify-center flex-1">
+                        <div 
+                          className="text-center"
+                          style={{
+                            fontFamily: 'Poppins',
+                            fontStyle: 'normal',
+                            fontWeight: 600,
+                            fontSize: '64px',
+                            lineHeight: '96px',
+                            color: '#3D3D3D'
+                          }}
+                        >
+                          13
+                        </div>
+                        <div 
+                          className="text-center mt-1"
+                          style={{
+                            fontFamily: 'Poppins',
+                            fontStyle: 'normal',
+                            fontWeight: 500,
+                            fontSize: '15px',
+                            lineHeight: '22px',
+                            color: '#3D3D3D'
+                          }}
+                        >
+                          μm/ m<sup style={{ fontFamily: 'Poppins, sans-serif', fontSize: '10px', fontWeight: 500, color: '#3D3D3D' }}>3</sup>
+                        </div>
+                      </div>
+                    </div>
+                    
+                    {/* CO */}
+                    <div className="bg-white rounded-[10px] p-4 relative flex flex-col items-center justify-center w-full" style={{ height: '180px', maxWidth: '170px' }}>
+                      <div className="absolute w-[15px] h-[15px] rounded-full" style={{ background: '#C3F1CB', left: '14px', top: '13px' }} />
+                      <div 
+                        className="text-center mb-3"
+                        style={{
+                          fontFamily: 'Poppins',
+                          fontStyle: 'normal',
+                          fontWeight: 600,
+                          fontSize: '20px',
+                          lineHeight: '30px',
+                          color: '#3D3D3D'
+                        }}
+                      >
+                        CO
+                      </div>
+                      <div className="flex flex-col items-center justify-center flex-1">
+                        <div 
+                          className="text-center"
+                          style={{
+                            fontFamily: 'Poppins',
+                            fontStyle: 'normal',
+                            fontWeight: 600,
+                            fontSize: '55px',
+                            lineHeight: '82px',
+                            color: '#3D3D3D'
+                          }}
+                        >
+                          795.3
+                        </div>
+                        <div 
+                          className="text-center mt-1"
+                          style={{
+                            fontFamily: 'Poppins',
+                            fontStyle: 'normal',
+                            fontWeight: 500,
+                            fontSize: '15px',
+                            lineHeight: '22px',
+                            color: '#3D3D3D'
+                          }}
+                        >
+                          μm/ m<sup style={{ fontFamily: 'Poppins, sans-serif', fontSize: '10px', fontWeight: 500, color: '#3D3D3D' }}>3</sup>
+                        </div>
+                      </div>
+                    </div>
                   </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Forecasts Section - dipindah ke bawah */}
+          <section className="py-8" style={{ backgroundColor: '#FAFDFF' }}>
+            <div className="container mx-auto px-6">
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
+                <div>
+                  <ForecastWidget 
+                    title="Hourly Forecast" 
+                    type="hourly" 
+                    data={airQualityAPI.generateForecastData("hourly")} 
+                    icon={<Clock className="h-5 w-5" />} 
+                  />
+                </div>
+                <div>
+                  <ForecastWidget 
+                    title="Daily Forecast" 
+                    type="daily" 
+                    data={airQualityAPI.generateForecastData("daily")} 
+                    icon={<Calendar className="h-5 w-5" />} 
+                  />
                 </div>
               </div>
               
               {/* Historical Chart */}
-              <div className="mt-8">
+              <div>
                 <HistoricalChart data={airQualityAPI.generateHistoricalData()} />
               </div>
             </div>
-          </main>
+          </section>
         </>
       )}
 
       {activeTab === "cast" && (
-        <main className="container mx-auto px-6 py-8">
+        <main className="container mx-auto px-6 py-8" style={{ backgroundColor: '#FAFDFF' }}>
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-4">Air Quality Cast</h2>
             <p className="text-muted-foreground mb-8">
@@ -907,7 +1336,7 @@ const Index = () => {
       )}
 
       {activeTab === "forecast" && (
-        <main className="container mx-auto px-6 py-8">
+          <main className="container mx-auto px-6 py-8" style={{ backgroundColor: '#FAFDFF' }}>
           <div className="text-center">
             <h2 className="text-3xl font-bold mb-4">Extended Forecast</h2>
             <p className="text-muted-foreground mb-8">
@@ -922,7 +1351,7 @@ const Index = () => {
       )}
 
       {activeTab === "graph" && (
-        <main className="container mx-auto px-6 py-8">
+          <main className="container mx-auto px-6 py-8" style={{ backgroundColor: '#FAFDFF' }}>
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-4">Historical Data</h2>
             <p className="text-muted-foreground">
@@ -934,7 +1363,7 @@ const Index = () => {
       )}
 
       {activeTab === "stations" && (
-        <main className="container mx-auto px-6 py-8">
+          <main className="container mx-auto px-6 py-8" style={{ backgroundColor: '#FAFDFF' }}>
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-4">Monitoring Stations</h2>
             <p className="text-muted-foreground">

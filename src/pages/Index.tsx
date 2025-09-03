@@ -89,6 +89,29 @@ const Index = () => {
   });
   const [isLoading, setIsLoading] = useState(true);
 
+  // Function to scroll to section
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // Custom onTabChange function to handle navigation
+  const handleTabChange = (tab: string) => {
+    if (tab === 'forecast') {
+      setActiveTab('home');
+      setTimeout(() => scrollToSection('forecast-section'), 100);
+    } else if (tab === 'graph') {
+      setActiveTab('home');
+      setTimeout(() => scrollToSection('history-section'), 100);
+    } else if (tab === 'stations') {
+      window.location.href = '/stations';
+    } else {
+      setActiveTab(tab);
+    }
+  };
+
   // Load last searched city from localStorage or default to Jakarta
   useEffect(() => {
     const lastCity = localStorage.getItem('lastSearchedCity');
@@ -271,7 +294,7 @@ const Index = () => {
     <div className="min-h-screen" style={{ backgroundColor: '#FAFDFF' }}>
       <Header 
         activeTab={activeTab} 
-        onTabChange={setActiveTab}
+        onTabChange={handleTabChange}
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onSearch={handleSearch}
@@ -1290,7 +1313,7 @@ const Index = () => {
           </section>
 
           {/* Forecasts Section - sesuai referensi Figma */}
-          <section className="py-8" style={{ backgroundColor: '#FAFDFF' }}>
+          <section id="forecast-section" className="py-8" style={{ backgroundColor: '#FAFDFF' }}>
             <div className="container mx-auto px-6">
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
                 {/* Hourly Forecast - Rectangle 18 */}
@@ -1998,14 +2021,234 @@ const Index = () => {
                 </div>
               </div>
               
-              {/* Historical Chart */}
-              <div>
-                <HistoricalChart data={airQualityAPI.generateHistoricalData()} />
-              </div>
+
             </div>
           </section>
         </>
       )}
+
+      {/* History Section */}
+      <section id="history-section" className="relative mt-8" style={{ backgroundColor: '#ECFFBD', height: '604px' }}>
+        <div className="absolute" style={{ left: '97px', top: '53px' }}>
+          <h2 className="text-3xl font-bold" style={{
+            fontFamily: 'Poppins',
+            fontWeight: 700,
+            fontSize: '32px',
+            lineHeight: '48px',
+            color: '#3D3D3D'
+          }}>
+            History
+          </h2>
+          <p className="mt-0" style={{
+            fontFamily: 'Poppins',
+            fontWeight: 400,
+            fontSize: '20px',
+            lineHeight: '30px',
+            color: '#3D3D3D',
+            whiteSpace: 'nowrap'
+          }}>
+            Air Quality Chart for {currentCityData.name}
+          </p>
+        </div>
+        
+        {/* Legend */}
+        <div className="absolute" style={{
+          left: '930px',
+          top: '40px',
+          width: '339.9px',
+          height: '33px',
+          background: '#FFFFFF',
+          border: '0.55px solid #FEF979',
+          borderRadius: '5.5px',
+          boxSizing: 'border-box'
+        }}>
+          <div className="flex items-center gap-2" style={{
+            position: 'absolute',
+            left: '12.65px',
+            top: '7.15px',
+            width: '315.5px',
+            height: '17.5px'
+          }}>
+            {/* Good */}
+            <div className="flex justify-center items-center" style={{
+              padding: '2.75px 6.05px',
+              width: '35.1px',
+              height: '17.5px',
+              background: '#C3F1CB',
+              borderRadius: '2.75px'
+            }}>
+              <span style={{
+                fontFamily: 'Poppins',
+                fontWeight: 700,
+                fontSize: '8.25px',
+                lineHeight: '12px',
+                color: '#FFFFFF'
+              }}>Good</span>
+            </div>
+            
+            {/* Moderate */}
+            <div className="flex justify-center items-center" style={{
+              padding: '2.75px 6.05px',
+              width: '54.1px',
+              height: '17.5px',
+              background: '#FEF979',
+              borderRadius: '2.75px'
+            }}>
+              <span style={{
+                fontFamily: 'Poppins',
+                fontWeight: 700,
+                fontSize: '8.25px',
+                lineHeight: '12px',
+                color: '#FFFFFF'
+              }}>Moderate</span>
+            </div>
+            
+            {/* Unhealthy */}
+            <div className="flex justify-center items-center" style={{
+              padding: '2.75px 6.05px',
+              width: '57.1px',
+              height: '17.5px',
+              background: '#FFCA59',
+              borderRadius: '2.75px'
+            }}>
+              <span style={{
+                fontFamily: 'Poppins',
+                fontWeight: 700,
+                fontSize: '8.25px',
+                lineHeight: '12px',
+                color: '#FFFFFF'
+              }}>Unhealthy</span>
+            </div>
+            
+            {/* Very Unhealthy */}
+            <div className="flex justify-center items-center" style={{
+              padding: '2.75px 6.05px',
+              width: '78.1px',
+              height: '17.5px',
+              background: '#FD6E6E',
+              borderRadius: '2.75px'
+            }}>
+              <span style={{
+                fontFamily: 'Poppins',
+                fontWeight: 700,
+                fontSize: '8.25px',
+                lineHeight: '12px',
+                color: '#FFFFFF'
+              }}>Very Unhealthy</span>
+            </div>
+            
+            {/* Hazardous */}
+            <div className="flex justify-center items-center" style={{
+              padding: '2.75px 6.05px',
+              width: '58.1px',
+              height: '17.5px',
+              background: '#D597FF',
+              borderRadius: '2.75px'
+            }}>
+              <span style={{
+                fontFamily: 'Poppins',
+                fontWeight: 700,
+                fontSize: '8.25px',
+                lineHeight: '12px',
+                color: '#FFFFFF'
+              }}>Hazardous</span>
+            </div>
+          </div>
+        </div>
+             </section>
+
+       {/* Footer Section - Rectangle 118 */}
+       <footer 
+         className="relative w-full"
+         style={{ 
+           backgroundColor: '#FFFFFF',
+           height: '120px',
+           boxShadow: '0px -3px 15px rgba(0, 0, 0, 0.07)'
+         }}
+       >
+         <div className="relative w-full h-full flex items-center justify-between px-8">
+           {/* Logo Section - Rectangle 120 */}
+           <div 
+             style={{
+               width: '280px',
+               height: '52px',
+               background: '#FFFFFF',
+               border: '1px solid #3D3D3D',
+               borderRadius: '10px',
+               boxSizing: 'border-box',
+               display: 'flex',
+               alignItems: 'center',
+               padding: '0 27px'
+             }}
+           >
+             {/* Frame 2 - Logo Content */}
+             <div 
+               style={{
+                 display: 'flex',
+                 flexDirection: 'row',
+                 alignItems: 'center',
+                 gap: '17.22px',
+                 width: '220.75px',
+                 height: '54.53px'
+               }}
+             >
+               {/* Cloud Icon - ph:cloud-fill */}
+               <div 
+                 style={{
+                   width: '54.53px',
+                   height: '54.53px',
+                   flex: 'none',
+                   order: 0,
+                   flexGrow: 0,
+                   display: 'flex',
+                   alignItems: 'center',
+                   justifyContent: 'center'
+                 }}
+               >
+                 <svg width="54.53" height="54.53" viewBox="0 0 57 57" fill="none" xmlns="http://www.w3.org/2000/svg">
+                   <path 
+                     d="M35.6384 8.90625C31.9972 8.90682 28.4281 9.92081 25.3306 11.8347C22.2331 13.7486 19.7293 16.4868 18.0997 19.7429C16.7455 22.4424 16.0373 25.4198 16.0312 28.4399C16.0382 28.8988 15.8717 29.3434 15.565 29.6848C15.2582 30.0262 14.8339 30.2392 14.3769 30.2812C14.1325 30.2987 13.8872 30.2656 13.6562 30.1839C13.4252 30.1022 13.2136 29.9738 13.0345 29.8066C12.8554 29.6394 12.7127 29.4371 12.6154 29.2123C12.518 28.9875 12.4681 28.745 12.4688 28.5C12.467 26.0086 12.8685 23.5333 13.6577 21.1702C13.7097 21.0186 13.7199 20.8559 13.6872 20.6991C13.6545 20.5423 13.58 20.3972 13.4718 20.2791C13.3635 20.161 13.2254 20.0743 13.072 20.0282C12.9186 19.982 12.7556 19.9781 12.6001 20.0168C9.51371 20.7861 6.77279 22.5645 4.81267 25.0696C2.85255 27.5747 1.78559 30.6629 1.78125 33.8438C1.78125 41.679 8.40527 48.0938 16.2539 48.0938H35.625C38.2625 48.0909 40.8723 47.5562 43.2984 46.5215C45.7244 45.4868 47.9169 43.9734 49.7446 42.0719C51.5723 40.1704 52.9978 37.9198 53.9357 35.4547C54.8736 32.9896 55.3047 30.3607 55.2032 27.7252C54.7979 17.2648 46.1054 8.90625 35.6384 8.90625Z" 
+                     fill="#8DB2FF"
+                   />
+                 </svg>
+               </div>
+
+               {/* Air Quality Text */}
+               <div 
+                 style={{
+                   width: '149px',
+                   height: '40px',
+                   fontFamily: 'Poppins',
+                   fontStyle: 'normal',
+                   fontWeight: 800,
+                   fontSize: '26.7879px',
+                   lineHeight: '40px',
+                   color: '#3D3D3D',
+                   flex: 'none',
+                   order: 1,
+                   flexGrow: 0
+                 }}
+               >
+                 Air Quality
+               </div>
+             </div>
+           </div>
+
+           {/* Copyright Text */}
+           <div 
+             style={{
+               fontFamily: 'Poppins',
+               fontStyle: 'normal',
+               fontWeight: 600,
+               fontSize: '20px',
+               lineHeight: '30px',
+               color: '#3D3D3D'
+             }}
+           >
+             © 2025 Air Quality Monitor. All rights reserved.
+           </div>
+         </div>
+       </footer>
 
       {activeTab === "cast" && (
         <main className="container mx-auto px-6 py-8" style={{ backgroundColor: '#FAFDFF' }}>
@@ -2049,44 +2292,7 @@ const Index = () => {
         </main>
       )}
 
-      {activeTab === "stations" && (
-          <main className="container mx-auto px-6 py-8" style={{ backgroundColor: '#FAFDFF' }}>
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold mb-4">Monitoring Stations</h2>
-            <p className="text-muted-foreground">
-              Real-time data from air quality monitoring networks
-            </p>
-          </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 bg-card rounded-xl shadow-lg overflow-hidden">
-              <div className="h-[450px] relative">
-                <MapContainer 
-                  center={[currentCityData.lat, currentCityData.lng]} 
-                  zoom={10} 
-                  style={{
-                    height: '100%',
-                    width: '100%'
-                  }}
-                >
-                  <TileLayer 
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" 
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors' 
-                  />
-                  <Marker position={[currentCityData.lat, currentCityData.lng]}>
-                    <Popup>
-                      <div className="text-sm">
-                        <h3 className="font-bold mb-1">{currentCityData.name}</h3>
-                        <p>AQI: {currentCityData.aqi}</p>
-                        <p>Category: {currentCityData.category}</p>
-                      </div>
-                    </Popup>
-                  </Marker>
-                </MapContainer>
-              </div>
-            </div>
-          </div>
-        </main>
-      )}
+
     </div>
   );
 };

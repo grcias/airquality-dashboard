@@ -99,10 +99,12 @@ export class AirQualityAPI {
   // Generate mock pollution units data
   generatePollutionUnitsData() {
     return {
-      pm25: 25.5 + Math.random() * 20,
-      pm10: 45.2 + Math.random() * 30,
-      o3: 68.7 + Math.random() * 25,
-      no2: 42.1 + Math.random() * 20,
+      CO: 128.1 + Math.random() * 20,
+      NO2: 1.28 + Math.random() * 2,
+      O3: 53.43 + Math.random() * 10,
+      SO2: 0.44 + Math.random() * 0.5,
+      PM2_5: 5.17 + Math.random() * 3,
+      PM10: 8.9 + Math.random() * 5,
     };
   }
 

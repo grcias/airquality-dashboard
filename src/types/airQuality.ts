@@ -30,6 +30,8 @@ export interface PollutionData {
   pm10: number;
   o3: number;
   no2: number;
+  so2: number;
+  co: number;
 }
 
 export interface ForecastData {

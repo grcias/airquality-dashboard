@@ -34,11 +34,12 @@ const HistoricalChart = ({ data }: HistoricalChartProps) => {
     if (active && payload && payload.length) {
       const aqi = payload[0].value;
       let level = "Good";
-      let color = "#22c55e";
+      let color = "#B2F5BE";
       
-      if (aqi > 50) { level = "Moderate"; color = "#eab308"; }
-      if (aqi > 100) { level = "Unhealthy"; color = "#ef4444"; }
-      if (aqi > 150) { level = "Very Unhealthy"; color = "#dc2626"; }
+      if (aqi > 50) { level = "Moderate"; color = "#B8D6FF"; }
+      if (aqi > 100) { level = "Unhealthy"; color = "#FFCA59"; }
+      if (aqi > 150) { level = "Very Unhealthy"; color = "#FD6E6E"; }
+      if (aqi > 300) { level = "Hazardous"; color = "#3D3D3D"; }
       
       return (
         <div className="bg-chart-foreground p-3 rounded-lg shadow-lg border">

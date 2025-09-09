@@ -14,12 +14,12 @@ const AveragePollution = ({ averageAQI, previousAQI }: AveragePollutionProps) =>
     if (diff > 5) return { 
       icon: TrendingUp, 
       text: `+${diff.toFixed(1)} from yesterday`,
-      color: "text-red-500"
+      color: "text-[#FD6E6E]"
     };
     if (diff < -5) return { 
       icon: TrendingDown, 
       text: `${diff.toFixed(1)} from yesterday`,
-      color: "text-green-500"
+      color: "text-[#B2F5BE]"
     };
     return { 
       icon: Minus, 

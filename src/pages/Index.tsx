@@ -29,23 +29,23 @@ L.Icon.Default.mergeOptions({
 // AQI Categories and colors
 const aqiCategories = [{
   name: "Good",
-  color: "#4ade80",
+  color: "#B2F5BE",
   range: "0-50"
 }, {
   name: "Moderate",
-  color: "#facc15",
+  color: "#B8D6FF",
   range: "51-100"
 }, {
   name: "Unhealthy",
-  color: "#ef4444",
+  color: "#FFCA59",
   range: "101-200"
 }, {
   name: "Very Unhealthy",
-  color: "#ec4899",
+  color: "#FD6E6E",
   range: "201-300"
 }, {
   name: "Hazardous",
-  color: "#7e22ce",
+  color: "#3D3D3D",
   range: "301+"
 }];
 
@@ -66,7 +66,49 @@ interface CityData {
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
   const [searchQuery, setSearchQuery] = useState("");
-  const [isSearching, setIsSearching] = useState(false);
+
+  // Function to generate hourly time labels starting from current time
+  const generateHourlyLabels = () => {
+    const now = new Date();
+    const labels = [];
+    
+    for (let i = 0; i < 6; i++) {
+      if (i === 0) {
+        labels.push('Now');
+      } else {
+        const currentHour = now.getHours();
+        const nextHour = (currentHour + i) % 24;
+        const formattedHour = nextHour.toString().padStart(2, '0');
+        labels.push(`${formattedHour}.00`);
+      }
+    }
+    
+    return labels;
+  };
+
+  // Function to generate daily labels starting from today
+  const generateDailyLabels = () => {
+    const today = new Date();
+    const labels = [];
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat'];
+    
+    for (let i = 0; i < 3; i++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() + i);
+      
+      if (i === 0) {
+        labels.push('Today');
+      } else {
+        labels.push(dayNames[date.getDay()]);
+      }
+    }
+    
+    return labels;
+  };
+
+  const hourlyLabels = generateHourlyLabels();
+  const dailyLabels = generateDailyLabels();
+
   const [currentCityData, setCurrentCityData] = useState<CityData>({
     name: "Jakarta",
     country: "Indonesia",
@@ -85,7 +127,9 @@ const Index = () => {
     pm25: 0,
     pm10: 0,
     o3: 0,
-    no2: 0
+    no2: 0,
+    so2: 0,
+    co: 0
   });
   const [isLoading, setIsLoading] = useState(true);
 
@@ -130,13 +174,59 @@ const Index = () => {
   const loadAirQualityData = async () => {
     try {
       setIsLoading(true);
+      
+      // Fetch pollutant data from webhook
+      const response = await fetch('https://hook.eu2.make.com/a5dlaskv5a2gkmewkf9tkuwfi3pcrilj', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ city: currentCityData.name })
+      });
 
-      // Generate mock data for now (this can be updated when webhook provides pollutant data)
-      const unitsData = airQualityAPI.generatePollutionUnitsData();
-      setPollutionUnits(unitsData);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Webhook pollutant response:', data);
+      
+      // Check if we have pollutant data
+      if (data && data.CO !== undefined) {
+        // Use the pollutant data from webhook
+        setPollutionUnits({
+          pm25: data["PM2.5"] || 0,
+          pm10: data.PM10 || 0,
+          o3: data.O3 || 0,
+          no2: data.NO2 || 0,
+          so2: data.SO2 || 0,
+          co: data.CO || 0
+        });
+      } else {
+        // Fallback to mock data if webhook doesn't return pollutant data
+        const unitsData = airQualityAPI.generatePollutionUnitsData();
+        setPollutionUnits({
+          pm25: unitsData.PM2_5,
+          pm10: unitsData.PM10,
+          o3: unitsData.O3,
+          no2: unitsData.NO2,
+          so2: unitsData.SO2,
+          co: unitsData.CO
+        });
+      }
       // Average AQI is now set when city data is loaded
     } catch (error) {
       console.error("Error loading air quality data:", error);
+      // Fallback to mock data on error
+      const unitsData = airQualityAPI.generatePollutionUnitsData();
+      setPollutionUnits({
+        pm25: unitsData.PM2_5,
+        pm10: unitsData.PM10,
+        o3: unitsData.O3,
+        no2: unitsData.NO2,
+        so2: unitsData.SO2,
+        co: unitsData.CO
+      });
     } finally {
       setIsLoading(false);
     }
@@ -162,17 +252,19 @@ const Index = () => {
   //     }
   // };
 
-  // Function to fetch air quality and weather data from Make webhook
-  const fetchCityDataFromWebhook = async (cityName: string): Promise<CityData> => {
+
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
     try {
-      console.log(`Fetching data for city: ${cityName}`);
+      console.log(`Fetching data for city: ${searchQuery}`);
       
-      const response = await fetch('https://hook.eu2.make.com/lc1hratujpvj68rm1by4179k4osec9vc', {
+      const response = await fetch('https://hook.eu2.make.com/a5dlaskv5a2gkmewkf9tkuwfi3pcrilj', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ city: cityName })
+        body: JSON.stringify({ city: searchQuery })
       });
 
       if (!response.ok) {
@@ -207,28 +299,28 @@ const Index = () => {
         lng: parseFloat(data.coords.lon),
         aqi: data.aqi,
         category: category,
-        mainPollutant: "PM2.5", // Default value, can be updated if webhook provides this
-        mainPollutantValue: data.aqi, // Using AQI as default, can be updated if webhook provides specific pollutant data
+        mainPollutant: "PM2.5",
+        mainPollutantValue: data.aqi,
         temperature: data.weather.temp,
         humidity: data.weather.humidity,
         windSpeed: data.weather.wind
       };
 
-      console.log('Processed city data:', cityData);
-      return cityData;
-    } catch (error) {
-      console.error('Error fetching data from webhook:', error);
-      throw error;
-    }
-  };
-
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
-    try {
-      setIsSearching(true);
-
-      // Fetch air quality and weather data directly from webhook
-      const cityData = await fetchCityDataFromWebhook(searchQuery);
+      // Update pollutant data from webhook response
+      if (data.pollutants) {
+        setPollutionUnits(data.pollutants);
+      } else {
+        // Use pollutant data from webhook response
+        const fallbackPollutants = {
+          pm25: data["PM2.5"] || 0,
+          pm10: data.PM10 || 0,
+          o3: data.O3 || 0,
+          no2: data.NO2 || 0,
+          so2: data.SO2 || 0,
+          co: data.CO || 0
+        };
+        setPollutionUnits(fallbackPollutants);
+      }
 
       // Update state
       setCurrentCityData(cityData);
@@ -237,11 +329,10 @@ const Index = () => {
       // Save to localStorage
       localStorage.setItem('lastSearchedCity', JSON.stringify(cityData));
       setSearchQuery("");
+      
     } catch (error) {
       console.error('Search failed:', error);
       alert('Failed to fetch city data. Please try another city name.');
-    } finally {
-      setIsSearching(false);
     }
   };
 
@@ -259,22 +350,22 @@ const Index = () => {
 
   // Get color based on AQI value
   const getAQIColor = (aqi: number): string => {
-    if (aqi <= 50) return '#c3f1cb';  // Good - Green
-    if (aqi <= 100) return '#fef979'; // Moderate - Yellow
-    if (aqi <= 150) return '#ffca59'; // Unhealthy for Sensitive Groups - Orange
-    if (aqi <= 200) return '#ffca59'; // Unhealthy - Orange
-    if (aqi <= 300) return '#fd6e6e'; // Very Unhealthy - Red
-    return '#d597ff'; // Hazardous - Purple
+    if (aqi <= 50) return '#B2F5BE';  // Good - Green
+    if (aqi <= 100) return '#B8D6FF'; // Moderate - Blue
+    if (aqi <= 150) return '#FFCA59'; // Unhealthy for Sensitive Groups - Orange
+    if (aqi <= 200) return '#FFCA59'; // Unhealthy - Orange
+    if (aqi <= 300) return '#FD6E6E'; // Very Unhealthy - Red
+    return '#3D3D3D'; // Hazardous - Dark Gray
   };
 
   // Get gradient background based on AQI value
   const getAQIGradient = (aqi: number): string => {
-    if (aqi <= 50) return 'linear-gradient(180deg, #c3f1cb 0%, #a8e6b3 100%)';  // Good - Green gradient
-    if (aqi <= 100) return 'linear-gradient(180deg, #fef979 0%, #f4ea00 100%)'; // Moderate - Yellow gradient
-    if (aqi <= 150) return 'linear-gradient(180deg, #ffca59 0%, #ff9f1c 100%)'; // Unhealthy for Sensitive Groups - Orange gradient
-    if (aqi <= 200) return 'linear-gradient(180deg, #ffca59 0%, #ff9f1c 100%)'; // Unhealthy - Orange gradient
-    if (aqi <= 300) return 'linear-gradient(180deg, #fd6e6e 0%, #e63946 100%)'; // Very Unhealthy - Red gradient
-    return 'linear-gradient(180deg, #d597ff 0%, #b565d8 100%)'; // Hazardous - Purple gradient
+    if (aqi <= 50) return 'linear-gradient(180deg, #B2F5BE 0%, #8FE0A0 100%)';  // Good - Green gradient
+    if (aqi <= 100) return 'linear-gradient(180deg, #B8D6FF 0%, #95BFFA 100%)'; // Moderate - Blue gradient
+    if (aqi <= 150) return 'linear-gradient(180deg, #FFCA59 0%, #FFB01F 100%)'; // Unhealthy for Sensitive Groups - Orange gradient
+    if (aqi <= 200) return 'linear-gradient(180deg, #FFCA59 0%, #FFB01F 100%)'; // Unhealthy - Orange gradient
+    if (aqi <= 300) return 'linear-gradient(180deg, #FD6E6E 0%, #FA4D4D 100%)'; // Very Unhealthy - Red gradient
+    return 'linear-gradient(180deg, #3D3D3D 0%, #2A2A2A 100%)'; // Hazardous - Dark Gray gradient
   };
 
   if (isLoading) {
@@ -298,7 +389,6 @@ const Index = () => {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onSearch={handleSearch}
-        isSearching={isSearching}
       />
       
       {/* Soft drop shadow below navbar */}
@@ -669,7 +759,7 @@ const Index = () => {
               {/* Rectangle 11 - White container with yellow border */}
               <div 
                 style={{
-                  border: '1px solid #fef979',
+                  border: '1px solid #B8D6FF',
                   borderRadius: '7px',
                   background: '#ffffff',
                   width: '413px',
@@ -699,7 +789,7 @@ const Index = () => {
                       justifyContent: 'center',
                       columnGap: '8px',
                       borderRadius: '3px',
-                      background: '#c3f1cb',
+                      background: '#B2F5BE',
                       padding: '3px 7px'
                     }}
                   >
@@ -726,7 +816,7 @@ const Index = () => {
                       justifyContent: 'center',
                       columnGap: '8px',
                       borderRadius: '3px',
-                      background: '#fef979',
+                      background: '#B8D6FF',
                       padding: '3px 7px'
                     }}
                   >
@@ -753,7 +843,7 @@ const Index = () => {
                       justifyContent: 'center',
                       columnGap: '8px',
                       borderRadius: '3px',
-                      background: '#ffca59',
+                      background: '#FFCA59',
                       padding: '3px 7px'
                     }}
                   >
@@ -780,7 +870,7 @@ const Index = () => {
                       justifyContent: 'center',
                       columnGap: '8px',
                       borderRadius: '3px',
-                      background: '#fd6e6e',
+                      background: '#FD6E6E',
                       padding: '3px 7px'
                     }}
                   >
@@ -807,7 +897,7 @@ const Index = () => {
                       justifyContent: 'center',
                       columnGap: '8px',
                       borderRadius: '3px',
-                      background: '#d597ff',
+                      background: '#3D3D3D',
                       padding: '3px 7px'
                     }}
                   >
@@ -1059,7 +1149,7 @@ const Index = () => {
                             color: '#3D3D3D'
                           }}
                         >
-                          80
+                          {pollutionUnits.pm25.toFixed(1)}
                         </div>
                         <div 
                           className="text-center mt-1"
@@ -1105,7 +1195,7 @@ const Index = () => {
                             color: '#3D3D3D'
                           }}
                         >
-                          52
+                          {pollutionUnits.pm10.toFixed(1)}
                         </div>
                         <div 
                           className="text-center mt-1"
@@ -1151,7 +1241,7 @@ const Index = () => {
                             color: '#3D3D3D'
                           }}
                         >
-                          37.2
+                          {pollutionUnits.o3.toFixed(1)}
                         </div>
                         <div 
                           className="text-center mt-1"
@@ -1197,7 +1287,7 @@ const Index = () => {
                             color: '#3D3D3D'
                           }}
                         >
-                          7.6
+                          {pollutionUnits.no2.toFixed(1)}
                         </div>
                         <div 
                           className="text-center mt-1"
@@ -1243,7 +1333,7 @@ const Index = () => {
                             color: '#3D3D3D'
                           }}
                         >
-                          13
+                          {pollutionUnits.so2.toFixed(1)}
                         </div>
                         <div 
                           className="text-center mt-1"
@@ -1289,7 +1379,7 @@ const Index = () => {
                             color: '#3D3D3D'
                           }}
                         >
-                          795.3
+                          {pollutionUnits.co.toFixed(1)}
                         </div>
                         <div 
                           className="text-center mt-1"
@@ -1373,7 +1463,7 @@ const Index = () => {
                               color: '#000000'
                             }}
                           >
-                            Now
+                            {hourlyLabels[0]}
                           </div>
                           <div 
                             className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
@@ -1389,7 +1479,7 @@ const Index = () => {
                                 color: '#FFFFFF'
                               }}
                             >
-                              135
+                              {currentCityData.aqi}
                             </span>
                           </div>
                           
@@ -1408,7 +1498,7 @@ const Index = () => {
                                   color: '#3D3D3D'
                                 }}
                               >
-                                29°C
+                                {currentCityData.temperature}°C
                               </span>
                             </div>
                             
@@ -1425,7 +1515,7 @@ const Index = () => {
                                   color: '#3D3D3D'
                                 }}
                               >
-                                56%
+                                {currentCityData.humidity}%
                               </span>
                             </div>
                             
@@ -1442,7 +1532,7 @@ const Index = () => {
                                   color: '#3D3D3D'
                                 }}
                               >
-                                3.5 m/s
+                                {currentCityData.windSpeed} m/s
                               </span>
                             </div>
                           </div>
@@ -1467,7 +1557,7 @@ const Index = () => {
                               color: '#000000'
                             }}
                           >
-                            00.00
+                            {hourlyLabels[1]}
                           </div>
                           <div 
                             className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
@@ -1483,7 +1573,7 @@ const Index = () => {
                                 color: '#FFFFFF'
                               }}
                             >
-                              135
+                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 21) - 10)}
                             </span>
                           </div>
                           
@@ -1492,19 +1582,19 @@ const Index = () => {
                             {/* Temperature */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-osomnqk.svg" width="26" height="26" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>29°C</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 7) - 3)}°C</span>
                             </div>
                             
                             {/* Humidity */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>56%</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 21) - 10))}%</span>
                             </div>
                             
                             {/* Wind */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>3.5 m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (currentCityData.windSpeed + (Math.random() * 2 - 1)).toFixed(1))} m/s</span>
                             </div>
                           </div>
                         </div>
@@ -1528,7 +1618,7 @@ const Index = () => {
                               color: '#000000'
                             }}
                           >
-                            01.00
+                            {hourlyLabels[2]}
                           </div>
                           <div 
                             className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
@@ -1544,7 +1634,7 @@ const Index = () => {
                                 color: '#FFFFFF'
                               }}
                             >
-                              135
+                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 25) - 12)}
                             </span>
                           </div>
                           
@@ -1553,19 +1643,19 @@ const Index = () => {
                             {/* Temperature */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-osomnqk.svg" width="26" height="26" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>29°C</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 9) - 4)}°C</span>
                             </div>
                             
                             {/* Humidity */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>56%</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 25) - 12))}%</span>
                             </div>
                             
                             {/* Wind */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>3.5 m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (currentCityData.windSpeed + (Math.random() * 2.5 - 1.2)).toFixed(1))} m/s</span>
                             </div>
                           </div>
                         </div>
@@ -1589,7 +1679,7 @@ const Index = () => {
                               color: '#000000'
                             }}
                           >
-                            02.00
+                            {hourlyLabels[3]}
                           </div>
                           <div 
                             className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
@@ -1605,7 +1695,7 @@ const Index = () => {
                                 color: '#FFFFFF'
                               }}
                             >
-                              135
+                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 31) - 15)}
                             </span>
                           </div>
                           
@@ -1614,19 +1704,19 @@ const Index = () => {
                             {/* Temperature */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-osomnqk.svg" width="26" height="26" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>29°C</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 11) - 5)}°C</span>
                             </div>
                             
                             {/* Humidity */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>56%</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 31) - 15))}%</span>
                             </div>
                             
                             {/* Wind */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>3.5 m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (currentCityData.windSpeed + (Math.random() * 3 - 1.5)).toFixed(1))} m/s</span>
                             </div>
                           </div>
                         </div>
@@ -1650,7 +1740,7 @@ const Index = () => {
                               color: '#000000'
                             }}
                           >
-                            03.00
+                            {hourlyLabels[4]}
                           </div>
                           <div 
                             className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
@@ -1666,7 +1756,7 @@ const Index = () => {
                                 color: '#FFFFFF'
                               }}
                             >
-                              135
+                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 35) - 17)}
                             </span>
                           </div>
                           
@@ -1675,19 +1765,19 @@ const Index = () => {
                             {/* Temperature */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-osomnqk.svg" width="26" height="26" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>29°C</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 13) - 6)}°C</span>
                             </div>
                             
                             {/* Humidity */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>56%</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 35) - 17))}%</span>
                             </div>
                             
                             {/* Wind */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>3.5 m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (currentCityData.windSpeed + (Math.random() * 3.5 - 1.7)).toFixed(1))} m/s</span>
                             </div>
                           </div>
                         </div>
@@ -1711,7 +1801,7 @@ const Index = () => {
                               color: '#000000'
                             }}
                           >
-                            04.00
+                            {hourlyLabels[5]}
                           </div>
                           <div 
                             className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
@@ -1727,7 +1817,7 @@ const Index = () => {
                                 color: '#FFFFFF'
                               }}
                             >
-                              135
+                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 41) - 20)}
                             </span>
                           </div>
                           
@@ -1736,19 +1826,19 @@ const Index = () => {
                             {/* Temperature */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-osomnqk.svg" width="26" height="26" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>29°C</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 15) - 7)}°C</span>
                             </div>
                             
                             {/* Humidity */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>56%</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 41) - 20))}%</span>
                             </div>
                             
                             {/* Wind */}
                             <div className="flex flex-col items-center justify-center gap-1">
                               <img src="/.figma/image/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>3.5 m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (currentCityData.windSpeed + (Math.random() * 4 - 2)).toFixed(1))} m/s</span>
                             </div>
                           </div>
                         </div>
@@ -1812,10 +1902,10 @@ const Index = () => {
                               fontSize: '16px',
                               lineHeight: '24px',
                               color: '#000000',
-                              width: '40px'
+                              width: '60px'
                             }}
                           >
-                            Min
+                            {dailyLabels[0]}
                           </div>
                           <div 
                             className="ml-4 flex items-center justify-center rounded-[10px]"
@@ -1835,7 +1925,7 @@ const Index = () => {
                                 color: '#FFFFFF'
                               }}
                             >
-                              135
+                              {currentCityData.aqi}
                             </span>
                           </div>
                           
@@ -1854,7 +1944,7 @@ const Index = () => {
                                   color: '#3D3D3D'
                                 }}
                               >
-                                29°C
+                                {currentCityData.temperature}°C
                               </span>
                             </div>
                             
@@ -1871,7 +1961,7 @@ const Index = () => {
                                   color: '#3D3D3D'
                                 }}
                               >
-                                56%
+                                {currentCityData.humidity}%
                               </span>
                             </div>
                             
@@ -1888,7 +1978,7 @@ const Index = () => {
                                   color: '#3D3D3D'
                                 }}
                               >
-                                3.5 m/s
+                                {currentCityData.windSpeed} m/s
                               </span>
                             </div>
                           </div>
@@ -1911,10 +2001,10 @@ const Index = () => {
                               fontSize: '16px',
                               lineHeight: '24px',
                               color: '#000000',
-                              width: '40px'
+                              width: '60px'
                             }}
                           >
-                            Min
+                            {dailyLabels[1]}
                           </div>
                           <div 
                             className="ml-4 flex items-center justify-center rounded-[10px]"
@@ -1934,7 +2024,7 @@ const Index = () => {
                                 color: '#FFFFFF'
                               }}
                             >
-                              135
+                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 21) - 10)}
                             </span>
                           </div>
                           
@@ -1942,15 +2032,15 @@ const Index = () => {
                           <div className="ml-10 flex items-center gap-10">
                             <div className="flex items-center gap-2">
                               <img src="/.figma/image/meths6m4-osomnqk.svg" width="28" height="28" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>29°C</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 7) - 3)}°C</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="24.89" height="24.89" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>56%</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.min(100, Math.max(20, currentCityData.humidity + Math.floor(Math.random() * 21) - 10))}%</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <img src="/.figma/image/meths6m4-dte37nt.svg" width="28.45" height="26.67" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>3.5 m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.5, currentCityData.windSpeed + (Math.random() * 3) - 1.5).toFixed(1)} m/s</span>
                             </div>
                           </div>
                         </div>
@@ -1972,10 +2062,10 @@ const Index = () => {
                               fontSize: '16px',
                               lineHeight: '24px',
                               color: '#000000',
-                              width: '40px'
+                              width: '60px'
                             }}
                           >
-                            Min
+                            {dailyLabels[2]}
                           </div>
                           <div 
                             className="ml-4 flex items-center justify-center rounded-[10px]"
@@ -1995,7 +2085,7 @@ const Index = () => {
                                 color: '#FFFFFF'
                               }}
                             >
-                              135
+                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 31) - 15)}
                             </span>
                           </div>
                           
@@ -2003,15 +2093,15 @@ const Index = () => {
                           <div className="ml-10 flex items-center gap-10">
                             <div className="flex items-center gap-2">
                               <img src="/.figma/image/meths6m4-osomnqk.svg" width="28" height="28" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>29°C</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(12, currentCityData.temperature + Math.floor(Math.random() * 9) - 4)}°C</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="24.89" height="24.89" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>56%</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.min(100, Math.max(15, currentCityData.humidity + Math.floor(Math.random() * 25) - 12))}%</span>
                             </div>
                             <div className="flex items-center gap-2">
                               <img src="/.figma/image/meths6m4-dte37nt.svg" width="28.45" height="26.67" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>3.5 m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.3, currentCityData.windSpeed + (Math.random() * 4) - 2).toFixed(1)} m/s</span>
                             </div>
                           </div>
                         </div>
@@ -2058,7 +2148,7 @@ const Index = () => {
           width: '339.9px',
           height: '33px',
           background: '#FFFFFF',
-          border: '0.55px solid #FEF979',
+          border: '0.55px solid #B8D6FF',
           borderRadius: '5.5px',
           boxSizing: 'border-box'
         }}>
@@ -2074,7 +2164,7 @@ const Index = () => {
               padding: '2.75px 6.05px',
               width: '35.1px',
               height: '17.5px',
-              background: '#C3F1CB',
+              background: '#B2F5BE',
               borderRadius: '2.75px'
             }}>
               <span style={{
@@ -2091,7 +2181,7 @@ const Index = () => {
               padding: '2.75px 6.05px',
               width: '54.1px',
               height: '17.5px',
-              background: '#FEF979',
+              background: '#B8D6FF',
               borderRadius: '2.75px'
             }}>
               <span style={{
@@ -2142,7 +2232,7 @@ const Index = () => {
               padding: '2.75px 6.05px',
               width: '58.1px',
               height: '17.5px',
-              background: '#D597FF',
+              background: '#3D3D3D',
               borderRadius: '2.75px'
             }}>
               <span style={{

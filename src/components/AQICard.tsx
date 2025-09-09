@@ -21,7 +21,7 @@ const AQICard = ({
   windSpeed 
 }: AQICardProps) => {
   return (
-    <Card className="bg-white p-6 rounded-2xl shadow-sm overflow-hidden border border-yellow-100">
+    <Card className="bg-white p-6 rounded-2xl shadow-sm overflow-hidden border border-[#FFCA59]/20">
       {/* Location pill */}
       <div className="flex items-center mb-5">
         <div className="inline-flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1 whitespace-nowrap max-w-full">
@@ -34,8 +34,8 @@ const AQICard = ({
 
       {/* AQI value and status */}
       <div className="mb-2">
-        <div className="text-6xl font-bold text-yellow-400 leading-none">{aqi}</div>
-        <div className="text-lg font-semibold text-yellow-400 mt-1">{status}</div>
+        <div className="text-6xl font-bold text-[#FFCA59] leading-none">{aqi}</div>
+        <div className="text-lg font-semibold text-[#FFCA59] mt-1">{status}</div>
       </div>
 
       {/* Description */}
@@ -51,8 +51,8 @@ const AQICard = ({
         </div>
       </div>
 
-      {/* Footer: weather details on yellow gradient */}
-      <div className="mt-6 -mx-6 -mb-6 px-5 py-3 bg-gradient-to-b from-yellow-300 to-yellow-400 flex items-center justify-between">
+      {/* Footer: weather details on orange gradient */}
+      <div className="mt-6 -mx-6 -mb-6 px-5 py-3 bg-gradient-to-b from-[#FFCA59] to-[#FFB01F] flex items-center justify-between">
         <div className="flex items-center gap-1 text-gray-800">
           <Thermometer className="h-4 w-4" />
           <span className="text-sm font-medium">{temperature}°C</span>

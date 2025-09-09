@@ -6,61 +6,82 @@ interface PollutionUnitsProps {
 }
 
 const PollutionUnits = ({ data }: PollutionUnitsProps) => {
+  // Determine status based on pollutant values
+  const getPollutantStatus = (name: string, value: number) => {
+    // These thresholds are simplified and should be adjusted based on actual AQI standards
+    switch(name) {
+      case "PM2.5":
+        return value > 35 ? "unhealthy" : value > 12 ? "moderate" : "good";
+      case "PM10":
+        return value > 150 ? "unhealthy" : value > 54 ? "moderate" : "good";
+      case "O₃":
+        return value > 70 ? "unhealthy" : value > 54 ? "moderate" : "good";
+      case "NO₂":
+        return value > 100 ? "unhealthy" : value > 53 ? "moderate" : "good";
+      case "SO₂":
+        return value > 75 ? "unhealthy" : value > 35 ? "moderate" : "good";
+      case "CO":
+        return value > 9 ? "unhealthy" : value > 4.4 ? "moderate" : "good";
+      default:
+        return "good";
+    }
+  };
+  
   const pollutants = [
     {
       name: "PM2.5",
-      value: 80,
+      value: data.pm25,
       unit: "μg/m³",
       description: "Fine particles (≤ 2.5 μm)",
-      status: "unhealthy"
+      status: getPollutantStatus("PM2.5", data.pm25)
     },
     {
       name: "PM10",
-      value: 52,
+      value: data.pm10,
       unit: "μg/m³", 
       description: "Coarse particles (≤ 10 μm)",
-      status: "good"
+      status: getPollutantStatus("PM10", data.pm10)
     },
     {
       name: "O₃",
-      value: 37.2,
+      value: data.o3,
       unit: "μg/m³",
       description: "Ozone",
-      status: "good"
+      status: getPollutantStatus("O₃", data.o3)
     },
     {
       name: "NO₂",
-      value: 7.6,
+      value: data.no2,
       unit: "μg/m³",
       description: "Nitrogen Dioxide",
-      status: "good"
+      status: getPollutantStatus("NO₂", data.no2)
     },
     {
       name: "SO₂",
-      value: 13,
+      value: data.so2,
       unit: "μg/m³",
       description: "Sulphur Dioxide",
-      status: "good"
+      status: getPollutantStatus("SO₂", data.so2)
     },
     {
       name: "CO",
-      value: 795.3,
+      value: data.co,
       unit: "μg/m³",
       description: "Carbon Monoxide",
-      status: "good"
+      status: getPollutantStatus("CO", data.co)
     },
   ];
 
   const getStatusDot = (status: string) => {
-    if (status === "unhealthy") return "bg-red-500";
-    if (status === "moderate") return "bg-yellow-500";
-    return "bg-green-500";
+    if (status === "unhealthy") return "bg-[#FD6E6E]";
+    if (status === "moderate") return "bg-[#FFCA59]";
+    return "bg-[#B2F5BE]";
   };
 
   const getValueColor = (status: string) => {
-    if (status === "unhealthy") return "text-red-500";
-    if (status === "moderate") return "text-yellow-500";
-    return "text-green-500";
+    if (status === "unhealthy") return "text-[#FD6E6E]";
+    if (status === "moderate") return "text-[#FFCA59]";
+    return "text-[#B2F5BE]";
   };
 
   return (

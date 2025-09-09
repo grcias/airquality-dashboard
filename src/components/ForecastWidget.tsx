@@ -40,12 +40,12 @@ const ForecastWidget = ({ title, type, data, icon }: ForecastWidgetProps) => {
   );
 
   const getAQIColor = (aqi: number) => {
-    if (aqi <= 50) return "bg-green-500";
-    if (aqi <= 100) return "bg-yellow-500";
-    if (aqi <= 150) return "bg-orange-500";
-    if (aqi <= 200) return "bg-red-500";
-    if (aqi <= 300) return "bg-purple-500";
-    return "bg-red-800";
+    if (aqi <= 50) return "bg-[#B2F5BE]";
+    if (aqi <= 100) return "bg-[#B8D6FF]";
+    if (aqi <= 150) return "bg-[#FFCA59]";
+    if (aqi <= 200) return "bg-[#FFCA59]";
+    if (aqi <= 300) return "bg-[#FD6E6E]";
+    return "bg-[#3D3D3D]";
   };
 
   const bgColor = type === "hourly" ? "bg-hourly-forecast" : "bg-daily-forecast";

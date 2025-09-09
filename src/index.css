@@ -58,10 +58,10 @@ All colors MUST be HSL.
     --map-area-foreground: 220 15% 15%;
     
     --status-good: 142 76% 73%;
-    --status-moderate: 48 96% 89%;
-    --status-unhealthy: 25 95% 84%;
-    --status-very-unhealthy: 0 86% 78%;
-    --status-hazardous: 316 73% 87%;
+    --status-moderate: 214 100% 85%;
+    --status-unhealthy: 39 100% 67%;
+    --status-very-unhealthy: 0 96% 71%;
+    --status-hazardous: 0 0% 24%;
 
     /* Gradients */
     --gradient-map: linear-gradient(135deg, hsl(var(--map-primary)), hsl(var(--map-secondary)));

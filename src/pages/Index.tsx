@@ -2119,7 +2119,7 @@ const Index = () => {
 
       {/* History Section */}
       <section id="history-section" className="relative mt-8 px-4 md:px-6 lg:px-8 w-full" style={{ backgroundColor: '#ECFFBD', height: '604px', overflow: 'hidden' }}>
-        <div className="absolute max-w-[calc(100%-400px)]" style={{ left: '20px', top: '53px', right: '400px' }}>
+        <div className="absolute max-w-[calc(100%-400px)]" style={{ left: '60px', top: '53px', right: '400px' }}>
           <h2 className="text-3xl font-bold" style={{
             fontFamily: 'Poppins',
             fontWeight: 700,
@@ -2143,7 +2143,7 @@ const Index = () => {
         
         {/* Legend */}
         <div className="absolute max-w-[339.9px]" style={{
-          right: '20px',
+          right: '50px',
           top: '40px',
           width: '339.9px',
           height: '33px',
@@ -2247,8 +2247,8 @@ const Index = () => {
         </div>
 
         {/* Bar Graph */}
-        <div className="absolute flex items-end justify-between w-full max-w-[calc(100%-40px)]" style={{
-          left: '20px',
+        <div className="absolute flex items-end justify-between w-full max-w-[calc(100%-80px)]" style={{
+          left: '60px',
           right: '20px',
           top: '220px',
           height: '307px',
@@ -2256,218 +2256,218 @@ const Index = () => {
         }}>
           {/* Bar 1 - Very Unhealthy (Red) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '240px',
             background: '#FD6E6E',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 2 - Unhealthy (Yellow-orange) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '162px',
             background: '#FFCA59',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 3 - Hazardous (Dark gray/black) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '279px',
             background: '#3D3D3D',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 4 - Very Unhealthy (Red) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '240px',
             background: '#FD6E6E',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 5 - Very Unhealthy (Red) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '225px',
             background: '#FD6E6E',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 6 - Very Unhealthy (Red) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '263px',
             background: '#FD6E6E',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 7 - Unhealthy (Yellow-orange) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '173px',
             background: '#FFCA59',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 8 - Moderate (Light blue) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '115px',
             background: '#B8D6FF',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 9 - Very Unhealthy (Red) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '240px',
             background: '#FD6E6E',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 10 - Unhealthy (Yellow-orange) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '181px',
             background: '#FFCA59',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 11 - Hazardous (Dark gray/black) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '270px',
             background: '#3D3D3D',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 12 - Hazardous (Dark gray/black) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '292px',
             background: '#3D3D3D',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 13 - Very Unhealthy (Red) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '240px',
             background: '#FD6E6E',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 14 - Unhealthy (Yellow-orange) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '209px',
             background: '#FFCA59',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 15 - Very Unhealthy (Red) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '263px',
             background: '#FD6E6E',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 16 - Moderate (Light blue) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '173px',
             background: '#B8D6FF',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 17 - Moderate (Light blue) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '125px',
             background: '#B8D6FF',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 18 - Hazardous (Dark gray/black) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '285px',
             background: '#3D3D3D',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 19 - Unhealthy (Yellow-orange) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '240px',
             background: '#FFCA59',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 20 - Unhealthy (Yellow-orange) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '240px',
             background: '#FFCA59',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 21 - Unhealthy (Yellow-orange) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '213px',
             background: '#FFCA59',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 22 - Good (Light green) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '42px',
             background: '#C3F1CB',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 23 - Moderate (Light blue) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '98px',
             background: '#B8D6FF',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
           
           {/* Bar 24 - Moderate (Light blue) */}
           <div className="flex-shrink-0" style={{
-            width: '32px',
+            width: '40px',
             height: '190px',
             background: '#B8D6FF',
             borderRadius: '4px',
-            marginRight: '6px'
+            marginRight: '12px'
           }}></div>
         </div>
              </section>

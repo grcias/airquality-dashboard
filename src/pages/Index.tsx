@@ -494,7 +494,7 @@ const Index = () => {
               }}
             />
 
-            <main className="container mx-auto px-6 py-8 relative" style={{ zIndex: 10 }}>
+            <main className="container mx-auto px-4 md:px-6 py-8 relative max-w-full" style={{ zIndex: 10, overflow: 'hidden' }}>
               {/* Header Section */}
               <div className="mb-6 text-left">
                 <h1 className="text-3xl font-bold text-white mb-2">Air Quality Status</h1>
@@ -504,12 +504,12 @@ const Index = () => {
               </div>
 
           {/* Main Dashboard Layout */}
-          <div className="relative overflow-hidden" style={{ marginTop: '45px' }}>
+          <div className="relative overflow-hidden max-w-full" style={{ marginTop: '45px' }}>
 
             
                         {/* Full-width Map Container - Rectangle 58 from Figma */}
                          {/* Outer wrapper: rounded + bg-white */}
-             <div className="relative rounded-2xl bg-white max-w-[1440px] mx-auto" style={{
+             <div className="relative rounded-2xl bg-white w-full max-w-full mx-auto" style={{
                zIndex: 10
              }}>
               {/* Inner wrapper: rounded + overflow-hidden untuk clip map */}
@@ -547,7 +547,7 @@ const Index = () => {
             {/* Overlay Elements - Outside of MapContainer */}
             {/* Floating AQI Card - Top Right */}
             {/* Rectangle 9 - Yellow Gradient Background with Shadow */}
-            <div className="absolute top-4 right-4" style={{ zIndex: 100, width: '341px', height: '370px' }}>
+            <div className="absolute top-4 right-4 max-w-[calc(100%-2rem)]" style={{ zIndex: 100, width: '341px', height: '370px' }}>
               <div 
                 className="rounded-xl shadow-lg" 
                 style={{
@@ -755,14 +755,14 @@ const Index = () => {
 
             
             {/* AQI Legend - Bottom Center - Rectangle 11 & Frame 18 */}
-            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2" style={{ zIndex: 100 }}>
+            <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 max-w-[calc(100%-2rem)]" style={{ zIndex: 100 }}>
               {/* Rectangle 11 - White container with yellow border */}
               <div 
+                className="w-full max-w-[413px]"
                 style={{
                   border: '1px solid #B8D6FF',
                   borderRadius: '7px',
                   background: '#ffffff',
-                  width: '413px',
                   height: '40px',
                   display: 'flex',
                   alignItems: 'center',
@@ -772,11 +772,11 @@ const Index = () => {
               >
                 {/* Frame 18 - Category badges container */}
                 <div 
+                  className="w-full"
                   style={{
                     display: 'inline-flex',
                     alignItems: 'center',
                     columnGap: '10px',
-                    width: '382px',
                     height: '22px'
                   }}
                 >
@@ -1077,9 +1077,9 @@ const Index = () => {
 
           {/* Air Pollutants Section - sesuai referensi Figma */}
           <section className="relative pt-36 pb-16" style={{ backgroundColor: '#FAFDFF' }}>
-            <div className="container mx-auto px-6">
+            <div className="container mx-auto px-4 md:px-6 max-w-full">
               {/* Frame 26 - Air Pollutants Container */}
-              <div className="relative mx-auto flex items-center justify-center" style={{ maxWidth: '1280px', minHeight: '382px' }}>
+              <div className="relative mx-auto flex items-center justify-center w-full" style={{ maxWidth: '1280px', minHeight: '382px' }}>
                 {/* Rectangle 12 - Background hijau */}
                 <div 
                   className="absolute inset-0 rounded-[50px]"
@@ -1404,7 +1404,7 @@ const Index = () => {
 
           {/* Forecasts Section - sesuai referensi Figma */}
           <section id="forecast-section" className="py-8" style={{ backgroundColor: '#FAFDFF' }}>
-            <div className="container mx-auto px-6">
+            <div className="container mx-auto px-4 md:px-6 max-w-full">
               <div className="grid grid-cols-1 xl:grid-cols-2 gap-6 mb-8">
                 {/* Hourly Forecast - Rectangle 18 */}
                 <div className="relative">
@@ -2118,8 +2118,8 @@ const Index = () => {
       )}
 
       {/* History Section */}
-      <section id="history-section" className="relative mt-8" style={{ backgroundColor: '#ECFFBD', height: '604px' }}>
-        <div className="absolute" style={{ left: '97px', top: '53px' }}>
+      <section id="history-section" className="relative mt-8 px-4 md:px-6 lg:px-8 w-full" style={{ backgroundColor: '#ECFFBD', height: '604px', overflow: 'hidden' }}>
+        <div className="absolute max-w-[calc(100%-400px)]" style={{ left: '20px', top: '53px', right: '400px' }}>
           <h2 className="text-3xl font-bold" style={{
             fontFamily: 'Poppins',
             fontWeight: 700,
@@ -2142,8 +2142,8 @@ const Index = () => {
         </div>
         
         {/* Legend */}
-        <div className="absolute" style={{
-          left: '930px',
+        <div className="absolute max-w-[339.9px]" style={{
+          right: '20px',
           top: '40px',
           width: '339.9px',
           height: '33px',
@@ -2244,6 +2244,231 @@ const Index = () => {
               }}>Hazardous</span>
             </div>
           </div>
+        </div>
+
+        {/* Bar Graph */}
+        <div className="absolute flex items-end justify-between w-full max-w-[calc(100%-40px)]" style={{
+          left: '20px',
+          right: '20px',
+          top: '220px',
+          height: '307px',
+          paddingRight: '400px' // Space for legend
+        }}>
+          {/* Bar 1 - Very Unhealthy (Red) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '240px',
+            background: '#FD6E6E',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 2 - Unhealthy (Yellow-orange) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '162px',
+            background: '#FFCA59',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 3 - Hazardous (Dark gray/black) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '279px',
+            background: '#3D3D3D',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 4 - Very Unhealthy (Red) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '240px',
+            background: '#FD6E6E',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 5 - Very Unhealthy (Red) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '225px',
+            background: '#FD6E6E',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 6 - Very Unhealthy (Red) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '263px',
+            background: '#FD6E6E',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 7 - Unhealthy (Yellow-orange) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '173px',
+            background: '#FFCA59',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 8 - Moderate (Light blue) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '115px',
+            background: '#B8D6FF',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 9 - Very Unhealthy (Red) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '240px',
+            background: '#FD6E6E',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 10 - Unhealthy (Yellow-orange) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '181px',
+            background: '#FFCA59',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 11 - Hazardous (Dark gray/black) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '270px',
+            background: '#3D3D3D',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 12 - Hazardous (Dark gray/black) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '292px',
+            background: '#3D3D3D',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 13 - Very Unhealthy (Red) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '240px',
+            background: '#FD6E6E',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 14 - Unhealthy (Yellow-orange) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '209px',
+            background: '#FFCA59',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 15 - Very Unhealthy (Red) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '263px',
+            background: '#FD6E6E',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 16 - Moderate (Light blue) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '173px',
+            background: '#B8D6FF',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 17 - Moderate (Light blue) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '125px',
+            background: '#B8D6FF',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 18 - Hazardous (Dark gray/black) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '285px',
+            background: '#3D3D3D',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 19 - Unhealthy (Yellow-orange) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '240px',
+            background: '#FFCA59',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 20 - Unhealthy (Yellow-orange) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '240px',
+            background: '#FFCA59',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 21 - Unhealthy (Yellow-orange) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '213px',
+            background: '#FFCA59',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 22 - Good (Light green) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '42px',
+            background: '#C3F1CB',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 23 - Moderate (Light blue) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '98px',
+            background: '#B8D6FF',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
+          
+          {/* Bar 24 - Moderate (Light blue) */}
+          <div className="flex-shrink-0" style={{
+            width: '32px',
+            height: '190px',
+            background: '#B8D6FF',
+            borderRadius: '4px',
+            marginRight: '6px'
+          }}></div>
         </div>
              </section>
 

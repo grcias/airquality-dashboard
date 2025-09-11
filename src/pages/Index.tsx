@@ -2118,7 +2118,7 @@ const Index = () => {
       )}
 
       {/* History Section */}
-      <section id="history-section" className="relative mt-8 px-4 md:px-6 lg:px-8 w-full" style={{ backgroundColor: '#ECFFBD', height: '604px', overflow: 'hidden' }}>
+      <section id="history-section" className="relative mt-8 px-4 md:px-6 lg:px-8 w-full" style={{ backgroundColor: '#ECFFBD', height: '580px', overflow: 'hidden' }}>
         <div className="absolute max-w-[calc(100%-400px)]" style={{ left: '60px', top: '53px', right: '400px' }}>
           <h2 className="text-3xl font-bold" style={{
             fontFamily: 'Poppins',
@@ -2250,7 +2250,7 @@ const Index = () => {
         <div className="absolute flex items-end justify-between w-full max-w-[calc(100%-80px)]" style={{
           left: '60px',
           right: '20px',
-          top: '220px',
+          top: '180px',
           height: '307px',
           paddingRight: '400px' // Space for legend
         }}>
@@ -2259,7 +2259,6 @@ const Index = () => {
             width: '40px',
             height: '240px',
             background: '#FD6E6E',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2268,7 +2267,6 @@ const Index = () => {
             width: '40px',
             height: '162px',
             background: '#FFCA59',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2277,7 +2275,6 @@ const Index = () => {
             width: '40px',
             height: '279px',
             background: '#3D3D3D',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2286,7 +2283,6 @@ const Index = () => {
             width: '40px',
             height: '240px',
             background: '#FD6E6E',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2295,7 +2291,6 @@ const Index = () => {
             width: '40px',
             height: '225px',
             background: '#FD6E6E',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2304,7 +2299,6 @@ const Index = () => {
             width: '40px',
             height: '263px',
             background: '#FD6E6E',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2313,7 +2307,6 @@ const Index = () => {
             width: '40px',
             height: '173px',
             background: '#FFCA59',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2322,7 +2315,6 @@ const Index = () => {
             width: '40px',
             height: '115px',
             background: '#B8D6FF',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2331,7 +2323,6 @@ const Index = () => {
             width: '40px',
             height: '240px',
             background: '#FD6E6E',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2340,7 +2331,6 @@ const Index = () => {
             width: '40px',
             height: '181px',
             background: '#FFCA59',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2349,7 +2339,6 @@ const Index = () => {
             width: '40px',
             height: '270px',
             background: '#3D3D3D',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2358,7 +2347,6 @@ const Index = () => {
             width: '40px',
             height: '292px',
             background: '#3D3D3D',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2367,7 +2355,6 @@ const Index = () => {
             width: '40px',
             height: '240px',
             background: '#FD6E6E',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2376,7 +2363,6 @@ const Index = () => {
             width: '40px',
             height: '209px',
             background: '#FFCA59',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2385,7 +2371,6 @@ const Index = () => {
             width: '40px',
             height: '263px',
             background: '#FD6E6E',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2394,7 +2379,6 @@ const Index = () => {
             width: '40px',
             height: '173px',
             background: '#B8D6FF',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2403,7 +2387,6 @@ const Index = () => {
             width: '40px',
             height: '125px',
             background: '#B8D6FF',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2412,7 +2395,6 @@ const Index = () => {
             width: '40px',
             height: '285px',
             background: '#3D3D3D',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2421,7 +2403,6 @@ const Index = () => {
             width: '40px',
             height: '240px',
             background: '#FFCA59',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2430,7 +2411,6 @@ const Index = () => {
             width: '40px',
             height: '240px',
             background: '#FFCA59',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2439,7 +2419,6 @@ const Index = () => {
             width: '40px',
             height: '213px',
             background: '#FFCA59',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2448,7 +2427,6 @@ const Index = () => {
             width: '40px',
             height: '42px',
             background: '#C3F1CB',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2457,7 +2435,6 @@ const Index = () => {
             width: '40px',
             height: '98px',
             background: '#B8D6FF',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
           
@@ -2466,7 +2443,6 @@ const Index = () => {
             width: '40px',
             height: '190px',
             background: '#B8D6FF',
-            borderRadius: '4px',
             marginRight: '12px'
           }}></div>
         </div>

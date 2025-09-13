@@ -87,9 +87,22 @@ const Stations = () => {
     
     setIsSearching(true);
     try {
-      const cityData = await airQualityAPI.searchCity(searchQuery);
-      setCurrentCityData(cityData);
-      localStorage.setItem('lastSearchedCity', JSON.stringify(cityData));
+      // Mock data with proper structure for Stations page
+      const mockData: CityData = {
+        name: searchQuery,
+        country: searchQuery === 'Jakarta' ? 'Indonesia' : 'Unknown',
+        lat: searchQuery === 'Jakarta' ? -6.223099 : 0,
+        lng: searchQuery === 'Jakarta' ? 106.791597 : 0,
+        aqi: 85,
+        category: "Moderate",
+        mainPollutant: "PM2.5",
+        mainPollutantValue: 53,
+        temperature: 29,
+        humidity: 56,
+        windSpeed: 1.1
+      };
+      setCurrentCityData(mockData);
+      localStorage.setItem('lastSearchedCity', JSON.stringify(mockData));
     } catch (error) {
       console.error('Search failed:', error);
     } finally {
@@ -118,7 +131,6 @@ const Stations = () => {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onSearch={handleSearch}
-        isSearching={isSearching}
       />
       
       {/* Soft drop shadow below navbar */}

@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '@/components/LeafletFix.css';
@@ -67,14 +66,6 @@ interface CityData {
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentCityData, setCurrentCityData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchParams] = useSearchParams();
-  const [averageAQI, setAverageAQI] = useState(0);
-  const [currentCityData, setCurrentCityData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchParams] = useSearchParams();
-  const [averageAQI, setAverageAQI] = useState(0);
 
   // Function to generate hourly time labels starting from current time
   const generateHourlyLabels = () => {
@@ -166,65 +157,10 @@ const Index = () => {
   };
 
   useEffect(() => {
-    const cityFromUrl = searchParams.get('city') || 'Jakarta';
-    setSearchQuery(cityFromUrl);
-    
-    const lastCity = localStorage.getItem('lastSearchedCity');
-    if (lastCity) {
-      try {
-        const cityData = JSON.parse(lastCity);
-        if (cityData.city === cityFromUrl) {
-          setCurrentCityData(cityData);
-          setAverageAQI(cityData.aqi);
-          return;
-        }
-      } catch (error) {
-        console.error('Error parsing last city data:', error);
-      }
-    }
-    loadAirQualityData(cityFromUrl);
-  }, [searchParams]);
+    loadAirQualityData();
+  }, []);
 
-  const loadAirQualityData = async (cityName = 'Jakarta') => {
-    setIsLoading(true);
-    try {
-      // Fallback to mock data with proper structure based on city
-      const mockData = {
-        city: cityName,
-        country: cityName === 'Jakarta' ? 'Indonesia' : 'Unknown',
-        aqi: 85,
-        category: "Moderate",
-        description: "Air quality is acceptable for most people",
-        mainPollutant: "PM2.5",
-        temperature: 32,
-        humidity: 65,
-        windSpeed: 3.5,
-        lat: cityName === 'Jakarta' ? -6.2088 : 0,
-        lng: cityName === 'Jakarta' ? 106.8456 : 0
-      };
-      setCurrentCityData(mockData);
-      localStorage.setItem('lastSearchedCity', JSON.stringify(mockData));
-    } catch (error) {
-      console.error('Error loading air quality data:', error);
-      // Set default data on error
-      const defaultData = {
-        city: "Jakarta",
-        country: "Indonesia",
-        aqi: 85,
-        category: "Moderate",
-        description: "Air quality is acceptable for most people",
-        mainPollutant: "PM2.5",
-        temperature: 32,
-        humidity: 65,
-        windSpeed: 3.5,
-        lat: -6.2088,
-        lng: 106.8456
-      };
-      setCurrentCityData(defaultData);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const loadAirQualityData = async () => {
     try {
       setIsLoading(true);
       

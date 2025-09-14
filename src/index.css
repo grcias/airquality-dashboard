@@ -39,8 +39,8 @@ All colors MUST be HSL.
     --radius: 1rem;
 
     /* Air Quality Dashboard Pastel Colors */
-    --nav-active: 0 76% 65%;
-    --nav-active-foreground: 0 0% 98%;
+    --nav-active: 0 96% 71%;
+    --nav-active-foreground: 0 0% 100%;
     
     --pollutants-bg: 0 76% 65%;
     --pollutants-foreground: 0 0% 98%;

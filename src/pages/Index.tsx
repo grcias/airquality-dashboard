@@ -66,6 +66,20 @@ interface CityData {
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isSearching, setIsSearching] = useState(false);
+  const [city, setCity] = useState("Jakarta");
+
+  // Parse URL parameters to get city and fetch data
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const cityParam = urlParams.get('city');
+    if (cityParam) {
+      setCity(cityParam);
+      setSearchQuery(cityParam);
+      // Automatically fetch data for the city from URL parameter
+      handleSearchForCity(cityParam);
+    }
+  }, []);
 
   // Function to generate hourly time labels starting from current time
   const generateHourlyLabels = () => {
@@ -165,7 +179,7 @@ const Index = () => {
       setIsLoading(true);
       
       // Fetch pollutant data from webhook
-      const response = await fetch('https://hook.eu2.make.com/a5dlaskv5a2gkmewkf9tkuwfi3pcrilj', {
+      const response = await fetch('https://hook.us2.make.com/w1ucmkkh65mhnvu2tagq6ixet2os3sye', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -243,17 +257,20 @@ const Index = () => {
 
 
 
-  const handleSearch = async () => {
-    if (!searchQuery.trim()) return;
+  const handleSearchForCity = async (cityName: string) => {
+    if (!cityName.trim()) return;
+    
+    setIsSearching(true);
+    
     try {
-      console.log(`Fetching data for city: ${searchQuery}`);
+      console.log(`Fetching data for city: ${cityName}`);
       
-      const response = await fetch('https://hook.eu2.make.com/a5dlaskv5a2gkmewkf9tkuwfi3pcrilj', {
+      const response = await fetch('https://hook.us2.make.com/w1ucmkkh65mhnvu2tagq6ixet2os3sye', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ city: searchQuery })
+        body: JSON.stringify({ city: cityName })
       });
 
       if (!response.ok) {
@@ -314,15 +331,24 @@ const Index = () => {
       // Update state
       setCurrentCityData(cityData);
       setAverageAQI(cityData.aqi);
+      setCity(cityData.name);
 
       // Save to localStorage
       localStorage.setItem('lastSearchedCity', JSON.stringify(cityData));
-      setSearchQuery("");
       
     } catch (error) {
       console.error('Search failed:', error);
       alert('Failed to fetch city data. Please try another city name.');
+    } finally {
+      setIsSearching(false);
     }
+  };
+
+  const handleSearch = async () => {
+    if (!searchQuery.trim()) return;
+    
+    await handleSearchForCity(searchQuery);
+    setSearchQuery("");
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -360,8 +386,8 @@ const Index = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+        <div className="text-center space-y-4 ml-8">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
           <p className="text-xl text-muted-foreground">
             Loading air quality data...
           </p>
@@ -378,6 +404,7 @@ const Index = () => {
         searchQuery={searchQuery}
         onSearchChange={setSearchQuery}
         onSearch={handleSearch}
+        isSearching={isSearching}
       />
       
       {/* Soft drop shadow below navbar */}
@@ -490,6 +517,7 @@ const Index = () => {
                 <p className="text-lg text-white/90">
                   Air Quality Index (AQI) and PM2.5 pollution in {currentCityData.name}
                 </p>
+
               </div>
 
           {/* Main Dashboard Layout */}
@@ -1064,6 +1092,201 @@ const Index = () => {
             </div>
           </section>
 
+          {/* Recommendation Section */}
+          <section className="relative pt-24 pb-16" style={{ backgroundColor: '#FAFDFF' }}>
+            <div className="container mx-auto px-4 md:px-6 max-w-full">
+              {/* Header */}
+              <div className="flex justify-center mb-12">
+                <div 
+                  className="relative flex items-center justify-center"
+                  style={{
+                    width: '1300px',
+                    height: '83px',
+                    background: '#E9FFB1',
+                    borderRadius: '30px'
+                  }}
+                >
+                  <h2 
+                    className="text-center"
+                    style={{
+                      fontFamily: 'Poppins',
+                      fontStyle: 'normal',
+                      fontWeight: 800,
+                      fontSize: '32px',
+                      lineHeight: '48px',
+                      color: '#FFFFFF'
+                    }}
+                  >
+                    Recommendation for you
+                  </h2>
+                </div>
+              </div>
+
+              {/* Main Content Layout */}
+              <div className="relative max-w-7xl mx-auto">
+                <div className="grid grid-cols-12 gap-8 items-start">
+                  {/* Left Side - Illustration and Chat Bubble */}
+                  <div className="col-span-5 relative">
+                    {/* Main Sun Illustration */}
+                    <div className="relative mb-8">
+                      <div 
+                        style={{
+                          position: 'absolute',
+                          width: '550px',
+                          height: '500px',
+                          left: '-60px',
+                          top: '0px'
+                        }}
+                      >
+                        {/* Matahari */}
+                        <img
+                          src="/.figma/image/mfjryh5n-08thd59.png"
+                          className="w-full h-full object-contain"
+                          alt="matahari"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Chat Bubble - positioned to overlap slightly with illustration */}
+                    <div className="relative" style={{ marginTop: '400px', marginLeft: '246px' }}>
+                      <div 
+                        className="bg-white rounded-2xl p-6 shadow-lg relative"
+                        style={{
+                          maxWidth: '380px',
+                          boxShadow: '0px 4px 11.4px rgba(0, 0, 0, 0.15)'
+                        }}
+                      >
+                        {/* Speech Bubble Tail */}
+                        <div 
+                          className="absolute -left-3 top-6 w-0 h-0"
+                          style={{
+                            borderTop: '15px solid transparent',
+                            borderBottom: '15px solid transparent',
+                            borderRight: '20px solid white'
+                          }}
+                        ></div>
+                        
+                        <p 
+                          style={{
+                            fontFamily: 'Poppins',
+                            fontStyle: 'normal',
+                            fontWeight: 600,
+                            fontSize: '25px',
+                            lineHeight: '38px',
+                            color: '#3D3D3D'
+                          }}
+                        >
+                          Hey, air quality is unhealthy now. Better avoid outdoor activities
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right Side - Fun Fact and Challenge Cards */}
+                  <div className="col-span-7 space-y-8">
+                    {/* Fun Fact Card */}
+                    <div 
+                      className="bg-white p-8 rounded-3xl shadow-lg"
+                      style={{
+                        background: '#ECFFBD',
+                        borderRadius: '50px',
+                        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                        minHeight: '249px'
+                      }}
+                    >
+                      <div className="flex items-start gap-6">
+                        <div className="flex-shrink-0">
+                          <img 
+                            src="./.figma/image/mfjuevl0-8a68vyi.png" 
+                            alt="Desain tanpa judul (1) 2"
+                            style={{ width: '189px', height: '215px' }}
+                          />
+                        </div>
+                        <div className="flex-1">
+                          <h3 
+                            className="mb-4"
+                            style={{
+                              fontFamily: 'Poppins',
+                              fontStyle: 'normal',
+                              fontWeight: 700,
+                              fontSize: '35px',
+                              lineHeight: '52px',
+                              color: '#000000'
+                            }}
+                          >
+                            Fun Fact
+                          </h3>
+                          <p 
+                            style={{
+                              fontFamily: 'Poppins',
+                              fontStyle: 'normal',
+                              fontWeight: 500,
+                              fontSize: '23px',
+                              lineHeight: '34px',
+                              color: '#000000',
+                              textAlign: 'justify'
+                            }}
+                          >
+                            Did you know? 🚴 Cycling in the morning when AQI is under 100 is much safer for your lungs.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Challenge Card */}
+                    <div 
+                      className="bg-white p-8 rounded-3xl shadow-lg"
+                      style={{
+                        background: '#ECFFBD',
+                        borderRadius: '50px',
+                        boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.15)',
+                        minHeight: '249px'
+                      }}
+                    >
+                      <div className="flex items-start gap-6">
+                        <div className="flex-1">
+                          <h3 
+                            className="mb-4"
+                            style={{
+                              fontFamily: 'Poppins',
+                              fontStyle: 'normal',
+                              fontWeight: 700,
+                              fontSize: '35px',
+                              lineHeight: '52px',
+                              color: '#000000'
+                            }}
+                          >
+                            Challenge
+                          </h3>
+                          <p 
+                            style={{
+                              fontFamily: 'Poppins',
+                              fontStyle: 'normal',
+                              fontWeight: 500,
+                              fontSize: '23px',
+                              lineHeight: '34px',
+                              color: '#000000',
+                              textAlign: 'justify'
+                            }}
+                          >
+                            🚶 Take 5000 steps indoors today to avoid outdoor pollution. Can you do it?
+                          </p>
+                        </div>
+                        <div className="flex-shrink-0">
+                          <img 
+                            src="./.figma/image/mfjuly73-7lfjv62.png" 
+                            alt="Desain tanpa judul (2) 1"
+                            style={{ width: '253px', height: '253px' }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
           {/* Air Pollutants Section - sesuai referensi Figma */}
           <section className="relative pt-36 pb-16" style={{ backgroundColor: '#FAFDFF' }}>
             <div className="container mx-auto px-4 md:px-6 max-w-full">
@@ -1073,7 +1296,7 @@ const Index = () => {
                 <div 
                   className="absolute inset-0 rounded-[50px]"
                   style={{
-                    background: '#ECFFBD',
+                    background: '#8DB2FF',
                     width: '100%',
                     height: '382px'
                   }}
@@ -1134,21 +1357,22 @@ const Index = () => {
                             fontStyle: 'normal',
                             fontWeight: 600,
                             fontSize: '64px',
-                            lineHeight: '96px',
+                            lineHeight: '64px',
                             color: '#3D3D3D'
                           }}
                         >
                           {pollutionUnits.pm25.toFixed(1)}
                         </div>
                         <div 
-                          className="text-center mt-1"
+                          className="text-center"
                           style={{
                             fontFamily: 'Poppins',
                             fontStyle: 'normal',
                             fontWeight: 500,
                             fontSize: '15px',
-                            lineHeight: '22px',
-                            color: '#3D3D3D'
+                            lineHeight: '15px',
+                            color: '#3D3D3D',
+                            marginTop: '4px'
                           }}
                         >
                           μm/ m<sup style={{ fontFamily: 'Poppins, sans-serif', fontSize: '10px', fontWeight: 500, color: '#3D3D3D' }}>3</sup>
@@ -1180,21 +1404,22 @@ const Index = () => {
                             fontStyle: 'normal',
                             fontWeight: 600,
                             fontSize: '64px',
-                            lineHeight: '96px',
+                            lineHeight: '64px',
                             color: '#3D3D3D'
                           }}
                         >
                           {pollutionUnits.pm10.toFixed(1)}
                         </div>
                         <div 
-                          className="text-center mt-1"
+                          className="text-center"
                           style={{
                             fontFamily: 'Poppins',
                             fontStyle: 'normal',
                             fontWeight: 500,
                             fontSize: '15px',
-                            lineHeight: '22px',
-                            color: '#3D3D3D'
+                            lineHeight: '15px',
+                            color: '#3D3D3D',
+                            marginTop: '4px'
                           }}
                         >
                           μm/ m<sup style={{ fontFamily: 'Poppins, sans-serif', fontSize: '10px', fontWeight: 500, color: '#3D3D3D' }}>3</sup>
@@ -1226,21 +1451,22 @@ const Index = () => {
                             fontStyle: 'normal',
                             fontWeight: 600,
                             fontSize: '64px',
-                            lineHeight: '96px',
+                            lineHeight: '64px',
                             color: '#3D3D3D'
                           }}
                         >
                           {pollutionUnits.o3.toFixed(1)}
                         </div>
                         <div 
-                          className="text-center mt-1"
+                          className="text-center"
                           style={{
                             fontFamily: 'Poppins',
                             fontStyle: 'normal',
                             fontWeight: 500,
                             fontSize: '15px',
-                            lineHeight: '22px',
-                            color: '#3D3D3D'
+                            lineHeight: '15px',
+                            color: '#3D3D3D',
+                            marginTop: '4px'
                           }}
                         >
                           μm/ m<sup style={{ fontFamily: 'Poppins, sans-serif', fontSize: '10px', fontWeight: 500, color: '#3D3D3D' }}>3</sup>
@@ -1272,21 +1498,22 @@ const Index = () => {
                             fontStyle: 'normal',
                             fontWeight: 600,
                             fontSize: '64px',
-                            lineHeight: '96px',
+                            lineHeight: '64px',
                             color: '#3D3D3D'
                           }}
                         >
                           {pollutionUnits.no2.toFixed(1)}
                         </div>
                         <div 
-                          className="text-center mt-1"
+                          className="text-center"
                           style={{
                             fontFamily: 'Poppins',
                             fontStyle: 'normal',
                             fontWeight: 500,
                             fontSize: '15px',
-                            lineHeight: '22px',
-                            color: '#3D3D3D'
+                            lineHeight: '15px',
+                            color: '#3D3D3D',
+                            marginTop: '4px'
                           }}
                         >
                           μm/ m<sup style={{ fontFamily: 'Poppins, sans-serif', fontSize: '10px', fontWeight: 500, color: '#3D3D3D' }}>3</sup>
@@ -1318,21 +1545,22 @@ const Index = () => {
                             fontStyle: 'normal',
                             fontWeight: 600,
                             fontSize: '64px',
-                            lineHeight: '96px',
+                            lineHeight: '64px',
                             color: '#3D3D3D'
                           }}
                         >
                           {pollutionUnits.so2.toFixed(1)}
                         </div>
                         <div 
-                          className="text-center mt-1"
+                          className="text-center"
                           style={{
                             fontFamily: 'Poppins',
                             fontStyle: 'normal',
                             fontWeight: 500,
                             fontSize: '15px',
-                            lineHeight: '22px',
-                            color: '#3D3D3D'
+                            lineHeight: '15px',
+                            color: '#3D3D3D',
+                            marginTop: '4px'
                           }}
                         >
                           μm/ m<sup style={{ fontFamily: 'Poppins, sans-serif', fontSize: '10px', fontWeight: 500, color: '#3D3D3D' }}>3</sup>
@@ -1363,22 +1591,23 @@ const Index = () => {
                             fontFamily: 'Poppins',
                             fontStyle: 'normal',
                             fontWeight: 600,
-                            fontSize: '55px',
-                            lineHeight: '82px',
+                            fontSize: '48px',
+                            lineHeight: '55px',
                             color: '#3D3D3D'
                           }}
                         >
                           {pollutionUnits.co.toFixed(1)}
                         </div>
                         <div 
-                          className="text-center mt-1"
+                          className="text-center"
                           style={{
                             fontFamily: 'Poppins',
                             fontStyle: 'normal',
                             fontWeight: 500,
                             fontSize: '15px',
-                            lineHeight: '22px',
-                            color: '#3D3D3D'
+                            lineHeight: '15px',
+                            color: '#3D3D3D',
+                            marginTop: '4px'
                           }}
                         >
                           μm/ m<sup style={{ fontFamily: 'Poppins, sans-serif', fontSize: '10px', fontWeight: 500, color: '#3D3D3D' }}>3</sup>

@@ -1,4 +1,4 @@
-import { Search, User, Menu, X } from "lucide-react";
+import { Search, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -10,6 +10,7 @@ interface HeaderProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   onSearch: () => void;
+  isSearching?: boolean;
 }
 
 // Custom PhCloudFill component
@@ -29,7 +30,7 @@ const PhCloudFill = ({ className }: { className?: string }) => (
   </svg>
 );
 
-const Header = ({ activeTab, onTabChange, searchQuery, onSearchChange, onSearch }: HeaderProps) => {
+const Header = ({ activeTab, onTabChange, searchQuery, onSearchChange, onSearch, isSearching = false }: HeaderProps) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   
   const tabs = [
@@ -54,13 +55,13 @@ const Header = ({ activeTab, onTabChange, searchQuery, onSearchChange, onSearch 
           </div>
           
           {/* Desktop Navigation */}
-          <nav className="hidden lg:flex space-x-1">
+          <nav className="hidden lg:flex space-x-0 ml-8">
             {tabs.map((tab) => (
               <Button
                 key={tab.id}
                 variant="ghost"
                 onClick={() => onTabChange(tab.id)}
-                className={`px-4 xl:px-6 py-2 font-semibold transition-all duration-200 rounded-lg text-[#3D3D3D] ${
+                className={`px-4 xl:px-6 py-2 font-semibold transition-all duration-200 rounded-md text-lg text-[#3D3D3D] ${
                   activeTab === tab.id 
                     ? 'bg-nav-active text-nav-active-foreground hover:bg-nav-active/90' 
                     : 'hover:bg-secondary'
@@ -72,18 +73,34 @@ const Header = ({ activeTab, onTabChange, searchQuery, onSearchChange, onSearch 
           </nav>
           
           {/* Right Section */}
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center" style={{gap: '23px'}}>
             {/* Search Bar - Hidden on mobile */}
-            <div className="relative hidden sm:block">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                type="text"
-                placeholder="Search locations..."
-                value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && onSearch()}
-                className="pl-10 w-48 lg:w-64 xl:w-80"
-              />
+            <div className="relative hidden sm:block" style={{width: '273px', height: '39px'}}>
+              <div className="flex items-center" style={{
+                background: '#F1F2F4',
+                border: '1px solid #8B8F92',
+                borderRadius: '10px',
+                width: '273px',
+                height: '39px',
+                padding: '0 11px',
+                gap: '13px'
+              }}>
+                <Search className="w-5 h-5" style={{color: '#8B8F92'}} />
+                <input
+                  type="text"
+                  placeholder="Search location..."
+                  value={searchQuery}
+                  onChange={(e) => onSearchChange(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && onSearch()}
+                  className="flex-1 bg-transparent border-none outline-none text-sm"
+                  style={{
+                    fontFamily: 'Poppins',
+                    fontSize: '14px',
+                    fontWeight: '400',
+                    color: '#8B8F92'
+                  }}
+                />
+              </div>
             </div>
             
             {/* Mobile Search Button */}
@@ -91,12 +108,21 @@ const Header = ({ activeTab, onTabChange, searchQuery, onSearchChange, onSearch 
               <Search className="h-5 w-5" />
             </Button>
             
-            {/* Avatar */}
-            <Avatar className="h-8 w-8 cursor-pointer hover:ring-2 hover:ring-primary/20 transition-all">
-              <AvatarFallback className="bg-primary/10 text-primary">
-                <User className="h-4 w-4" />
-              </AvatarFallback>
-            </Avatar>
+            {/* Profile Icon */}
+            <div className="hidden sm:flex items-center justify-center cursor-pointer" style={{
+              width: '39px',
+              height: '39px',
+              background: '#F1F2F4',
+              border: '1px solid #8B8F92',
+              borderRadius: '50%'
+            }}>
+              <img 
+                src="/.figma/image/mfjoc5ob-quj1wlx.svg" 
+                alt="Profile" 
+                className="w-7 h-7"
+                style={{width: '29px', height: '29px'}}
+              />
+            </div>
             
             {/* Mobile Menu Button */}
             <Button
@@ -117,7 +143,7 @@ const Header = ({ activeTab, onTabChange, searchQuery, onSearchChange, onSearch 
         {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
           <div className="lg:hidden mt-4 pb-4 border-t border-border pt-4">
-            <nav className="flex flex-col space-y-2">
+            <nav className="flex flex-col space-y-1">
               {tabs.map((tab) => (
                 <Button
                   key={tab.id}
@@ -126,7 +152,7 @@ const Header = ({ activeTab, onTabChange, searchQuery, onSearchChange, onSearch 
                     onTabChange(tab.id);
                     setIsMobileMenuOpen(false);
                   }}
-                  className="justify-start font-semibold transition-all duration-200 text-[#3D3D3D]"
+                  className="justify-start font-semibold transition-all duration-200 text-lg text-[#3D3D3D]"
                 >
                   {tab.label}
                 </Button>
@@ -134,16 +160,31 @@ const Header = ({ activeTab, onTabChange, searchQuery, onSearchChange, onSearch 
             </nav>
             
             {/* Mobile Search Bar */}
-            <div className="relative mt-4 sm:hidden">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
-                type="text"
-                placeholder="Search locations..."
-                value={searchQuery}
-                onChange={(e) => onSearchChange(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && onSearch()}
-                className="pl-10 w-full"
-              />
+            <div className="mt-4 sm:hidden">
+              <div className="flex items-center" style={{
+                background: '#F1F2F4',
+                border: '1px solid #8B8F92',
+                borderRadius: '10px',
+                height: '39px',
+                padding: '0 11px',
+                gap: '13px'
+              }}>
+                <Search className="w-5 h-5" style={{color: '#8B8F92'}} />
+                <input
+                  type="text"
+                  placeholder="Search location..."
+                  value={searchQuery}
+                  onChange={(e) => onSearchChange(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && onSearch()}
+                  className="flex-1 bg-transparent border-none outline-none text-sm"
+                  style={{
+                    fontFamily: 'Poppins',
+                    fontSize: '14px',
+                    fontWeight: '400',
+                    color: '#8B8F92'
+                  }}
+                />
+              </div>
             </div>
           </div>
         )}

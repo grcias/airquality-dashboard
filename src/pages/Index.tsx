@@ -274,7 +274,7 @@ const Index = () => {
 
   });
 
-  const [averageAQI, setAverageAQI] = useState(0);
+  const [averageAQI, setAverageAQI] = useState(101);
 
   const [pollutionUnits, setPollutionUnits] = useState({
 
@@ -2084,7 +2084,7 @@ const Index = () => {
 
                   <div className="flex-shrink-0 flex flex-col items-center justify-center text-center">
 
-                  <div className="text-8xl font-bold mb-4">101</div>
+                  <div className="text-8xl font-bold mb-4">{averageAQI || 101}</div>
 
                   <div className="text-2xl font-semibold mb-2">AQI⁺ Index</div>
 

@@ -353,18 +353,26 @@ const Index = () => {
   // Helper: robust JSON parser for Make webhook
   const parseWebhookJSON = async (response: Response) => {
     const raw = await response.text();
+    console.log('Raw webhook response:', raw);
+    
     try {
       return JSON.parse(raw);
     } catch {
-      const fixed = raw
-        .replace(/(\"fun_fact\"\s*:\s*)([^\"\n][^\n]*?)(\s*[,}])/g, (_m, p1, p2, p3) => `${p1}\"${p2.trim()}\"${p3}`)
-        .replace(/(\"tip\"\s*:\s*)([^\"\n][^\n]*?)(\s*[,}])/g, (_m, p1, p2, p3) => `${p1}\"${p2.trim()}\"${p3}`)
-        .replace(/(\"challenge\"\s*:\s*)([^\"\n][^\n]*?)(\s*[,}])/g, (_m, p1, p2, p3) => `${p1}\"${p2.trim()}\"${p3}`);
+      // Fix common Make.com webhook JSON issues
+      let fixed = raw
+        // Remove trailing commas
+        .replace(/,(\s*[}\]])/g, '$1')
+        // Quote unquoted strings in insight object
+        .replace(/"fun_fact"\s*:\s*([^"'][^,}]*[^,}\s])/g, '"fun_fact": "$1"')
+        .replace(/"tip"\s*:\s*([^"'][^,}]*[^,}\s])/g, '"tip": "$1"')
+        .replace(/"challenge"\s*:\s*([^"'][^,}]*[^,}\s])/g, '"challenge": "$1"');
+      
       try {
         return JSON.parse(fixed);
       } catch (e) {
-        console.log('Webhook raw body (invalid JSON):', raw);
-        throw new Error('Invalid JSON from webhook');
+        console.error('JSON parse error after fixes:', e);
+        console.log('Fixed JSON attempt:', fixed);
+        throw new Error('Invalid JSON from webhook - check Make.com response format');
       }
     }
   };

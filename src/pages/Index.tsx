@@ -359,13 +359,20 @@ const Index = () => {
       return JSON.parse(raw);
     } catch {
       // Fix common Make.com webhook JSON issues
-      let fixed = raw
-        // Remove trailing commas
-        .replace(/,(\s*[}\]])/g, '$1')
-        // Quote unquoted strings in insight object
-        .replace(/"fun_fact"\s*:\s*([^"'][^,}]*[^,}\s])/g, '"fun_fact": "$1"')
-        .replace(/"tip"\s*:\s*([^"'][^,}]*[^,}\s])/g, '"tip": "$1"')
-        .replace(/"challenge"\s*:\s*([^"'][^,}]*[^,}\s])/g, '"challenge": "$1"');
+      // 1) Remove trailing commas
+      // 2) Quote unquoted long text values (can contain commas) in insight object
+      const quoteField = (text: string, key: string) => {
+        // Case with trailing comma at end of line
+        text = text.replace(new RegExp(`(${"\""}${key}${"\""}\\s*:\\s*)([^"\n][^\n]*?)(\\s*,)`, 'gm'), (_m, p1, p2, p3) => `${p1}"${p2.trim().replace(/"/g, '\\"')}"${p3}`);
+        // Case ending with closing brace
+        text = text.replace(new RegExp(`(${"\""}${key}${"\""}\\s*:\\s*)([^"\n][^\n]*?)(\\s*})`, 'gm'), (_m, p1, p2, p3) => `${p1}"${p2.trim().replace(/"/g, '\\"')}"${p3}`);
+        return text;
+      };
+
+      let fixed = raw.replace(/,(\s*[}\]])/g, '$1');
+      fixed = quoteField(fixed, 'fun_fact');
+      fixed = quoteField(fixed, 'tip');
+      fixed = quoteField(fixed, 'challenge');
       
       try {
         return JSON.parse(fixed);
@@ -633,33 +640,27 @@ const Index = () => {
 
 
       // Update pollutant data from webhook response
-
       if (data.pollutants) {
-
-        setPollutionUnits(data.pollutants);
-
+        const p = data.pollutants;
+        setPollutionUnits({
+          pm25: p["PM2.5"] || 0,
+          pm10: p.PM10 || 0,
+          o3: p.O3 || 0,
+          no2: p.NO2 || 0,
+          so2: p.SO2 || 0,
+          co: p.CO || 0,
+        });
       } else {
-
-        // Use pollutant data from webhook response
-
+        // Use pollutant data from flat webhook response
         const fallbackPollutants = {
-
           pm25: data["PM2.5"] || 0,
-
           pm10: data.PM10 || 0,
-
           o3: data.O3 || 0,
-
           no2: data.NO2 || 0,
-
           so2: data.SO2 || 0,
-
-          co: data.CO || 0
-
+          co: data.CO || 0,
         };
-
         setPollutionUnits(fallbackPollutants);
-
       }
 
 

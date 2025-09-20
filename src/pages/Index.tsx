@@ -360,7 +360,7 @@ const Index = () => {
 
       // Fetch pollutant data from webhook
 
-      const response = await fetch('https://hook.us2.make.com/w1ucmkkh65mhnvu2tagq6ixet2os3sye', {
+      const response = await fetch('https://hook.eu2.make.com/f3wk4bwskt9i8vdaoamw7ht5utpltjpx', {
 
         method: 'POST',
 
@@ -532,7 +532,7 @@ const Index = () => {
 
       
 
-      const response = await fetch('https://hook.us2.make.com/w1ucmkkh65mhnvu2tagq6ixet2os3sye', {
+      const response = await fetch('https://hook.eu2.make.com/f3wk4bwskt9i8vdaoamw7ht5utpltjpx', {
 
         method: 'POST',
 

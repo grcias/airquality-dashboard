@@ -382,7 +382,15 @@ const Index = () => {
 
       }
 
+      
 
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.log('Webhook response (non-JSON):', text);
+        throw new Error('Webhook returned non-JSON response: ' + text);
+      }
 
       const data = await response.json();
 
@@ -554,7 +562,15 @@ const Index = () => {
 
       }
 
+      
 
+      // Check if response is JSON
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        const text = await response.text();
+        console.log('Webhook response (non-JSON):', text);
+        throw new Error('Webhook returned non-JSON response: ' + text);
+      }
 
       const data = await response.json();
 

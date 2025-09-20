@@ -350,6 +350,25 @@ const Index = () => {
 
 
 
+  // Helper: robust JSON parser for Make webhook
+  const parseWebhookJSON = async (response: Response) => {
+    const raw = await response.text();
+    try {
+      return JSON.parse(raw);
+    } catch {
+      const fixed = raw
+        .replace(/(\"fun_fact\"\s*:\s*)([^\"\n][^\n]*?)(\s*[,}])/g, (_m, p1, p2, p3) => `${p1}\"${p2.trim()}\"${p3}`)
+        .replace(/(\"tip\"\s*:\s*)([^\"\n][^\n]*?)(\s*[,}])/g, (_m, p1, p2, p3) => `${p1}\"${p2.trim()}\"${p3}`)
+        .replace(/(\"challenge\"\s*:\s*)([^\"\n][^\n]*?)(\s*[,}])/g, (_m, p1, p2, p3) => `${p1}\"${p2.trim()}\"${p3}`);
+      try {
+        return JSON.parse(fixed);
+      } catch (e) {
+        console.log('Webhook raw body (invalid JSON):', raw);
+        throw new Error('Invalid JSON from webhook');
+      }
+    }
+  };
+
   const loadAirQualityData = async () => {
 
     try {
@@ -384,15 +403,7 @@ const Index = () => {
 
       
 
-      // Check if response is JSON
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
-        console.log('Webhook response (non-JSON):', text);
-        throw new Error('Webhook returned non-JSON response: ' + text);
-      }
-
-      const data = await response.json();
+      const data = await parseWebhookJSON(response);
 
       console.log('Webhook pollutant response:', data);
 
@@ -400,48 +411,27 @@ const Index = () => {
 
       // Check if we have pollutant data
 
-      if (data && data.CO !== undefined) {
-
-        // Use the pollutant data from webhook
-
+      if (data && (data.pollutants || data.CO !== undefined)) {
+        const p = data.pollutants || data;
         setPollutionUnits({
-
-          pm25: data["PM2.5"] || 0,
-
-          pm10: data.PM10 || 0,
-
-          o3: data.O3 || 0,
-
-          no2: data.NO2 || 0,
-
-          so2: data.SO2 || 0,
-
-          co: data.CO || 0
-
+          pm25: p["PM2.5"] || 0,
+          pm10: p.PM10 || 0,
+          o3: p.O3 || 0,
+          no2: p.NO2 || 0,
+          so2: p.SO2 || 0,
+          co: p.CO || 0,
         });
-
       } else {
-
         // Fallback to mock data if webhook doesn't return pollutant data
-
         const unitsData = airQualityAPI.generatePollutionUnitsData();
-
         setPollutionUnits({
-
           pm25: unitsData.PM2_5,
-
           pm10: unitsData.PM10,
-
           o3: unitsData.O3,
-
           no2: unitsData.NO2,
-
           so2: unitsData.SO2,
-
-          co: unitsData.CO
-
+          co: unitsData.CO,
         });
-
       }
 
       // Average AQI is now set when city data is loaded
@@ -564,15 +554,7 @@ const Index = () => {
 
       
 
-      // Check if response is JSON
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
-        console.log('Webhook response (non-JSON):', text);
-        throw new Error('Webhook returned non-JSON response: ' + text);
-      }
-
-      const data = await response.json();
+      const data = await parseWebhookJSON(response);
 
       console.log('Webhook response:', data);
 

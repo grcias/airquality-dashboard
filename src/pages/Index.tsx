@@ -398,7 +398,7 @@ const Index = () => {
       
 
       // Fetch pollutant data from webhook
-      const response = await fetch(import.meta.env.VITE_WEBHOOK_URL, {
+      const response = await fetch('/api/webhook', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ city: currentCityData.name })
@@ -579,7 +579,7 @@ const Index = () => {
 
       
 
-      const response = await fetch(import.meta.env.VITE_WEBHOOK_URL, {
+      const response = await fetch('/api/webhook', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ city: cityName })

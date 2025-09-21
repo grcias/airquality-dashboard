@@ -117,7 +117,7 @@ const Header = ({ activeTab, onTabChange, searchQuery, onSearchChange, onSearch,
               borderRadius: '50%'
             }}>
               <img 
-                src="/.figma/image/mfjoc5ob-quj1wlx.svg" 
+                src="/mfjoc5ob-quj1wlx.svg" 
                 alt="Profile" 
                 className="w-7 h-7"
                 style={{width: '29px', height: '29px'}}

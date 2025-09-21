@@ -1553,7 +1553,7 @@ const Index = () => {
 
                       <div className="flex items-center gap-2">
 
-                        <img src="/.figma/image/meths6m4-osomnqk.svg" className="h-4 w-4" />
+                        <img src="/meths6m4-osomnqk.svg" className="h-4 w-4" />
 
                         <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>{currentCityData.temperature}°C</span>
 
@@ -1561,7 +1561,7 @@ const Index = () => {
 
                       <div className="flex items-center gap-2">
 
-                        <img src="/.figma/image/meths6m4-ygz2nyn.svg" className="h-4 w-4" />
+                        <img src="/meths6m4-ygz2nyn.svg" className="h-4 w-4" />
 
                         <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>{currentCityData.humidity}%</span>
 
@@ -1569,7 +1569,7 @@ const Index = () => {
 
                       <div className="flex items-center gap-2">
 
-                        <img src="/.figma/image/meths6m4-dte37nt.svg" className="h-4 w-4" />
+                        <img src="/meths6m4-dte37nt.svg" className="h-4 w-4" />
 
                         <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', letterSpacing: '0', wordSpacing: 'normal', fontFeatureSettings: 'normal' }}>{currentCityData.windSpeed} m/s</span>
 
@@ -2328,7 +2328,7 @@ const Index = () => {
 
                         <img
 
-                          src="/.figma/image/mfjryh5n-08thd59.png"
+                          src="/mfjryh5n-08thd59.png"
 
                           className="w-full h-full object-contain"
 
@@ -2432,7 +2432,7 @@ const Index = () => {
 
                           <img 
 
-                            src="./.figma/image/mfjuevl0-8a68vyi.png" 
+                            src="./mfjuevl0-8a68vyi.png" 
 
                             alt="Desain tanpa judul (1) 2"
 
@@ -2572,7 +2572,7 @@ const Index = () => {
 
                           <img 
 
-                            src="./.figma/image/mfjuly73-7lfjv62.png" 
+                            src="./mfjuly73-7lfjv62.png" 
 
                             alt="Desain tanpa judul (2) 1"
 
@@ -3433,7 +3433,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
 
                               <span 
 
@@ -3467,7 +3467,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
 
                               <span 
 
@@ -3501,7 +3501,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
                               <span 
 
@@ -3621,7 +3621,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 7) - 3)}°C</span>
 
@@ -3633,7 +3633,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 21) - 10))}%</span>
 
@@ -3645,7 +3645,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 2 - 1))).toFixed(1)} m/s</span>
 
@@ -3743,7 +3743,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 9) - 4)}°C</span>
 
@@ -3755,7 +3755,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 25) - 12))}%</span>
 
@@ -3767,7 +3767,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 2.5 - 1.2))).toFixed(1)} m/s</span>
 
@@ -3865,7 +3865,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 11) - 5)}°C</span>
 
@@ -3877,7 +3877,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 31) - 15))}%</span>
 
@@ -3889,7 +3889,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 3 - 1.5))).toFixed(1)} m/s</span>
 
@@ -3987,7 +3987,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 13) - 6)}°C</span>
 
@@ -3999,7 +3999,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 35) - 17))}%</span>
 
@@ -4011,7 +4011,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 3.5 - 1.7))).toFixed(1)} m/s</span>
 
@@ -4109,7 +4109,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 15) - 7)}°C</span>
 
@@ -4121,7 +4121,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 41) - 20))}%</span>
 
@@ -4133,7 +4133,7 @@ const Index = () => {
 
                             <div className="flex flex-col items-center justify-center gap-1">
 
-                              <img src="/.figma/image/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 4 - 2))).toFixed(1)} m/s</span>
 
@@ -4325,7 +4325,7 @@ const Index = () => {
 
                             <div className="flex items-center gap-2">
 
-                              <img src="/.figma/image/meths6m4-osomnqk.svg" width="28" height="28" />
+                              <img src="/meths6m4-osomnqk.svg" width="28" height="28" />
 
                               <span 
 
@@ -4359,7 +4359,7 @@ const Index = () => {
 
                             <div className="flex items-center gap-2">
 
-                              <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="24.89" height="24.89" />
+                              <img src="/meths6m4-ygz2nyn.svg" width="24.89" height="24.89" />
 
                               <span 
 
@@ -4393,7 +4393,7 @@ const Index = () => {
 
                             <div className="flex items-center gap-2">
 
-                              <img src="/.figma/image/meths6m4-dte37nt.svg" width="28.45" height="26.67" />
+                              <img src="/meths6m4-dte37nt.svg" width="28.45" height="26.67" />
 
                               <span 
 
@@ -4521,7 +4521,7 @@ const Index = () => {
 
                             <div className="flex items-center gap-2">
 
-                              <img src="/.figma/image/meths6m4-osomnqk.svg" width="28" height="28" />
+                              <img src="/meths6m4-osomnqk.svg" width="28" height="28" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 7) - 3)}°C</span>
 
@@ -4529,7 +4529,7 @@ const Index = () => {
 
                             <div className="flex items-center gap-2">
 
-                              <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="24.89" height="24.89" />
+                              <img src="/meths6m4-ygz2nyn.svg" width="24.89" height="24.89" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.min(100, Math.max(20, currentCityData.humidity + Math.floor(Math.random() * 21) - 10))}%</span>
 
@@ -4537,7 +4537,7 @@ const Index = () => {
 
                             <div className="flex items-center gap-2">
 
-                              <img src="/.figma/image/meths6m4-dte37nt.svg" width="28.45" height="26.67" />
+                              <img src="/meths6m4-dte37nt.svg" width="28.45" height="26.67" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.5, currentCityData.windSpeed + (Math.random() * 3) - 1.5).toFixed(1)} m/s</span>
 
@@ -4643,7 +4643,7 @@ const Index = () => {
 
                             <div className="flex items-center gap-2">
 
-                              <img src="/.figma/image/meths6m4-osomnqk.svg" width="28" height="28" />
+                              <img src="/meths6m4-osomnqk.svg" width="28" height="28" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(12, currentCityData.temperature + Math.floor(Math.random() * 9) - 4)}°C</span>
 
@@ -4651,7 +4651,7 @@ const Index = () => {
 
                             <div className="flex items-center gap-2">
 
-                              <img src="/.figma/image/meths6m4-ygz2nyn.svg" width="24.89" height="24.89" />
+                              <img src="/meths6m4-ygz2nyn.svg" width="24.89" height="24.89" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.min(100, Math.max(15, currentCityData.humidity + Math.floor(Math.random() * 25) - 12))}%</span>
 
@@ -4659,7 +4659,7 @@ const Index = () => {
 
                             <div className="flex items-center gap-2">
 
-                              <img src="/.figma/image/meths6m4-dte37nt.svg" width="28.45" height="26.67" />
+                              <img src="/meths6m4-dte37nt.svg" width="28.45" height="26.67" />
 
                               <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.3, currentCityData.windSpeed + (Math.random() * 4) - 2).toFixed(1)} m/s</span>
 

@@ -10,9 +10,9 @@ export default defineConfig(({ mode }) => ({
     port: 8080,
     proxy: {
       '/api/webhook': {
-        target: 'https://hook.eu2.make.com',
+        target: process.env.VITE_WEBHOOK_URL || 'https://hook.eu2.make.com/detov4ly3w3fi43boq9sh5f6snh53qhi',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api\/webhook/, '/f3wk4bwskt9i8vdaoamw7ht5utpltjpx'),
+        rewrite: (path) => path.replace(/^\/api\/webhook/, ''),
         secure: true,
       }
     }

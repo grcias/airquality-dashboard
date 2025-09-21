@@ -294,6 +294,11 @@ const Index = () => {
 
   const [isLoading, setIsLoading] = useState(true);
 
+  // Webhook data states
+  const [webhookTip, setWebhookTip] = useState("Hey, air quality is unhealthy now. Better avoid outdoor activities");
+  const [webhookFunFact, setWebhookFunFact] = useState("Did you know? 🚴 Cycling in the morning when AQI is under 100 is much safer for your lungs.");
+  const [webhookChallenge, setWebhookChallenge] = useState("🚶 Take 5000 steps indoors today to avoid outdoor pollution. Can you do it?");
+
 
 
   // Function to scroll to section
@@ -393,50 +398,74 @@ const Index = () => {
       
 
       // Fetch pollutant data from webhook
-
-      const response = await fetch('https://hook.eu2.make.com/f3wk4bwskt9i8vdaoamw7ht5utpltjpx', {
-
+      const response = await fetch('/api/webhook', {
         method: 'POST',
-
-        headers: {
-
-          'Content-Type': 'application/json',
-
-        },
-
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ city: currentCityData.name })
-
       });
 
-
-
       if (!response.ok) {
-
-        throw new Error(`HTTP error! status: ${response.status}`);
-
+        throw new Error(`Webhook error: ${response.status} ${response.statusText}`);
       }
 
+      const text = await response.text();
+      console.log("Raw webhook response:", text);
+
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error("Webhook returned non-JSON response: " + text);
+      }
+
+      console.log("Parsed webhook data:", data);
+      console.log("Data keys:", Object.keys(data));
+      console.log("Pollutants section:", data.pollutants);
+      console.log("Insights section:", data.insights);
+      console.log("Data keys:", Object.keys(data));
+      console.log("Pollutants section:", data.pollutants);
+      console.log("Insights section:", data.insights);
       
+      // Update webhook content states - check multiple possible keys
+      setWebhookTip(data.tip || data.insight?.tip || data.insights?.tip || data.recommendation || "⚠️ Tip tidak tersedia.");
+      setWebhookFunFact(data.fun_fact || data.insight?.fun_fact || data.insights?.fun_fact || data.funFact || "⚠️ Fun fact tidak tersedia.");
+      setWebhookChallenge(data.challenge || data.insight?.challenge || data.insights?.challenge || "⚠️ Challenge tidak tersedia.");
 
-      const data = await parseWebhookJSON(response);
+      // Update current city data with AQI from webhook if available
+      if (data.aqi !== undefined) {
+        console.log("Setting city AQI from webhook:", data.aqi);
+        
+        // Update current city data with new AQI
+        setCurrentCityData(prev => ({
+          ...prev,
+          aqi: data.aqi,
+          mainPollutantValue: data.aqi
+        }));
+      }
 
-      console.log('Webhook pollutant response:', data);
-
-      
-
-      // Check if we have pollutant data
-
-      if (data && (data.pollutants || data.CO !== undefined)) {
-        const p = data.pollutants || data;
+      // Check if we have pollutant data - try multiple possible structures
+      if (data.pollutants) {
+        console.log("Using pollutants object:", data.pollutants);
         setPollutionUnits({
-          pm25: p["PM2.5"] || 0,
-          pm10: p.PM10 || 0,
-          o3: p.O3 || 0,
-          no2: p.NO2 || 0,
-          so2: p.SO2 || 0,
-          co: p.CO || 0,
+          pm25: data.pollutants.pm25 || data.pollutants["PM2.5"] || 0,
+          pm10: data.pollutants.pm10 || data.pollutants.PM10 || 0,
+          o3: data.pollutants.o3 || data.pollutants.O3 || 0,
+          no2: data.pollutants.no2 || data.pollutants.NO2 || 0,
+          so2: data.pollutants.so2 || data.pollutants.SO2 || 0,
+          co: data.pollutants.co || data.pollutants.CO || 0
+        });
+      } else if (data.CO !== undefined || data["PM2.5"] !== undefined) {
+        console.log("Using direct pollutant values");
+        setPollutionUnits({
+          pm25: data["PM2.5"] || data.pm25 || 0,
+          pm10: data.PM10 || data.pm10 || 0,
+          o3: data.O3 || data.o3 || 0,
+          no2: data.NO2 || data.no2 || 0,
+          so2: data.SO2 || data.so2 || 0,
+          co: data.CO || data.co || 0
         });
       } else {
+        console.log("No pollutant data found, using mock data");
         // Fallback to mock data if webhook doesn't return pollutant data
         const unitsData = airQualityAPI.generatePollutionUnitsData();
         setPollutionUnits({
@@ -445,16 +474,21 @@ const Index = () => {
           o3: unitsData.O3,
           no2: unitsData.NO2,
           so2: unitsData.SO2,
-          co: unitsData.CO,
+          co: unitsData.CO
         });
       }
 
       // Average AQI is now set when city data is loaded
 
     } catch (error) {
+      console.error("❌ Error loading air quality data:", error);
 
-      console.error("Error loading air quality data:", error);
+      setWebhookTip("⚠️ Gagal ambil data tip dari webhook.");
+      setWebhookFunFact("⚠️ Fun fact tidak tersedia.");
+      setWebhookChallenge("⚠️ Challenge tidak tersedia.");
 
+      alert('Failed to fetch city data. Please try another city name.');
+      
       // Fallback to mock data on error
 
       const unitsData = airQualityAPI.generatePollutionUnitsData();
@@ -545,33 +579,27 @@ const Index = () => {
 
       
 
-      const response = await fetch('https://hook.eu2.make.com/f3wk4bwskt9i8vdaoamw7ht5utpltjpx', {
-
+      const response = await fetch('/api/webhook', {
         method: 'POST',
-
-        headers: {
-
-          'Content-Type': 'application/json',
-
-        },
-
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ city: cityName })
-
       });
 
-
-
       if (!response.ok) {
-
-        throw new Error(`HTTP error! status: ${response.status}`);
-
+        throw new Error(`Webhook error: ${response.status} ${response.statusText}`);
       }
 
-      
+      const text = await response.text();
+      console.log("Raw webhook response:", text);
 
-      const data = await parseWebhookJSON(response);
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch {
+        throw new Error("Webhook returned non-JSON response: " + text);
+      }
 
-      console.log('Webhook response:', data);
+      console.log("Parsed webhook data:", data);
 
       
 
@@ -639,38 +667,47 @@ const Index = () => {
 
 
 
-      // Update pollutant data from webhook response
+      // Update pollutant data from webhook response - try multiple possible structures
       if (data.pollutants) {
-        const p = data.pollutants;
+        console.log("Using pollutants object:", data.pollutants);
         setPollutionUnits({
-          pm25: p["PM2.5"] || 0,
-          pm10: p.PM10 || 0,
-          o3: p.O3 || 0,
-          no2: p.NO2 || 0,
-          so2: p.SO2 || 0,
-          co: p.CO || 0,
+          pm25: data.pollutants.pm25 || data.pollutants["PM2.5"] || 0,
+          pm10: data.pollutants.pm10 || data.pollutants.PM10 || 0,
+          o3: data.pollutants.o3 || data.pollutants.O3 || 0,
+          no2: data.pollutants.no2 || data.pollutants.NO2 || 0,
+          so2: data.pollutants.so2 || data.pollutants.SO2 || 0,
+          co: data.pollutants.co || data.pollutants.CO || 0
         });
-      } else {
-        // Use pollutant data from flat webhook response
+      } else if (data.CO !== undefined || data["PM2.5"] !== undefined) {
+        console.log("Using direct pollutant values");
         const fallbackPollutants = {
-          pm25: data["PM2.5"] || 0,
-          pm10: data.PM10 || 0,
-          o3: data.O3 || 0,
-          no2: data.NO2 || 0,
-          so2: data.SO2 || 0,
-          co: data.CO || 0,
+          pm25: data["PM2.5"] || data.pm25 || 0,
+          pm10: data.PM10 || data.pm10 || 0,
+          o3: data.O3 || data.o3 || 0,
+          no2: data.NO2 || data.no2 || 0,
+          so2: data.SO2 || data.so2 || 0,
+          co: data.CO || data.co || 0
         };
         setPollutionUnits(fallbackPollutants);
+      } else {
+        console.log("No pollutant data found, using default values");
+        setPollutionUnits({
+          pm25: 0,
+          pm10: 0,
+          o3: 0,
+          no2: 0,
+          so2: 0,
+          co: 0
+        });
       }
 
-
+      // Update webhook content states - check multiple possible keys
+      setWebhookTip(data.tip || data.insight?.tip || data.insights?.tip || data.recommendation || "⚠️ Tip tidak tersedia.");
+      setWebhookFunFact(data.fun_fact || data.insight?.fun_fact || data.insights?.fun_fact || data.funFact || "⚠️ Fun fact tidak tersedia.");
+      setWebhookChallenge(data.challenge || data.insight?.challenge || data.insights?.challenge || "⚠️ Challenge tidak tersedia.");
 
       // Update state
-
       setCurrentCityData(cityData);
-
-      setAverageAQI(cityData.aqi);
-
       setCity(cityData.name);
 
 
@@ -682,8 +719,11 @@ const Index = () => {
       
 
     } catch (error) {
+      console.error("❌ Error fetching city data:", error);
 
-      console.error('Search failed:', error);
+      setWebhookTip("⚠️ Gagal ambil data tip dari webhook.");
+      setWebhookFunFact("⚠️ Fun fact tidak tersedia.");
+      setWebhookChallenge("⚠️ Challenge tidak tersedia.");
 
       alert('Failed to fetch city data. Please try another city name.');
 
@@ -2337,12 +2377,12 @@ const Index = () => {
                               fontFamily: 'Poppins',
                               fontStyle: 'normal',
                               fontWeight: 600,
-                              fontSize: '25px',
+                              fontSize: '20px',
                               lineHeight: '38px',
                               color: '#3D3D3D'
                             }}
                           >
-                            Hey, air quality is unhealthy now. Better avoid outdoor activities
+                            {webhookTip}
                           </p>
                         </div>
 
@@ -2436,8 +2476,8 @@ const Index = () => {
 
                               fontWeight: 500,
 
-                              fontSize: '22px',
-                              lineHeight: '32px',
+                              fontSize: '18px',
+                              lineHeight: '28px',
                               color: '#000000',
 
                               textAlign: 'justify'
@@ -2446,7 +2486,7 @@ const Index = () => {
 
                           >
 
-                            Did you know? 🚴 Cycling in the morning when AQI is under 100 is much safer for your lungs.
+                            {webhookFunFact}
 
                           </p>
 
@@ -2512,8 +2552,8 @@ const Index = () => {
 
                               fontWeight: 500,
 
-                              fontSize: '22px',
-                              lineHeight: '32px',
+                              fontSize: '18px',
+                              lineHeight: '28px',
                               color: '#000000',
 
                               textAlign: 'justify'
@@ -2522,7 +2562,7 @@ const Index = () => {
 
                           >
 
-                            🚶 Take 5000 steps indoors today to avoid outdoor pollution. Can you do it?
+                            {webhookChallenge}
 
                           </p>
 
@@ -2705,7 +2745,7 @@ const Index = () => {
 
                         >
 
-                          {pollutionUnits.pm25.toFixed(1)}
+                          {pollutionUnits?.pm25?.toFixed(1) || '0.0'}
 
                         </div>
 
@@ -2799,7 +2839,7 @@ const Index = () => {
 
                         >
 
-                          {pollutionUnits.pm10.toFixed(1)}
+                          {pollutionUnits?.pm10?.toFixed(1) || '0.0'}
 
                         </div>
 
@@ -2893,7 +2933,7 @@ const Index = () => {
 
                         >
 
-                          {pollutionUnits.o3.toFixed(1)}
+                          {pollutionUnits?.o3?.toFixed(1) || '0.0'}
 
                         </div>
 
@@ -2987,7 +3027,7 @@ const Index = () => {
 
                         >
 
-                          {pollutionUnits.no2.toFixed(1)}
+                          {pollutionUnits?.no2?.toFixed(1) || '0.0'}
 
                         </div>
 
@@ -3081,7 +3121,7 @@ const Index = () => {
 
                         >
 
-                          {pollutionUnits.so2.toFixed(1)}
+                          {pollutionUnits?.so2?.toFixed(1) || '0.0'}
 
                         </div>
 
@@ -3175,7 +3215,7 @@ const Index = () => {
 
                         >
 
-                          {pollutionUnits.co.toFixed(1)}
+                          {pollutionUnits?.co?.toFixed(1) || '0.0'}
 
                         </div>
 

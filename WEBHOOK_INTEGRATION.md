@@ -2,18 +2,19 @@
 
 This application now integrates with your Make webhook to fetch real-time air quality and weather data for cities.
 
-## How It Works
+## 🔄 How It Works
 
-### 1. Search Flow
-- User types a city name in the search bar
+### 1. City Search & Data Loading
+- Both city search and data loading use the same webhook endpoint
 - On Enter key press, a POST request is sent to your Make webhook
 - The webhook returns city data including coordinates, AQI, and weather
+- The same endpoint handles initial data loading for the current city
 - The map automatically updates with the new location
 - The AQI card displays real-time data
 
 ### 2. Webhook Endpoint
 ```
-POST https://hook.eu2.make.com/lc1hratujpvj68rm1by4179k4osec9vc
+POST https://hook.eu2.make.com/f3wk4bwskt9i8vdaoamw7ht5utpltjpx
 ```
 
 ### 3. Request Body

@@ -2,7 +2,7 @@
 // Run this in your browser console to test the webhook directly
 
 async function testWebhook() {
-  const webhookUrl = 'https://hook.eu2.make.com/lc1hratujpvj68rm1by4179k4osec9vc';
+  const webhookUrl = 'https://hook.eu2.make.com/f3wk4bwskt9i8vdaoamw7ht5utpltjpx';
   
   console.log('Testing webhook...');
   console.log('URL:', webhookUrl);

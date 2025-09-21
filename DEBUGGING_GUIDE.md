@@ -73,8 +73,10 @@ Try these cities that should work:
 ## 🔧 Make Webhook Setup
 
 ### 1. Check Webhook URL
-- Verify the URL: `https://hook.eu2.make.com/lc1hratujpvj68rm1by4179k4osec9vc`
-- Make sure it's active and not expired
+- Go to your Make scenario
+- Find the webhook module
+- Copy the webhook URL: `https://hook.eu2.make.com/f3wk4bwskt9i8vdaoamw7ht5utpltjpx`
+- This single webhook handles both load data and search city operations
 
 ### 2. Check Make Automation
 - Log into your Make account

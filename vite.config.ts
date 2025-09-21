@@ -8,6 +8,14 @@ export default defineConfig(({ mode }) => ({
   server: {
     host: "::",
     port: 8080,
+    proxy: {
+      '/api/webhook': {
+        target: 'https://hook.eu2.make.com',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api\/webhook/, '/f3wk4bwskt9i8vdaoamw7ht5utpltjpx'),
+        secure: true,
+      }
+    }
   },
   plugins: [
     react(),

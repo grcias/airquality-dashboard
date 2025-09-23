@@ -41,7 +41,7 @@ export interface ForecastData {
 }
 
 export interface AirQualityLevel {
-  level: 'Good' | 'Moderate' | 'Unhealthy for Sensitive Groups' | 'Unhealthy' | 'Very Unhealthy' | 'Hazardous';
+  level: 'Good' | 'Moderate' | 'Unhealthy' | 'Very Unhealthy' | 'Hazardous';
   color: string;
   description: string;
 }
@@ -58,12 +58,6 @@ export const getAQILevel = (aqi: number): AirQualityLevel => {
       level: 'Moderate',
       color: 'hsl(var(--status-moderate))',
       description: 'Air quality is acceptable for most people'
-    };
-  } else if (aqi <= 150) {
-    return {
-      level: 'Unhealthy for Sensitive Groups',
-      color: 'hsl(var(--status-unhealthy))',
-      description: 'Sensitive groups may experience health effects'
     };
   } else if (aqi <= 200) {
     return {

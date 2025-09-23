@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '@/components/LeafletFix.css';
@@ -29,6 +30,7 @@ interface CityData {
 }
 
 const Stations = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("stations");
   const [searchQuery, setSearchQuery] = useState("");
   const [isSearching, setIsSearching] = useState(false);
@@ -58,11 +60,11 @@ const Stations = () => {
   // Custom onTabChange function to handle navigation
   const handleTabChange = (tab: string) => {
     if (tab === 'forecast') {
-      window.location.href = '/#forecast-section';
+      navigate('/#forecast-section');
     } else if (tab === 'graph') {
-      window.location.href = '/#history-section';
+      navigate('/#history-section');
     } else if (tab === 'home') {
-      window.location.href = '/';
+      navigate('/');
     } else {
       setActiveTab(tab);
     }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
@@ -129,7 +130,7 @@ interface CityData {
 
 
 const Index = () => {
-
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("home");
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -299,7 +300,39 @@ const Index = () => {
   const [webhookFunFact, setWebhookFunFact] = useState("Did you know? 🚴 Cycling in the morning when AQI is under 100 is much safer for your lungs.");
   const [webhookChallenge, setWebhookChallenge] = useState("🚶 Take 5000 steps indoors today to avoid outdoor pollution. Can you do it?");
 
+  // Function to get AQI category color
+  const getAQICategoryColor = (category: string): string => {
+    const lowerCategory = category.toLowerCase();
+    if (lowerCategory.includes('good')) return '#B2F5BE';
+    if (lowerCategory.includes('moderate')) return '#B8D6FF';
+    if (lowerCategory.includes('unhealthy for sensitive')) return '#FFCA59';
+    if (lowerCategory.includes('unhealthy')) return '#FFCA59';
+    if (lowerCategory.includes('very unhealthy')) return '#FD6E6E';
+    if (lowerCategory.includes('hazardous')) return '#3D3D3D';
+    return '#3D3D3D'; // default color
+  };
 
+  // Function to render colored tip text
+  const renderColoredTipText = (text: string) => {
+    const categories = ['good', 'moderate', 'unhealthy for sensitive groups', 'unhealthy', 'very unhealthy', 'hazardous'];
+    
+    let processedText = text;
+    
+    // Find and replace categories with colored spans
+    categories.forEach(category => {
+      const regex = new RegExp(`\\b${category}\\b`, 'gi');
+      const matches = processedText.match(regex);
+      
+      if (matches) {
+        matches.forEach(match => {
+          const color = getAQICategoryColor(match);
+          processedText = processedText.replace(match, `<span style="color: ${color}; font-weight: 700;">${match}</span>`);
+        });
+      }
+    });
+    
+    return <span dangerouslySetInnerHTML={{ __html: processedText }} />;
+  };
 
   // Function to scroll to section
 
@@ -318,31 +351,18 @@ const Index = () => {
 
 
   // Custom onTabChange function to handle navigation
-
   const handleTabChange = (tab: string) => {
-
     if (tab === 'forecast') {
-
       setActiveTab('home');
-
       setTimeout(() => scrollToSection('forecast-section'), 100);
-
     } else if (tab === 'graph') {
-
       setActiveTab('home');
-
       setTimeout(() => scrollToSection('history-section'), 100);
-
     } else if (tab === 'stations') {
-
-      window.location.href = '/stations';
-
+      navigate('/stations');
     } else {
-
       setActiveTab(tab);
-
     }
-
   };
 
 
@@ -622,17 +642,11 @@ const Index = () => {
 
 
       // Determine category based on AQI
-
       let category = "Good";
-
       if (data.aqi <= 50) category = "Good";
-
       else if (data.aqi <= 100) category = "Moderate";
-
       else if (data.aqi <= 200) category = "Unhealthy";
-
       else if (data.aqi <= 300) category = "Very Unhealthy";
-
       else category = "Hazardous";
 
 
@@ -2382,7 +2396,7 @@ const Index = () => {
                               color: '#3D3D3D'
                             }}
                           >
-                            {webhookTip}
+                            {renderColoredTipText(webhookTip)}
                           </p>
                         </div>
 

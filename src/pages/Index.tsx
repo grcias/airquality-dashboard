@@ -151,13 +151,11 @@ const Index = () => {
       setSearchQuery(cityParam);
       // Automatically fetch data for the city from URL parameter
       handleSearchForCity(cityParam);
+    } else {
+      // Load default data when no city parameter is present
+      loadAirQualityData();
     }
   }, [location.search]);
-
-  // Load initial data when component mounts
-  useEffect(() => {
-    loadAirQualityData();
-  }, []);
 
 
 
@@ -363,11 +361,7 @@ const Index = () => {
 
 
 
-  useEffect(() => {
 
-    loadAirQualityData();
-
-  }, []);
 
 
 

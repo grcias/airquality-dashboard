@@ -574,11 +574,9 @@ const Index = () => {
 
 
   const handleSearchForCity = async (cityName: string) => {
-
     if (!cityName.trim()) return;
-
     
-
+    setIsLoading(true);
     setIsSearching(true);
 
     
@@ -732,9 +730,8 @@ const Index = () => {
       alert('Failed to fetch city data. Please try another city name.');
 
     } finally {
-
+      setIsLoading(false);
       setIsSearching(false);
-
     }
 
   };

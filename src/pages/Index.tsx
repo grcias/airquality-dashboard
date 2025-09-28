@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 
@@ -131,6 +131,7 @@ interface CityData {
 
 const Index = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState("home");
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -141,26 +142,21 @@ const Index = () => {
 
 
 
-  // Parse URL parameters to get city and fetch data
-
+  // Listen to location changes and update city parameter
   useEffect(() => {
-
-    const urlParams = new URLSearchParams(window.location.search);
-
+    const urlParams = new URLSearchParams(location.search);
     const cityParam = urlParams.get('city');
-
     if (cityParam) {
-
       setCity(cityParam);
-
       setSearchQuery(cityParam);
-
       // Automatically fetch data for the city from URL parameter
-
       handleSearchForCity(cityParam);
-
     }
+  }, [location.search]);
 
+  // Load initial data when component mounts
+  useEffect(() => {
+    loadAirQualityData();
   }, []);
 
 

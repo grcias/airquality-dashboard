@@ -63,7 +63,7 @@ const AQICard = ({
         </div>
         <div className="flex items-center gap-1 text-gray-800">
           <Wind className="h-4 w-4" />
-          <span className="text-sm font-medium">{windSpeed} m/s</span>
+          <span className="text-sm font-medium">{windSpeed} km/h</span>
         </div>
       </div>
     </Card>

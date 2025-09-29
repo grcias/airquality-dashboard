@@ -441,15 +441,29 @@ const Index = () => {
       setWebhookFunFact(data.fun_fact || data.insight?.fun_fact || data.insights?.fun_fact || data.funFact || "⚠️ Fun fact tidak tersedia.");
       setWebhookChallenge(data.challenge || data.insight?.challenge || data.insights?.challenge || "⚠️ Challenge tidak tersedia.");
 
-      // Update current city data with AQI from webhook if available
+      // Update current city data with AQI and weather data from webhook if available
       if (data.aqi !== undefined) {
         console.log("Setting city AQI from webhook:", data.aqi);
         
-        // Update current city data with new AQI
+        // Update current city data with new AQI and weather data
         setCurrentCityData(prev => ({
           ...prev,
           aqi: data.aqi,
-          mainPollutantValue: data.aqi
+          mainPollutantValue: data.aqi,
+          // Update weather data if available
+          ...(data.weather && {
+            temperature: data.weather.temp,
+            humidity: data.weather.humidity,
+            windSpeed: data.weather.wind_kmh
+          })
+        }));
+      } else if (data.weather) {
+        // If no AQI but weather data is available, update weather data only
+        setCurrentCityData(prev => ({
+          ...prev,
+          temperature: data.weather.temp,
+          humidity: data.weather.humidity,
+          windSpeed: data.weather.wind_kmh
         }));
       }
 
@@ -663,7 +677,7 @@ const Index = () => {
 
         humidity: data.weather.humidity,
 
-        windSpeed: data.weather.wind
+        windSpeed: data.weather.wind_kmh
 
       };
 
@@ -1554,7 +1568,7 @@ const Index = () => {
 
                       <div className="flex items-center gap-2">
 
-                        <img src="/meths6m4-osomnqk.svg" className="h-4 w-4" />
+                        <img src="/meths6m4-osomnqk.svg" className="h-6 w-6" />
 
                         <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>{currentCityData.temperature}°C</span>
 
@@ -1562,7 +1576,7 @@ const Index = () => {
 
                       <div className="flex items-center gap-2">
 
-                        <img src="/meths6m4-ygz2nyn.svg" className="h-4 w-4" />
+                        <img src="/meths6m4-ygz2nyn.svg" className="h-6 w-6" />
 
                         <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>{currentCityData.humidity}%</span>
 
@@ -1570,9 +1584,9 @@ const Index = () => {
 
                       <div className="flex items-center gap-2">
 
-                        <img src="/meths6m4-dte37nt.svg" className="h-4 w-4" />
+                        <img src="/meths6m4-dte37nt.svg" className="h-6 w-6" />
 
-                        <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', letterSpacing: '0', wordSpacing: 'normal', fontFeatureSettings: 'normal' }}>{currentCityData.windSpeed} m/s</span>
+                        <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', letterSpacing: '0', wordSpacing: 'normal', fontFeatureSettings: 'normal' }}>{currentCityData.windSpeed} km/h</span>
 
                       </div>
 
@@ -3524,7 +3538,7 @@ const Index = () => {
 
                               >
 
-                                {currentCityData.windSpeed} m/s
+                                {currentCityData.windSpeed} km/h
 
                               </span>
 
@@ -3648,7 +3662,7 @@ const Index = () => {
 
                               <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 2 - 1))).toFixed(1)} m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 2 - 1))).toFixed(1)} km/h</span>
 
                             </div>
 
@@ -3770,7 +3784,7 @@ const Index = () => {
 
                               <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 2.5 - 1.2))).toFixed(1)} m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 2.5 - 1.2))).toFixed(1)} km/h</span>
 
                             </div>
 
@@ -3892,7 +3906,7 @@ const Index = () => {
 
                               <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 3 - 1.5))).toFixed(1)} m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 3 - 1.5))).toFixed(1)} km/h</span>
 
                             </div>
 
@@ -4014,7 +4028,7 @@ const Index = () => {
 
                               <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 3.5 - 1.7))).toFixed(1)} m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 3.5 - 1.7))).toFixed(1)} km/h</span>
 
                             </div>
 
@@ -4136,7 +4150,7 @@ const Index = () => {
 
                               <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 4 - 2))).toFixed(1)} m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 4 - 2))).toFixed(1)} km/h</span>
 
                             </div>
 
@@ -4416,7 +4430,7 @@ const Index = () => {
 
                               >
 
-                                {currentCityData.windSpeed} m/s
+                                {currentCityData.windSpeed} km/h
 
                               </span>
 
@@ -4540,7 +4554,7 @@ const Index = () => {
 
                               <img src="/meths6m4-dte37nt.svg" width="28.45" height="26.67" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.5, currentCityData.windSpeed + (Math.random() * 3) - 1.5).toFixed(1)} m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.5, currentCityData.windSpeed + (Math.random() * 3) - 1.5).toFixed(1)} km/h</span>
 
                             </div>
 
@@ -4662,7 +4676,7 @@ const Index = () => {
 
                               <img src="/meths6m4-dte37nt.svg" width="28.45" height="26.67" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.3, currentCityData.windSpeed + (Math.random() * 4) - 2).toFixed(1)} m/s</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.3, currentCityData.windSpeed + (Math.random() * 4) - 2).toFixed(1)} km/h</span>
 
                             </div>
 

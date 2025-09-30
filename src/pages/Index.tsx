@@ -162,31 +162,18 @@ const Index = () => {
   // Function to generate hourly time labels starting from current time
 
   const generateHourlyLabels = () => {
-
     const now = new Date();
-
     const labels = [];
-
     
-
-    for (let i = 0; i < 6; i++) {
-
+    for (let i = 0; i < 12; i++) {
       if (i === 0) {
-
         labels.push('Now');
-
       } else {
-
         const currentHour = now.getHours();
-
         const nextHour = (currentHour + i) % 24;
-
         const formattedHour = nextHour.toString().padStart(2, '0');
-
         labels.push(`${formattedHour}.00`);
-
       }
-
     }
 
     
@@ -3339,1184 +3326,115 @@ const Index = () => {
                     
 
                     {/* Hourly Items */}
-
                     <div className="flex gap-3 overflow-x-auto">
-
-                      {/* Now */}
-
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-
-                        <div 
-
-                          className="absolute inset-0 rounded-[10px]"
-
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-
-                        />
-
-                        <div className="relative p-3 flex flex-col items-center h-full">
-
-                                                    <div 
-
-                            className="text-center mb-2"
-
-                            style={{
-
-                              fontFamily: 'Poppins',
-
-                              fontStyle: 'normal',
-
-                              fontWeight: 400,
-
-                              fontSize: '16px',
-
-                              lineHeight: '24px',
-
-                              color: '#000000'
-
-                            }}
-
-                          >
-
-                            {hourlyLabels[0]}
-
-                          </div>
-
+                      {hourlyLabels.map((label, index) => (
+                        <div key={index} className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
                           <div 
-
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-
-                            style={{ background: '#FFCA59' }}
-
-                          >
-
-                            <span 
-
+                            className="absolute inset-0 rounded-[10px]"
+                            style={{ background: 'rgba(244, 255, 141, 0.2)' }}
+                          />
+                          <div className="relative p-3 flex flex-col items-center h-full">
+                            <div 
+                              className="text-center mb-2"
                               style={{
-
                                 fontFamily: 'Poppins',
-
                                 fontStyle: 'normal',
-
-                                fontWeight: 600,
-
-                                fontSize: '15px',
-
-                                lineHeight: '22px',
-
-                                color: '#FFFFFF'
-
+                                fontWeight: 400,
+                                fontSize: '16px',
+                                lineHeight: '24px',
+                                color: '#000000'
                               }}
-
                             >
-
-                              {currentCityData.aqi}
-
-                            </span>
-
-                          </div>
-
-                          
-
-                          {/* Weather Details */}
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-                            {/* Temperature */}
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              {label}
+                            </div>
+                            <div 
+                              className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
+                              style={{ background: '#FFCA59' }}
+                            >
                               <span 
-                                className="font-inter"
                                 style={{
+                                  fontFamily: 'Poppins',
                                   fontStyle: 'normal',
-                                  fontWeight: 400,
-                                  fontSize: '13px',
-                                  lineHeight: '16px',
-                                  color: '#3D3D3D'
+                                  fontWeight: 600,
+                                  fontSize: '15px',
+                                  lineHeight: '22px',
+                                  color: '#FFFFFF'
                                 }}
                               >
-                                {currentCityData.temperature}°C
+                                {index === 0 
+                                  ? currentCityData.aqi 
+                                  : Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 21) - 10)
+                                }
                               </span>
                             </div>
                             
-                            {/* Humidity */}
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span 
-                                className="font-inter"
-                                style={{
-                                  fontStyle: 'normal',
-                                  fontWeight: 400,
-                                  fontSize: '13px',
-                                  lineHeight: '16px',
-                                  color: '#3D3D3D'
-                                }}
-                              >
-                                {currentCityData.humidity}%
-                              </span>
-                            </div>
-                            
-                            {/* Wind */}
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span 
-                                className="font-inter"
-                                style={{
-                                  fontStyle: 'normal',
-                                  fontWeight: 400,
-                                  fontSize: '13px',
-                                  lineHeight: '16px',
-                                  color: '#3D3D3D'
-                                }}
-                              >
-                                {currentCityData.windSpeed} km/h
-                              </span>
-                            </div>
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                      
-
-                      {/* 00.00 */}
-
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-
-                        <div 
-
-                          className="absolute inset-0 rounded-[10px]"
-
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-
-                        />
-
-                        <div className="relative p-3 flex flex-col items-center h-full">
-
-                          <div 
-
-                            className="text-center mb-2"
-
-                            style={{
-
-                              fontFamily: 'Poppins',
-
-                              fontStyle: 'normal',
-
-                              fontWeight: 400,
-
-                              fontSize: '16px',
-
-                              lineHeight: '24px',
-
-                              color: '#000000'
-
-                            }}
-
-                          >
-
-                            {hourlyLabels[1]}
-
-                          </div>
-
-                          <div 
-
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-
-                            style={{ background: '#FFCA59' }}
-
-                          >
-
-                            <span 
-
-                              style={{
-
-                                fontFamily: 'Poppins',
-
-                                fontStyle: 'normal',
-
-                                fontWeight: 600,
-
-                                fontSize: '15px',
-
-                                lineHeight: '22px',
-
-                                color: '#FFFFFF'
-
-                              }}
-
-                            >
-
-                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 21) - 10)}
-
-                            </span>
-
-                          </div>
-
-                          
-
-                          {/* Weather Details */}
-
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-
-                            {/* Temperature */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 7) - 3)}°C</span>
-
-                            </div>
-
-                            
-
-                            {/* Humidity */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 21) - 10))}%</span>
-
-                            </div>
-
-                            
-
-                            {/* Wind */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 2 - 1))).toFixed(1)} km/h</span>
-
-                            </div>
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                      
-
-                      {/* 01.00 */}
-
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-
-                        <div 
-
-                          className="absolute inset-0 rounded-[10px]"
-
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-
-                        />
-
-                        <div className="relative p-3 flex flex-col items-center h-full">
-
-                          <div 
-
-                            className="text-center mb-2"
-
-                            style={{
-
-                              fontFamily: 'Poppins',
-
-                              fontStyle: 'normal',
-
-                              fontWeight: 400,
-
-                              fontSize: '16px',
-
-                              lineHeight: '24px',
-
-                              color: '#000000'
-
-                            }}
-
-                          >
-
-                            {hourlyLabels[2]}
-
-                          </div>
-
-                          <div 
-
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-
-                            style={{ background: '#FFCA59' }}
-
-                          >
-
-                            <span 
-
-                              style={{
-
-                                fontFamily: 'Poppins',
-
-                                fontStyle: 'normal',
-
-                                fontWeight: 600,
-
-                                fontSize: '15px',
-
-                                lineHeight: '22px',
-
-                                color: '#FFFFFF'
-
-                              }}
-
-                            >
-
-                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 25) - 12)}
-
-                            </span>
-
-                          </div>
-
-                          
-
-                          {/* Weather Details */}
-
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-
-                            {/* Temperature */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 9) - 4)}°C</span>
-
-                            </div>
-
-                            
-
-                            {/* Humidity */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 25) - 12))}%</span>
-
-                            </div>
-
-                            
-
-                            {/* Wind */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 2.5 - 1.2))).toFixed(1)} km/h</span>
-
-                            </div>
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                      
-
-                      {/* 02.00 */}
-
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-
-                        <div 
-
-                          className="absolute inset-0 rounded-[10px]"
-
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-
-                        />
-
-                        <div className="relative p-3 flex flex-col items-center h-full">
-
-                          <div 
-
-                            className="text-center mb-2"
-
-                            style={{
-
-                              fontFamily: 'Poppins',
-
-                              fontStyle: 'normal',
-
-                              fontWeight: 400,
-
-                              fontSize: '16px',
-
-                              lineHeight: '24px',
-
-                              color: '#000000'
-
-                            }}
-
-                          >
-
-                            {hourlyLabels[3]}
-
-                          </div>
-
-                          <div 
-
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-
-                            style={{ background: '#FFCA59' }}
-
-                          >
-
-                            <span 
-
-                              style={{
-
-                                fontFamily: 'Poppins',
-
-                                fontStyle: 'normal',
-
-                                fontWeight: 600,
-
-                                fontSize: '15px',
-
-                                lineHeight: '22px',
-
-                                color: '#FFFFFF'
-
-                              }}
-
-                            >
-
-                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 31) - 15)}
-
-                            </span>
-
-                          </div>
-
-                          
-
-                          {/* Weather Details */}
-
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-
-                            {/* Temperature */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 11) - 5)}°C</span>
-
-                            </div>
-
-                            
-
-                            {/* Humidity */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 31) - 15))}%</span>
-
-                            </div>
-
-                            
-
-                            {/* Wind */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 3 - 1.5))).toFixed(1)} km/h</span>
-
-                            </div>
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                      
-
-                      {/* 03.00 */}
-
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-
-                        <div 
-
-                          className="absolute inset-0 rounded-[10px]"
-
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-
-                        />
-
-                        <div className="relative p-3 flex flex-col items-center h-full">
-
-                          <div 
-
-                            className="text-center mb-2"
-
-                            style={{
-
-                              fontFamily: 'Poppins',
-
-                              fontStyle: 'normal',
-
-                              fontWeight: 400,
-
-                              fontSize: '16px',
-
-                              lineHeight: '24px',
-
-                              color: '#000000'
-
-                            }}
-
-                          >
-
-                            {hourlyLabels[4]}
-
-                          </div>
-
-                          <div 
-
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-
-                            style={{ background: '#FFCA59' }}
-
-                          >
-
-                            <span 
-
-                              style={{
-
-                                fontFamily: 'Poppins',
-
-                                fontStyle: 'normal',
-
-                                fontWeight: 600,
-
-                                fontSize: '15px',
-
-                                lineHeight: '22px',
-
-                                color: '#FFFFFF'
-
-                              }}
-
-                            >
-
-                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 35) - 17)}
-
-                            </span>
-
-                          </div>
-
-                          
-
-                          {/* Weather Details */}
-
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-
-                            {/* Temperature */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 13) - 6)}°C</span>
-
-                            </div>
-
-                            
-
-                            {/* Humidity */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 35) - 17))}%</span>
-
-                            </div>
-
-                            
-
-                            {/* Wind */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 3.5 - 1.7))).toFixed(1)} km/h</span>
-
-                            </div>
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                      
-
-                      {/* 04.00 */}
-
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-
-                        <div 
-
-                          className="absolute inset-0 rounded-[10px]"
-
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-
-                        />
-
-                        <div className="relative p-3 flex flex-col items-center h-full">
-
-                          <div 
-
-                            className="text-center mb-2"
-
-                            style={{
-
-                              fontFamily: 'Poppins',
-
-                              fontStyle: 'normal',
-
-                              fontWeight: 400,
-
-                              fontSize: '16px',
-
-                              lineHeight: '24px',
-
-                              color: '#000000'
-
-                            }}
-
-                          >
-
-                            {hourlyLabels[5]}
-
-                          </div>
-
-                          <div 
-
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-
-                            style={{ background: '#FFCA59' }}
-
-                          >
-
-                            <span 
-
-                              style={{
-
-                                fontFamily: 'Poppins',
-
-                                fontStyle: 'normal',
-
-                                fontWeight: 600,
-
-                                fontSize: '15px',
-
-                                lineHeight: '22px',
-
-                                color: '#FFFFFF'
-
-                              }}
-
-                            >
-
-                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 41) - 20)}
-
-                            </span>
-
-                          </div>
-
-                          
-
-                          {/* Weather Details */}
-
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-
-                            {/* Temperature */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 15) - 7)}°C</span>
-
-                            </div>
-
-                            
-
-                            {/* Humidity */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 41) - 20))}%</span>
-
-                            </div>
-
-                            
-
-                            {/* Wind */}
-
-                            <div className="flex flex-col items-center justify-center gap-1">
-
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 4 - 2))).toFixed(1)} km/h</span>
-
-                            </div>
-
-                          </div>
-
-                        </div>
-
-                      </div>
-
-                      {/* 05.00 */}
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-                        <div 
-                          className="absolute inset-0 rounded-[10px]"
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-                        />
-                        <div className="relative p-3 flex flex-col items-center h-full">
-                          <div 
-                            className="text-center mb-2"
-                            style={{
-                              fontFamily: 'Poppins',
-                              fontStyle: 'normal',
-                              fontWeight: 400,
-                              fontSize: '16px',
-                              lineHeight: '24px',
-                              color: '#000000'
-                            }}
-                          >
-                            05.00
-                          </div>
-                          <div 
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-                            style={{ background: '#FFCA59' }}
-                          >
-                            <span 
-                              style={{
-                                fontFamily: 'Poppins',
-                                fontStyle: 'normal',
-                                fontWeight: 600,
-                                fontSize: '15px',
-                                lineHeight: '22px',
-                                color: '#FFFFFF'
-                              }}
-                            >
-                              95
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>26°C</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>68%</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>9.2 km/h</span>
+                            {/* Weather Details */}
+                            <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
+                              {/* Temperature */}
+                              <div className="flex flex-col items-center justify-center gap-1">
+                                <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                                <span 
+                                  className="font-inter"
+                                  style={{
+                                    fontStyle: 'normal',
+                                    fontWeight: 400,
+                                    fontSize: '13px',
+                                    lineHeight: '16px',
+                                    color: '#3D3D3D'
+                                  }}
+                                >
+                                  {index === 0 
+                                    ? `${currentCityData.temperature}°C`
+                                    : `${Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 7) - 3)}°C`
+                                  }
+                                </span>
+                              </div>
+                              
+                              {/* Humidity */}
+                              <div className="flex flex-col items-center justify-center gap-1">
+                                <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                                <span 
+                                  className="font-inter"
+                                  style={{
+                                    fontStyle: 'normal',
+                                    fontWeight: 400,
+                                    fontSize: '13px',
+                                    lineHeight: '16px',
+                                    color: '#3D3D3D'
+                                  }}
+                                >
+                                  {index === 0 
+                                    ? `${currentCityData.humidity}%`
+                                    : `${Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 21) - 10))}%`
+                                  }
+                                </span>
+                              </div>
+                              
+                              {/* Wind */}
+                              <div className="flex flex-col items-center justify-center gap-1">
+                                <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                                <span 
+                                  className="font-inter"
+                                  style={{
+                                    fontStyle: 'normal',
+                                    fontWeight: 400,
+                                    fontSize: '13px',
+                                    lineHeight: '16px',
+                                    color: '#3D3D3D'
+                                  }}
+                                >
+                                  {index === 0 
+                                    ? `${currentCityData.windSpeed} km/h`
+                                    : `${Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 2 - 1))).toFixed(1)} km/h`
+                                  }
+                                </span>
+                              </div>
                             </div>
                           </div>
                         </div>
-                      </div>
+                      ))}
 
-                      {/* 06.00 */}
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-                        <div 
-                          className="absolute inset-0 rounded-[10px]"
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-                        />
-                        <div className="relative p-3 flex flex-col items-center h-full">
-                          <div 
-                            className="text-center mb-2"
-                            style={{
-                              fontFamily: 'Poppins',
-                              fontStyle: 'normal',
-                              fontWeight: 400,
-                              fontSize: '16px',
-                              lineHeight: '24px',
-                              color: '#000000'
-                            }}
-                          >
-                            06.00
-                          </div>
-                          <div 
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-                            style={{ background: '#FFCA59' }}
-                          >
-                            <span 
-                              style={{
-                                fontFamily: 'Poppins',
-                                fontStyle: 'normal',
-                                fontWeight: 600,
-                                fontSize: '15px',
-                                lineHeight: '22px',
-                                color: '#FFFFFF'
-                              }}
-                            >
-                              88
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>27°C</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>65%</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>10.1 km/h</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
 
-                      {/* 07.00 */}
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-                        <div 
-                          className="absolute inset-0 rounded-[10px]"
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-                        />
-                        <div className="relative p-3 flex flex-col items-center h-full">
-                          <div 
-                            className="text-center mb-2"
-                            style={{
-                              fontFamily: 'Poppins',
-                              fontStyle: 'normal',
-                              fontWeight: 400,
-                              fontSize: '16px',
-                              lineHeight: '24px',
-                              color: '#000000'
-                            }}
-                          >
-                            07.00
-                          </div>
-                          <div 
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-                            style={{ background: '#FFCA59' }}
-                          >
-                            <span 
-                              style={{
-                                fontFamily: 'Poppins',
-                                fontStyle: 'normal',
-                                fontWeight: 600,
-                                fontSize: '15px',
-                                lineHeight: '22px',
-                                color: '#FFFFFF'
-                              }}
-                            >
-                              92
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>29°C</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>58%</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>11.5 km/h</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 08.00 */}
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-                        <div 
-                          className="absolute inset-0 rounded-[10px]"
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-                        />
-                        <div className="relative p-3 flex flex-col items-center h-full">
-                          <div 
-                            className="text-center mb-2"
-                            style={{
-                              fontFamily: 'Poppins',
-                              fontStyle: 'normal',
-                              fontWeight: 400,
-                              fontSize: '16px',
-                              lineHeight: '24px',
-                              color: '#000000'
-                            }}
-                          >
-                            08.00
-                          </div>
-                          <div 
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-                            style={{ background: '#FFCA59' }}
-                          >
-                            <span 
-                              style={{
-                                fontFamily: 'Poppins',
-                                fontStyle: 'normal',
-                                fontWeight: 600,
-                                fontSize: '15px',
-                                lineHeight: '22px',
-                                color: '#FFFFFF'
-                              }}
-                            >
-                              105
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>31°C</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>52%</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>12.8 km/h</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 09.00 */}
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-                        <div 
-                          className="absolute inset-0 rounded-[10px]"
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-                        />
-                        <div className="relative p-3 flex flex-col items-center h-full">
-                          <div 
-                            className="text-center mb-2"
-                            style={{
-                              fontFamily: 'Poppins',
-                              fontStyle: 'normal',
-                              fontWeight: 400,
-                              fontSize: '16px',
-                              lineHeight: '24px',
-                              color: '#000000'
-                            }}
-                          >
-                            09.00
-                          </div>
-                          <div 
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-                            style={{ background: '#FFCA59' }}
-                          >
-                            <span 
-                              style={{
-                                fontFamily: 'Poppins',
-                                fontStyle: 'normal',
-                                fontWeight: 600,
-                                fontSize: '15px',
-                                lineHeight: '22px',
-                                color: '#FFFFFF'
-                              }}
-                            >
-                              118
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>33°C</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>48%</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>13.7 km/h</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 10.00 */}
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-                        <div 
-                          className="absolute inset-0 rounded-[10px]"
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-                        />
-                        <div className="relative p-3 flex flex-col items-center h-full">
-                          <div 
-                            className="text-center mb-2"
-                            style={{
-                              fontFamily: 'Poppins',
-                              fontStyle: 'normal',
-                              fontWeight: 400,
-                              fontSize: '16px',
-                              lineHeight: '24px',
-                              color: '#000000'
-                            }}
-                          >
-                            10.00
-                          </div>
-                          <div 
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-                            style={{ background: '#FFCA59' }}
-                          >
-                            <span 
-                              style={{
-                                fontFamily: 'Poppins',
-                                fontStyle: 'normal',
-                                fontWeight: 600,
-                                fontSize: '15px',
-                                lineHeight: '22px',
-                                color: '#FFFFFF'
-                              }}
-                            >
-                              125
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>35°C</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>45%</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>14.2 km/h</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 11.00 */}
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-                        <div 
-                          className="absolute inset-0 rounded-[10px]"
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-                        />
-                        <div className="relative p-3 flex flex-col items-center h-full">
-                          <div 
-                            className="text-center mb-2"
-                            style={{
-                              fontFamily: 'Poppins',
-                              fontStyle: 'normal',
-                              fontWeight: 400,
-                              fontSize: '16px',
-                              lineHeight: '24px',
-                              color: '#000000'
-                            }}
-                          >
-                            11.00
-                          </div>
-                          <div 
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-                            style={{ background: '#FFCA59' }}
-                          >
-                            <span 
-                              style={{
-                                fontFamily: 'Poppins',
-                                fontStyle: 'normal',
-                                fontWeight: 600,
-                                fontSize: '15px',
-                                lineHeight: '22px',
-                                color: '#FFFFFF'
-                              }}
-                            >
-                              132
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>34°C</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>47%</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>13.9 km/h</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* 12.00 */}
-                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
-                        <div 
-                          className="absolute inset-0 rounded-[10px]"
-                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
-                        />
-                        <div className="relative p-3 flex flex-col items-center h-full">
-                          <div 
-                            className="text-center mb-2"
-                            style={{
-                              fontFamily: 'Poppins',
-                              fontStyle: 'normal',
-                              fontWeight: 400,
-                              fontSize: '16px',
-                              lineHeight: '24px',
-                              color: '#000000'
-                            }}
-                          >
-                            12.00
-                          </div>
-                          <div 
-                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-                            style={{ background: '#FFCA59' }}
-                          >
-                            <span 
-                              style={{
-                                fontFamily: 'Poppins',
-                                fontStyle: 'normal',
-                                fontWeight: 600,
-                                fontSize: '15px',
-                                lineHeight: '22px',
-                                color: '#FFFFFF'
-                              }}
-                            >
-                              128
-                            </span>
-                          </div>
-                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>33°C</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>49%</span>
-                            </div>
-                            <div className="flex flex-col items-center justify-center gap-1">
-                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>12.6 km/h</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
 
                     </div>
 

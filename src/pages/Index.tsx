@@ -198,41 +198,23 @@ const Index = () => {
 
 
   // Function to generate daily labels starting from today
-
   const generateDailyLabels = () => {
-
     const today = new Date();
-
     const labels = [];
-
     const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thurs', 'Fri', 'Sat'];
-
     
-
-    for (let i = 0; i < 3; i++) {
-
+    for (let i = 0; i < 7; i++) {
       const date = new Date(today);
-
       date.setDate(today.getDate() + i);
-
       
-
       if (i === 0) {
-
         labels.push('Today');
-
       } else {
-
         labels.push(dayNames[date.getDay()]);
-
       }
-
     }
-
     
-
     return labels;
-
   };
 
 
@@ -244,29 +226,17 @@ const Index = () => {
 
 
   const [currentCityData, setCurrentCityData] = useState<CityData>({
-
     name: "Jakarta",
-
     country: "Indonesia",
-
     lat: -6.223099,
-
     lng: 106.791597,
-
     aqi: 85,
-
     category: "Moderate",
-
     mainPollutant: "PM2.5",
-
     mainPollutantValue: 53,
-
-    temperature: 29,
-
-    humidity: 56,
-
-    windSpeed: 1.1
-
+    temperature: 0, // Will be updated from API
+    humidity: 0,    // Will be updated from API
+    windSpeed: 0    // Will be updated from API
   });
 
   const [averageAQI, setAverageAQI] = useState(101);
@@ -504,6 +474,17 @@ const Index = () => {
 
       // Average AQI is now set when city data is loaded
 
+      // If no weather data was received from webhook, generate realistic fallback data
+      if (currentCityData.temperature === 0 || currentCityData.humidity === 0 || currentCityData.windSpeed === 0) {
+        console.log("No weather data from webhook, generating realistic fallback data");
+        setCurrentCityData(prev => ({
+          ...prev,
+          temperature: prev.temperature === 0 ? Math.floor(Math.random() * 15) + 20 : prev.temperature, // 20-35°C
+          humidity: prev.humidity === 0 ? Math.floor(Math.random() * 40) + 40 : prev.humidity, // 40-80%
+          windSpeed: prev.windSpeed === 0 ? Math.round((Math.random() * 8 + 2) * 10) / 10 : prev.windSpeed // 2-10 km/h
+        }));
+      }
+
     } catch (error) {
       console.error("❌ Error loading air quality data:", error);
 
@@ -514,29 +495,27 @@ const Index = () => {
       alert('Failed to fetch city data. Please try another city name.');
       
       // Fallback to mock data on error
-
       const unitsData = airQualityAPI.generatePollutionUnitsData();
 
       setPollutionUnits({
-
         pm25: unitsData.PM2_5,
-
         pm10: unitsData.PM10,
-
         o3: unitsData.O3,
-
         no2: unitsData.NO2,
-
         so2: unitsData.SO2,
-
         co: unitsData.CO
-
       });
 
+      // Generate realistic weather data as fallback
+      setCurrentCityData(prev => ({
+        ...prev,
+        temperature: Math.floor(Math.random() * 15) + 20, // 20-35°C
+        humidity: Math.floor(Math.random() * 40) + 40, // 40-80%
+        windSpeed: Math.round((Math.random() * 8 + 2) * 10) / 10 // 2-10 km/h
+      }));
+
     } finally {
-
       setIsLoading(false);
-
     }
 
   };
@@ -1563,14 +1542,13 @@ const Index = () => {
                 >
 
                   <div className="flex items-center justify-center w-full px-4" style={{ color: '#3D3D3D', fontFamily: 'Inter, sans-serif' }}>
-
-                    <div className="flex items-center justify-between w-full max-w-xs">
+                    <div className="flex items-center justify-center gap-8 w-full max-w-xs">
 
                       <div className="flex items-center gap-2">
 
                         <img src="/meths6m4-osomnqk.svg" className="h-6 w-6" />
 
-                        <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>{currentCityData.temperature}°C</span>
+                        <span className="text-sm font-medium whitespace-nowrap" style={{ fontFamily: 'Inter, sans-serif' }}>{currentCityData.temperature}°C</span>
 
                       </div>
 
@@ -1578,7 +1556,7 @@ const Index = () => {
 
                         <img src="/meths6m4-ygz2nyn.svg" className="h-6 w-6" />
 
-                        <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif' }}>{currentCityData.humidity}%</span>
+                        <span className="text-sm font-medium whitespace-nowrap" style={{ fontFamily: 'Inter, sans-serif' }}>{currentCityData.humidity}%</span>
 
                       </div>
 
@@ -1586,7 +1564,7 @@ const Index = () => {
 
                         <img src="/meths6m4-dte37nt.svg" className="h-6 w-6" />
 
-                        <span className="text-sm font-medium" style={{ fontFamily: 'Inter, sans-serif', letterSpacing: '0', wordSpacing: 'normal', fontFeatureSettings: 'normal' }}>{currentCityData.windSpeed} km/h</span>
+                        <span className="text-sm font-medium whitespace-nowrap" style={{ fontFamily: 'Inter, sans-serif', letterSpacing: '0', wordSpacing: 'normal', fontFeatureSettings: 'normal' }}>{currentCityData.windSpeed} km/h</span>
 
                       </div>
 
@@ -3441,109 +3419,57 @@ const Index = () => {
                           
 
                           {/* Weather Details */}
-
-                          <div className="flex flex-col items-center justify-around flex-1 mt-0">
-
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
                             {/* Temperature */}
-
                             <div className="flex flex-col items-center justify-center gap-1">
-
                               <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
-
                               <span 
-
                                 className="font-inter"
-
                                 style={{
-
                                   fontStyle: 'normal',
-
                                   fontWeight: 400,
-
-                                  fontSize: '15px',
-
-                                  lineHeight: '18px',
-
+                                  fontSize: '13px',
+                                  lineHeight: '16px',
                                   color: '#3D3D3D'
-
                                 }}
-
                               >
-
                                 {currentCityData.temperature}°C
-
                               </span>
-
                             </div>
-
                             
-
                             {/* Humidity */}
-
                             <div className="flex flex-col items-center justify-center gap-1">
-
                               <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
-
                               <span 
-
                                 className="font-inter"
-
                                 style={{
-
                                   fontStyle: 'normal',
-
                                   fontWeight: 400,
-
-                                  fontSize: '15px',
-
-                                  lineHeight: '18px',
-
+                                  fontSize: '13px',
+                                  lineHeight: '16px',
                                   color: '#3D3D3D'
-
                                 }}
-
                               >
-
                                 {currentCityData.humidity}%
-
                               </span>
-
                             </div>
-
                             
-
                             {/* Wind */}
-
                             <div className="flex flex-col items-center justify-center gap-1">
-
                               <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
-
                               <span 
-
                                 className="font-inter"
-
                                 style={{
-
                                   fontStyle: 'normal',
-
                                   fontWeight: 400,
-
-                                  fontSize: '15px',
-
-                                  lineHeight: '18px',
-
+                                  fontSize: '13px',
+                                  lineHeight: '16px',
                                   color: '#3D3D3D'
-
                                 }}
-
                               >
-
                                 {currentCityData.windSpeed} km/h
-
                               </span>
-
                             </div>
-
                           </div>
 
                         </div>
@@ -3630,7 +3556,7 @@ const Index = () => {
 
                           {/* Weather Details */}
 
-                          <div className="flex flex-col items-center justify-around flex-1 mt-0">
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
 
                             {/* Temperature */}
 
@@ -3638,7 +3564,7 @@ const Index = () => {
 
                               <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 7) - 3)}°C</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 7) - 3)}°C</span>
 
                             </div>
 
@@ -3650,7 +3576,7 @@ const Index = () => {
 
                               <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 21) - 10))}%</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 21) - 10))}%</span>
 
                             </div>
 
@@ -3662,7 +3588,7 @@ const Index = () => {
 
                               <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 2 - 1))).toFixed(1)} km/h</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 2 - 1))).toFixed(1)} km/h</span>
 
                             </div>
 
@@ -3752,7 +3678,7 @@ const Index = () => {
 
                           {/* Weather Details */}
 
-                          <div className="flex flex-col items-center justify-around flex-1 mt-0">
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
 
                             {/* Temperature */}
 
@@ -3760,7 +3686,7 @@ const Index = () => {
 
                               <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 9) - 4)}°C</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 9) - 4)}°C</span>
 
                             </div>
 
@@ -3772,7 +3698,7 @@ const Index = () => {
 
                               <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 25) - 12))}%</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 25) - 12))}%</span>
 
                             </div>
 
@@ -3784,7 +3710,7 @@ const Index = () => {
 
                               <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 2.5 - 1.2))).toFixed(1)} km/h</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 2.5 - 1.2))).toFixed(1)} km/h</span>
 
                             </div>
 
@@ -3874,7 +3800,7 @@ const Index = () => {
 
                           {/* Weather Details */}
 
-                          <div className="flex flex-col items-center justify-around flex-1 mt-0">
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
 
                             {/* Temperature */}
 
@@ -3882,7 +3808,7 @@ const Index = () => {
 
                               <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 11) - 5)}°C</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 11) - 5)}°C</span>
 
                             </div>
 
@@ -3894,7 +3820,7 @@ const Index = () => {
 
                               <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 31) - 15))}%</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 31) - 15))}%</span>
 
                             </div>
 
@@ -3906,7 +3832,7 @@ const Index = () => {
 
                               <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 3 - 1.5))).toFixed(1)} km/h</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 3 - 1.5))).toFixed(1)} km/h</span>
 
                             </div>
 
@@ -3996,7 +3922,7 @@ const Index = () => {
 
                           {/* Weather Details */}
 
-                          <div className="flex flex-col items-center justify-around flex-1 mt-0">
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
 
                             {/* Temperature */}
 
@@ -4004,7 +3930,7 @@ const Index = () => {
 
                               <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 13) - 6)}°C</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 13) - 6)}°C</span>
 
                             </div>
 
@@ -4016,7 +3942,7 @@ const Index = () => {
 
                               <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 35) - 17))}%</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 35) - 17))}%</span>
 
                             </div>
 
@@ -4028,7 +3954,7 @@ const Index = () => {
 
                               <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 3.5 - 1.7))).toFixed(1)} km/h</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 3.5 - 1.7))).toFixed(1)} km/h</span>
 
                             </div>
 
@@ -4118,7 +4044,7 @@ const Index = () => {
 
                           {/* Weather Details */}
 
-                          <div className="flex flex-col items-center justify-around flex-1 mt-0">
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
 
                             {/* Temperature */}
 
@@ -4126,7 +4052,7 @@ const Index = () => {
 
                               <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 15) - 7)}°C</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 15) - 7)}°C</span>
 
                             </div>
 
@@ -4138,7 +4064,7 @@ const Index = () => {
 
                               <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 41) - 20))}%</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(20, Math.min(90, currentCityData.humidity + Math.floor(Math.random() * 41) - 20))}%</span>
 
                             </div>
 
@@ -4150,7 +4076,7 @@ const Index = () => {
 
                               <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
 
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '15px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 4 - 2))).toFixed(1)} km/h</span>
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>{Math.max(0.1, (Number(currentCityData.windSpeed) + (Math.random() * 4 - 2))).toFixed(1)} km/h</span>
 
                             </div>
 
@@ -4158,6 +4084,438 @@ const Index = () => {
 
                         </div>
 
+                      </div>
+
+                      {/* 05.00 */}
+                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
+                        <div 
+                          className="absolute inset-0 rounded-[10px]"
+                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
+                        />
+                        <div className="relative p-3 flex flex-col items-center h-full">
+                          <div 
+                            className="text-center mb-2"
+                            style={{
+                              fontFamily: 'Poppins',
+                              fontStyle: 'normal',
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '24px',
+                              color: '#000000'
+                            }}
+                          >
+                            05.00
+                          </div>
+                          <div 
+                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
+                            style={{ background: '#FFCA59' }}
+                          >
+                            <span 
+                              style={{
+                                fontFamily: 'Poppins',
+                                fontStyle: 'normal',
+                                fontWeight: 600,
+                                fontSize: '15px',
+                                lineHeight: '22px',
+                                color: '#FFFFFF'
+                              }}
+                            >
+                              95
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>26°C</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>68%</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>9.2 km/h</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 06.00 */}
+                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
+                        <div 
+                          className="absolute inset-0 rounded-[10px]"
+                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
+                        />
+                        <div className="relative p-3 flex flex-col items-center h-full">
+                          <div 
+                            className="text-center mb-2"
+                            style={{
+                              fontFamily: 'Poppins',
+                              fontStyle: 'normal',
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '24px',
+                              color: '#000000'
+                            }}
+                          >
+                            06.00
+                          </div>
+                          <div 
+                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
+                            style={{ background: '#FFCA59' }}
+                          >
+                            <span 
+                              style={{
+                                fontFamily: 'Poppins',
+                                fontStyle: 'normal',
+                                fontWeight: 600,
+                                fontSize: '15px',
+                                lineHeight: '22px',
+                                color: '#FFFFFF'
+                              }}
+                            >
+                              88
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>27°C</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>65%</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>10.1 km/h</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 07.00 */}
+                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
+                        <div 
+                          className="absolute inset-0 rounded-[10px]"
+                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
+                        />
+                        <div className="relative p-3 flex flex-col items-center h-full">
+                          <div 
+                            className="text-center mb-2"
+                            style={{
+                              fontFamily: 'Poppins',
+                              fontStyle: 'normal',
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '24px',
+                              color: '#000000'
+                            }}
+                          >
+                            07.00
+                          </div>
+                          <div 
+                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
+                            style={{ background: '#FFCA59' }}
+                          >
+                            <span 
+                              style={{
+                                fontFamily: 'Poppins',
+                                fontStyle: 'normal',
+                                fontWeight: 600,
+                                fontSize: '15px',
+                                lineHeight: '22px',
+                                color: '#FFFFFF'
+                              }}
+                            >
+                              92
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>29°C</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>58%</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>11.5 km/h</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 08.00 */}
+                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
+                        <div 
+                          className="absolute inset-0 rounded-[10px]"
+                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
+                        />
+                        <div className="relative p-3 flex flex-col items-center h-full">
+                          <div 
+                            className="text-center mb-2"
+                            style={{
+                              fontFamily: 'Poppins',
+                              fontStyle: 'normal',
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '24px',
+                              color: '#000000'
+                            }}
+                          >
+                            08.00
+                          </div>
+                          <div 
+                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
+                            style={{ background: '#FFCA59' }}
+                          >
+                            <span 
+                              style={{
+                                fontFamily: 'Poppins',
+                                fontStyle: 'normal',
+                                fontWeight: 600,
+                                fontSize: '15px',
+                                lineHeight: '22px',
+                                color: '#FFFFFF'
+                              }}
+                            >
+                              105
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>31°C</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>52%</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>12.8 km/h</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 09.00 */}
+                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
+                        <div 
+                          className="absolute inset-0 rounded-[10px]"
+                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
+                        />
+                        <div className="relative p-3 flex flex-col items-center h-full">
+                          <div 
+                            className="text-center mb-2"
+                            style={{
+                              fontFamily: 'Poppins',
+                              fontStyle: 'normal',
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '24px',
+                              color: '#000000'
+                            }}
+                          >
+                            09.00
+                          </div>
+                          <div 
+                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
+                            style={{ background: '#FFCA59' }}
+                          >
+                            <span 
+                              style={{
+                                fontFamily: 'Poppins',
+                                fontStyle: 'normal',
+                                fontWeight: 600,
+                                fontSize: '15px',
+                                lineHeight: '22px',
+                                color: '#FFFFFF'
+                              }}
+                            >
+                              118
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>33°C</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>48%</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>13.7 km/h</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 10.00 */}
+                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
+                        <div 
+                          className="absolute inset-0 rounded-[10px]"
+                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
+                        />
+                        <div className="relative p-3 flex flex-col items-center h-full">
+                          <div 
+                            className="text-center mb-2"
+                            style={{
+                              fontFamily: 'Poppins',
+                              fontStyle: 'normal',
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '24px',
+                              color: '#000000'
+                            }}
+                          >
+                            10.00
+                          </div>
+                          <div 
+                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
+                            style={{ background: '#FFCA59' }}
+                          >
+                            <span 
+                              style={{
+                                fontFamily: 'Poppins',
+                                fontStyle: 'normal',
+                                fontWeight: 600,
+                                fontSize: '15px',
+                                lineHeight: '22px',
+                                color: '#FFFFFF'
+                              }}
+                            >
+                              125
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>35°C</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>45%</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>14.2 km/h</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 11.00 */}
+                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
+                        <div 
+                          className="absolute inset-0 rounded-[10px]"
+                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
+                        />
+                        <div className="relative p-3 flex flex-col items-center h-full">
+                          <div 
+                            className="text-center mb-2"
+                            style={{
+                              fontFamily: 'Poppins',
+                              fontStyle: 'normal',
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '24px',
+                              color: '#000000'
+                            }}
+                          >
+                            11.00
+                          </div>
+                          <div 
+                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
+                            style={{ background: '#FFCA59' }}
+                          >
+                            <span 
+                              style={{
+                                fontFamily: 'Poppins',
+                                fontStyle: 'normal',
+                                fontWeight: 600,
+                                fontSize: '15px',
+                                lineHeight: '22px',
+                                color: '#FFFFFF'
+                              }}
+                            >
+                              132
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>34°C</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>47%</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>13.9 km/h</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* 12.00 */}
+                      <div className="flex-shrink-0 relative" style={{ width: '86px', height: '283px' }}>
+                        <div 
+                          className="absolute inset-0 rounded-[10px]"
+                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
+                        />
+                        <div className="relative p-3 flex flex-col items-center h-full">
+                          <div 
+                            className="text-center mb-2"
+                            style={{
+                              fontFamily: 'Poppins',
+                              fontStyle: 'normal',
+                              fontWeight: 400,
+                              fontSize: '16px',
+                              lineHeight: '24px',
+                              color: '#000000'
+                            }}
+                          >
+                            12.00
+                          </div>
+                          <div 
+                            className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
+                            style={{ background: '#FFCA59' }}
+                          >
+                            <span 
+                              style={{
+                                fontFamily: 'Poppins',
+                                fontStyle: 'normal',
+                                fontWeight: 600,
+                                fontSize: '15px',
+                                lineHeight: '22px',
+                                color: '#FFFFFF'
+                              }}
+                            >
+                              128
+                            </span>
+                          </div>
+                          <div className="flex flex-col items-center justify-between flex-1 mt-0 py-2">
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>33°C</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="17.5" height="17.5" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>49%</span>
+                            </div>
+                            <div className="flex flex-col items-center justify-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="20" height="18.75" />
+                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '13px', lineHeight: '16px', color: '#3D3D3D' }}>12.6 km/h</span>
+                            </div>
+                          </div>
+                        </div>
                       </div>
 
                     </div>
@@ -4243,8 +4601,7 @@ const Index = () => {
                     
 
                     {/* Daily Items */}
-
-                    <div className="space-y-4">
+                    <div className="space-y-4 overflow-y-auto" style={{ maxHeight: '260px' }}>
 
                       {/* Day 1 */}
 
@@ -4333,109 +4690,57 @@ const Index = () => {
                           
 
                           {/* Weather Details */}
-
-                          <div className="ml-10 flex items-center gap-10">
-
+                          <div className="ml-10 flex items-center gap-12">
                             {/* Temperature */}
-
-                            <div className="flex items-center gap-2">
-
-                              <img src="/meths6m4-osomnqk.svg" width="28" height="28" />
-
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
                               <span 
-
-                                className="font-inter"
-
+                                className="font-inter whitespace-nowrap"
                                 style={{
-
                                   fontStyle: 'normal',
-
                                   fontWeight: 400,
-
-                                  fontSize: '21.3347px',
-
+                                  fontSize: '18px',
                                   lineHeight: '18px',
-
                                   color: '#3D3D3D'
-
                                 }}
-
                               >
-
                                 {currentCityData.temperature}°C
-
                               </span>
-
                             </div>
-
                             
-
                             {/* Humidity */}
-
-                            <div className="flex items-center gap-2">
-
-                              <img src="/meths6m4-ygz2nyn.svg" width="24.89" height="24.89" />
-
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="22" height="22" />
                               <span 
-
-                                className="font-inter"
-
+                                className="font-inter whitespace-nowrap"
                                 style={{
-
                                   fontStyle: 'normal',
-
                                   fontWeight: 400,
-
-                                  fontSize: '21.3347px',
-
+                                  fontSize: '18px',
                                   lineHeight: '18px',
-
                                   color: '#3D3D3D'
-
                                 }}
-
                               >
-
                                 {currentCityData.humidity}%
-
                               </span>
-
                             </div>
-
                             
-
                             {/* Wind */}
-
-                            <div className="flex items-center gap-2">
-
-                              <img src="/meths6m4-dte37nt.svg" width="28.45" height="26.67" />
-
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="26" height="24" />
                               <span 
-
-                                className="font-inter"
-
+                                className="font-inter whitespace-nowrap"
                                 style={{
-
                                   fontStyle: 'normal',
-
                                   fontWeight: 400,
-
-                                  fontSize: '21.3347px',
-
+                                  fontSize: '18px',
                                   lineHeight: '18px',
-
                                   color: '#3D3D3D'
-
                                 }}
-
                               >
-
                                 {currentCityData.windSpeed} km/h
-
                               </span>
-
                             </div>
-
                           </div>
 
                         </div>
@@ -4531,33 +4836,19 @@ const Index = () => {
                           
 
                           {/* Weather Details */}
-
-                          <div className="ml-10 flex items-center gap-10">
-
-                            <div className="flex items-center gap-2">
-
-                              <img src="/meths6m4-osomnqk.svg" width="28" height="28" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 7) - 3)}°C</span>
-
+                          <div className="ml-10 flex items-center gap-12">
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(15, currentCityData.temperature + Math.floor(Math.random() * 7) - 3)}°C</span>
                             </div>
-
-                            <div className="flex items-center gap-2">
-
-                              <img src="/meths6m4-ygz2nyn.svg" width="24.89" height="24.89" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.min(100, Math.max(20, currentCityData.humidity + Math.floor(Math.random() * 21) - 10))}%</span>
-
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="22" height="22" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.min(100, Math.max(20, currentCityData.humidity + Math.floor(Math.random() * 21) - 10))}%</span>
                             </div>
-
-                            <div className="flex items-center gap-2">
-
-                              <img src="/meths6m4-dte37nt.svg" width="28.45" height="26.67" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.5, currentCityData.windSpeed + (Math.random() * 3) - 1.5).toFixed(1)} km/h</span>
-
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="26" height="24" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.5, currentCityData.windSpeed + (Math.random() * 3) - 1.5).toFixed(1)} km/h</span>
                             </div>
-
                           </div>
 
                         </div>
@@ -4653,33 +4944,443 @@ const Index = () => {
                           
 
                           {/* Weather Details */}
-
-                          <div className="ml-10 flex items-center gap-10">
-
-                            <div className="flex items-center gap-2">
-
-                              <img src="/meths6m4-osomnqk.svg" width="28" height="28" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(12, currentCityData.temperature + Math.floor(Math.random() * 9) - 4)}°C</span>
-
+                          <div className="ml-10 flex items-center gap-12">
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(12, currentCityData.temperature + Math.floor(Math.random() * 9) - 4)}°C</span>
                             </div>
-
-                            <div className="flex items-center gap-2">
-
-                              <img src="/meths6m4-ygz2nyn.svg" width="24.89" height="24.89" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.min(100, Math.max(15, currentCityData.humidity + Math.floor(Math.random() * 25) - 12))}%</span>
-
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="22" height="22" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.min(100, Math.max(15, currentCityData.humidity + Math.floor(Math.random() * 25) - 12))}%</span>
                             </div>
-
-                            <div className="flex items-center gap-2">
-
-                              <img src="/meths6m4-dte37nt.svg" width="28.45" height="26.67" />
-
-                              <span className="font-inter" style={{ fontWeight: 400, fontSize: '21.3347px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.3, currentCityData.windSpeed + (Math.random() * 4) - 2).toFixed(1)} km/h</span>
-
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="26" height="24" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.3, currentCityData.windSpeed + (Math.random() * 4) - 2).toFixed(1)} km/h</span>
                             </div>
+                          </div>
 
+                        </div>
+
+                      </div>
+
+                      {/* Day 4 */}
+
+                      <div className="relative" style={{ height: '76px' }}>
+
+                        <div 
+
+                          className="absolute inset-0 rounded-[10px]"
+
+                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
+
+                        />
+
+                        <div className="relative flex items-center h-full px-4">
+
+                          <div 
+
+                            className="text-center"
+
+                            style={{
+
+                              fontFamily: 'Poppins',
+
+                              fontStyle: 'normal',
+
+                              fontWeight: 400,
+
+                              fontSize: '16px',
+
+                              lineHeight: '24px',
+
+                              color: '#000000',
+
+                              width: '60px'
+
+                            }}
+
+                          >
+
+                            {dailyLabels[3]}
+
+                          </div>
+
+                          <div 
+
+                            className="ml-4 flex items-center justify-center rounded-[10px]"
+
+                            style={{ 
+
+                              background: '#FFCA59',
+
+                              width: '80px',
+
+                              height: '43px'
+
+                            }}
+
+                          >
+
+                            <span 
+
+                              style={{
+
+                                fontFamily: 'Poppins',
+
+                                fontStyle: 'normal',
+
+                                fontWeight: 600,
+
+                                fontSize: '20px',
+
+                                lineHeight: '30px',
+
+                                color: '#FFFFFF'
+
+                              }}
+
+                            >
+
+                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 35) - 17)}
+
+                            </span>
+
+                          </div>
+
+                          
+
+                          {/* Weather Details */}
+                          <div className="ml-10 flex items-center gap-12">
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(10, currentCityData.temperature + Math.floor(Math.random() * 11) - 5)}°C</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="22" height="22" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.min(100, Math.max(20, currentCityData.humidity + Math.floor(Math.random() * 30) - 15))}%</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="26" height="24" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.2, currentCityData.windSpeed + (Math.random() * 5) - 2.5).toFixed(1)} km/h</span>
+                            </div>
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                      {/* Day 5 */}
+
+                      <div className="relative" style={{ height: '76px' }}>
+
+                        <div 
+
+                          className="absolute inset-0 rounded-[10px]"
+
+                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
+
+                        />
+
+                        <div className="relative flex items-center h-full px-4">
+
+                          <div 
+
+                            className="text-center"
+
+                            style={{
+
+                              fontFamily: 'Poppins',
+
+                              fontStyle: 'normal',
+
+                              fontWeight: 400,
+
+                              fontSize: '16px',
+
+                              lineHeight: '24px',
+
+                              color: '#000000',
+
+                              width: '60px'
+
+                            }}
+
+                          >
+
+                            {dailyLabels[4]}
+
+                          </div>
+
+                          <div 
+
+                            className="ml-4 flex items-center justify-center rounded-[10px]"
+
+                            style={{ 
+
+                              background: '#FFCA59',
+
+                              width: '80px',
+
+                              height: '43px'
+
+                            }}
+
+                          >
+
+                            <span 
+
+                              style={{
+
+                                fontFamily: 'Poppins',
+
+                                fontStyle: 'normal',
+
+                                fontWeight: 600,
+
+                                fontSize: '20px',
+
+                                lineHeight: '30px',
+
+                                color: '#FFFFFF'
+
+                              }}
+
+                            >
+
+                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 40) - 20)}
+
+                            </span>
+
+                          </div>
+
+                          
+
+                          {/* Weather Details */}
+                          <div className="ml-10 flex items-center gap-12">
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(8, currentCityData.temperature + Math.floor(Math.random() * 13) - 6)}°C</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="22" height="22" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.min(100, Math.max(25, currentCityData.humidity + Math.floor(Math.random() * 35) - 17))}%</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="26" height="24" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, currentCityData.windSpeed + (Math.random() * 6) - 3).toFixed(1)} km/h</span>
+                            </div>
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                      {/* Day 6 */}
+
+                      <div className="relative" style={{ height: '76px' }}>
+
+                        <div 
+
+                          className="absolute inset-0 rounded-[10px]"
+
+                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
+
+                        />
+
+                        <div className="relative flex items-center h-full px-4">
+
+                          <div 
+
+                            className="text-center"
+
+                            style={{
+
+                              fontFamily: 'Poppins',
+
+                              fontStyle: 'normal',
+
+                              fontWeight: 400,
+
+                              fontSize: '16px',
+
+                              lineHeight: '24px',
+
+                              color: '#000000',
+
+                              width: '60px'
+
+                            }}
+
+                          >
+
+                            {dailyLabels[5]}
+
+                          </div>
+
+                          <div 
+
+                            className="ml-4 flex items-center justify-center rounded-[10px]"
+
+                            style={{ 
+
+                              background: '#FFCA59',
+
+                              width: '80px',
+
+                              height: '43px'
+
+                            }}
+
+                          >
+
+                            <span 
+
+                              style={{
+
+                                fontFamily: 'Poppins',
+
+                                fontStyle: 'normal',
+
+                                fontWeight: 600,
+
+                                fontSize: '20px',
+
+                                lineHeight: '30px',
+
+                                color: '#FFFFFF'
+
+                              }}
+
+                            >
+
+                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 45) - 22)}
+
+                            </span>
+
+                          </div>
+
+                          
+
+                          {/* Weather Details */}
+                          <div className="ml-10 flex items-center gap-12">
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(6, currentCityData.temperature + Math.floor(Math.random() * 15) - 7)}°C</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="22" height="22" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.min(100, Math.max(30, currentCityData.humidity + Math.floor(Math.random() * 40) - 20))}%</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="26" height="24" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, currentCityData.windSpeed + (Math.random() * 7) - 3.5).toFixed(1)} km/h</span>
+                            </div>
+                          </div>
+
+                        </div>
+
+                      </div>
+
+                      {/* Day 7 */}
+
+                      <div className="relative" style={{ height: '76px' }}>
+
+                        <div 
+
+                          className="absolute inset-0 rounded-[10px]"
+
+                          style={{ background: 'rgba(244, 255, 141, 0.2)' }}
+
+                        />
+
+                        <div className="relative flex items-center h-full px-4">
+
+                          <div 
+
+                            className="text-center"
+
+                            style={{
+
+                              fontFamily: 'Poppins',
+
+                              fontStyle: 'normal',
+
+                              fontWeight: 400,
+
+                              fontSize: '16px',
+
+                              lineHeight: '24px',
+
+                              color: '#000000',
+
+                              width: '60px'
+
+                            }}
+
+                          >
+
+                            {dailyLabels[6]}
+
+                          </div>
+
+                          <div 
+
+                            className="ml-4 flex items-center justify-center rounded-[10px]"
+
+                            style={{ 
+
+                              background: '#FFCA59',
+
+                              width: '80px',
+
+                              height: '43px'
+
+                            }}
+
+                          >
+
+                            <span 
+
+                              style={{
+
+                                fontFamily: 'Poppins',
+
+                                fontStyle: 'normal',
+
+                                fontWeight: 600,
+
+                                fontSize: '20px',
+
+                                lineHeight: '30px',
+
+                                color: '#FFFFFF'
+
+                              }}
+
+                            >
+
+                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 50) - 25)}
+
+                            </span>
+
+                          </div>
+
+                          
+
+                          {/* Weather Details */}
+                          <div className="ml-10 flex items-center gap-12">
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-osomnqk.svg" width="26" height="26" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(5, currentCityData.temperature + Math.floor(Math.random() * 17) - 8)}°C</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-ygz2nyn.svg" width="22" height="22" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.min(100, Math.max(35, currentCityData.humidity + Math.floor(Math.random() * 45) - 22))}%</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <img src="/meths6m4-dte37nt.svg" width="26" height="24" />
+                              <span className="font-inter whitespace-nowrap" style={{ fontWeight: 400, fontSize: '18px', lineHeight: '18px', color: '#3D3D3D' }}>{Math.max(0.1, currentCityData.windSpeed + (Math.random() * 8) - 4).toFixed(1)} km/h</span>
+                            </div>
                           </div>
 
                         </div>

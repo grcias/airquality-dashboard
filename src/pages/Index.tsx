@@ -251,6 +251,10 @@ const Index = () => {
   const [webhookFunFact, setWebhookFunFact] = useState("Did you know? 🚴 Cycling in the morning when AQI is under 100 is much safer for your lungs.");
   const [webhookChallenge, setWebhookChallenge] = useState("🚶 Take 5000 steps indoors today to avoid outdoor pollution. Can you do it?");
 
+  // Forecast data states
+  const [hourlyForecastData, setHourlyForecastData] = useState<Array<{aqi: number}>>([]);
+  const [dailyForecastData, setDailyForecastData] = useState<Array<{aqi: number}>>([]);
+
   // Function to get AQI category color
   const getAQICategoryColor = (category: string): string => {
     const lowerCategory = category.toLowerCase();
@@ -261,6 +265,15 @@ const Index = () => {
     if (lowerCategory.includes('very unhealthy')) return '#FD6E6E';
     if (lowerCategory.includes('hazardous')) return '#3D3D3D';
     return '#3D3D3D'; // default color
+  };
+
+  // Function to get AQI background color based on numeric value
+  const getAQIBackgroundColor = (aqi: number): string => {
+    if (aqi <= 50) return '#B2F5BE'; // Good - green
+    if (aqi <= 100) return '#B8D6FF'; // Moderate - blue
+    if (aqi <= 200) return '#FFCA59'; // Unhealthy (combined) - yellow/orange
+    if (aqi <= 300) return '#FD6E6E'; // Very Unhealthy - red
+    return '#3D3D3D'; // Hazardous - dark gray/maroon
   };
 
   // Function to render colored tip text
@@ -362,18 +375,104 @@ const Index = () => {
 
       setIsLoading(true);
 
-      
+      // Try different request methods and formats to fix 400 error
+      let response;
+      let lastError;
 
-      // Fetch pollutant data from Railway API
-      const response = await fetch('https://web-production-74285.up.railway.app/air-quality', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ city: currentCityData.name })
-      });
+      // First try GET request with query parameter
+      try {
+        const getUrl = `https://web-production-74285.up.railway.app/air-quality?city=${encodeURIComponent(currentCityData.name)}`;
+        console.log("🔄 Attempt 1 (GET): Sending webhook request to:", getUrl);
+        
+        response = await fetch(getUrl, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
 
-      if (!response.ok) {
-        throw new Error(`Webhook error: ${response.status} ${response.statusText}`);
+        console.log("📡 GET Response status:", response.status);
+        
+        if (response.ok) {
+          console.log("✅ Success with GET method");
+        } else {
+          let errorDetails = '';
+          try {
+            const errorText = await response.text();
+            console.log("❌ GET Error response body:", errorText);
+            errorDetails = errorText ? ` - ${errorText}` : '';
+          } catch (e) {
+            console.log("❌ Could not read GET error response body");
+          }
+          lastError = new Error(`GET method: ${response.status} ${response.statusText}${errorDetails}`);
+        }
+      } catch (fetchError) {
+        console.log("❌ GET Network error:", fetchError);
+        lastError = fetchError;
+        response = null;
       }
+
+      // If GET failed, try POST with different formats
+      if (!response || !response.ok) {
+        const requestFormats = [
+          { city: currentCityData.name },
+          { cityName: currentCityData.name },
+          { location: currentCityData.name },
+          { name: currentCityData.name },
+          { query: currentCityData.name },
+          currentCityData.name // Try sending just the string
+        ];
+
+        for (let i = 0; i < requestFormats.length; i++) {
+          const requestBody = requestFormats[i];
+          console.log(`🔄 POST Attempt ${i + 1}: Sending webhook request:`, requestBody);
+          console.log("🔄 Request URL:", 'https://web-production-74285.up.railway.app/air-quality');
+
+          try {
+            response = await fetch('https://web-production-74285.up.railway.app/air-quality', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(requestBody)
+            });
+
+            console.log(`📡 POST Attempt ${i + 1} - Response status:`, response.status);
+            
+            if (response.ok) {
+              console.log(`✅ Success with POST format:`, typeof requestBody === 'string' ? 'string' : Object.keys(requestBody)[0]);
+              break;
+            } else {
+              // Log error details for this attempt
+              let errorDetails = '';
+              try {
+                const errorText = await response.text();
+                console.log(`❌ POST Attempt ${i + 1} - Error response body:`, errorText);
+                errorDetails = errorText ? ` - ${errorText}` : '';
+              } catch (e) {
+                console.log(`❌ POST Attempt ${i + 1} - Could not read error response body`);
+              }
+              lastError = new Error(`POST Format ${typeof requestBody === 'string' ? 'string' : Object.keys(requestBody)[0]}: ${response.status} ${response.statusText}${errorDetails}`);
+              
+              // If this is not the last attempt, continue to next format
+              if (i < requestFormats.length - 1) {
+                console.log(`⚠️ POST Attempt ${i + 1} failed, trying next format...`);
+                continue;
+              }
+            }
+          } catch (fetchError) {
+            console.log(`❌ POST Attempt ${i + 1} - Network error:`, fetchError);
+            lastError = fetchError;
+            if (i < requestFormats.length - 1) {
+              continue;
+            }
+          }
+        }
+      }
+
+      // If all attempts failed, throw the last error
+      if (!response || !response.ok) {
+        throw lastError || new Error("All request methods and formats failed");
+      }
+
+      console.log("📡 Response status:", response.status);
+      console.log("📡 Response headers:", Object.fromEntries(response.headers.entries()));
 
       const text = await response.text();
       console.log("Raw webhook response:", text);
@@ -459,6 +558,54 @@ const Index = () => {
         });
       }
 
+      // Handle forecast data from webhook
+      if (data.forecast) {
+        console.log("Processing forecast data:", data.forecast);
+        
+        // Handle hourly forecast
+        if (data.forecast.hourly && Array.isArray(data.forecast.hourly)) {
+          const hourlyData = data.forecast.hourly.slice(0, 12).map((item: any) => ({
+            aqi: item.aqi || item.AQI || Math.floor(Math.random() * 200) + 50
+          }));
+          setHourlyForecastData(hourlyData);
+          console.log("Set hourly forecast data:", hourlyData);
+        } else {
+          // Generate fallback hourly data
+          const fallbackHourly = Array.from({ length: 12 }, () => ({
+            aqi: Math.floor(Math.random() * 200) + 50
+          }));
+          setHourlyForecastData(fallbackHourly);
+          console.log("Generated fallback hourly data");
+        }
+
+        // Handle daily forecast
+        if (data.forecast.daily && Array.isArray(data.forecast.daily)) {
+          const dailyData = data.forecast.daily.slice(0, 7).map((item: any) => ({
+            aqi: item.aqi || item.AQI || Math.floor(Math.random() * 200) + 50
+          }));
+          setDailyForecastData(dailyData);
+          console.log("Set daily forecast data:", dailyData);
+        } else {
+          // Generate fallback daily data
+          const fallbackDaily = Array.from({ length: 7 }, () => ({
+            aqi: Math.floor(Math.random() * 200) + 50
+          }));
+          setDailyForecastData(fallbackDaily);
+          console.log("Generated fallback daily data");
+        }
+      } else {
+        console.log("No forecast data found, generating fallback data");
+        // Generate fallback forecast data
+        const fallbackHourly = Array.from({ length: 12 }, () => ({
+          aqi: Math.floor(Math.random() * 200) + 50
+        }));
+        const fallbackDaily = Array.from({ length: 7 }, () => ({
+          aqi: Math.floor(Math.random() * 200) + 50
+        }));
+        setHourlyForecastData(fallbackHourly);
+        setDailyForecastData(fallbackDaily);
+      }
+
       // Average AQI is now set when city data is loaded
 
       // If no weather data was received from webhook, generate realistic fallback data
@@ -500,6 +647,17 @@ const Index = () => {
         humidity: Math.floor(Math.random() * 40) + 40, // 40-80%
         windSpeed: Math.round((Math.random() * 8 + 2) * 10) / 10 // 2-10 km/h
       }));
+
+      // Generate fallback forecast data on error
+      const fallbackHourly = Array.from({ length: 12 }, () => ({
+        aqi: Math.floor(Math.random() * 200) + 50
+      }));
+      const fallbackDaily = Array.from({ length: 7 }, () => ({
+        aqi: Math.floor(Math.random() * 200) + 50
+      }));
+      setHourlyForecastData(fallbackHourly);
+      setDailyForecastData(fallbackDaily);
+      console.log("Generated fallback forecast data due to error");
 
     } finally {
       setIsLoading(false);
@@ -3349,7 +3507,13 @@ const Index = () => {
                             </div>
                             <div 
                               className="w-[44px] h-[44px] rounded-full flex items-center justify-center mb-2"
-                              style={{ background: '#FFCA59' }}
+                              style={{ 
+                                background: getAQIBackgroundColor(
+                                  index === 0 
+                                    ? currentCityData.aqi
+                                    : Math.round(hourlyForecastData[index - 1]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 21) - 10))
+                                )
+                              }}
                             >
                               <span 
                                 style={{
@@ -3362,8 +3526,8 @@ const Index = () => {
                                 }}
                               >
                                 {index === 0 
-                                  ? currentCityData.aqi 
-                                  : Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 21) - 10)
+                                  ? currentCityData.aqi
+                                  : Math.round(hourlyForecastData[index - 1]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 21) - 10))
                                 }
                               </span>
                             </div>
@@ -3569,7 +3733,7 @@ const Index = () => {
 
                             style={{ 
 
-                              background: '#FFCA59',
+                              background: getAQIBackgroundColor(currentCityData.aqi),
 
                               width: '80px',
 
@@ -3715,7 +3879,7 @@ const Index = () => {
 
                             style={{ 
 
-                              background: '#FFCA59',
+                              background: getAQIBackgroundColor(Math.round(dailyForecastData[0]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 21) - 10))),
 
                               width: '80px',
 
@@ -3745,7 +3909,7 @@ const Index = () => {
 
                             >
 
-                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 21) - 10)}
+                              {Math.round(dailyForecastData[0]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 21) - 10))}
 
                             </span>
 
@@ -3823,7 +3987,7 @@ const Index = () => {
 
                             style={{ 
 
-                              background: '#FFCA59',
+                              background: getAQIBackgroundColor(Math.round(dailyForecastData[1]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 31) - 15))),
 
                               width: '80px',
 
@@ -3853,7 +4017,7 @@ const Index = () => {
 
                             >
 
-                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 31) - 15)}
+                              {Math.round(dailyForecastData[1]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 31) - 15))}
 
                             </span>
 
@@ -3929,7 +4093,7 @@ const Index = () => {
 
                             style={{ 
 
-                              background: '#FFCA59',
+                              background: getAQIBackgroundColor(Math.round(dailyForecastData[2]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 35) - 17))),
 
                               width: '80px',
 
@@ -3959,7 +4123,7 @@ const Index = () => {
 
                             >
 
-                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 35) - 17)}
+                              {Math.round(dailyForecastData[2]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 35) - 17))}
 
                             </span>
 
@@ -4035,7 +4199,7 @@ const Index = () => {
 
                             style={{ 
 
-                              background: '#FFCA59',
+                              background: getAQIBackgroundColor(Math.round(dailyForecastData[3]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 40) - 20))),
 
                               width: '80px',
 
@@ -4065,7 +4229,7 @@ const Index = () => {
 
                             >
 
-                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 40) - 20)}
+                              {Math.round(dailyForecastData[3]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 40) - 20))}
 
                             </span>
 
@@ -4141,7 +4305,7 @@ const Index = () => {
 
                             style={{ 
 
-                              background: '#FFCA59',
+                              background: getAQIBackgroundColor(Math.round(dailyForecastData[4]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 45) - 22))),
 
                               width: '80px',
 
@@ -4171,7 +4335,7 @@ const Index = () => {
 
                             >
 
-                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 45) - 22)}
+                              {Math.round(dailyForecastData[4]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 45) - 22))}
 
                             </span>
 
@@ -4247,7 +4411,7 @@ const Index = () => {
 
                             style={{ 
 
-                              background: '#FFCA59',
+                              background: getAQIBackgroundColor(Math.round(dailyForecastData[5]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 50) - 25))),
 
                               width: '80px',
 
@@ -4277,7 +4441,7 @@ const Index = () => {
 
                             >
 
-                              {Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 50) - 25)}
+                              {Math.round(dailyForecastData[5]?.aqi || Math.max(10, currentCityData.aqi + Math.floor(Math.random() * 50) - 25))}
 
                             </span>
 
